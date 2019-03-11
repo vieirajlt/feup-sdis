@@ -9,6 +9,8 @@ public class Peer {
 
     private static Channel cmd;
 
+    private static SubProtocol protocol;
+
     public static void main(String[] args) {
 
         if (args.length != 6) {
@@ -35,18 +37,41 @@ public class Peer {
         String[] MDR = args[5].split(":");
         restore = new MulticastChannel(MDR[0], MDR[1]);
 
+        protocol = SubProtocol.getInstance();
+
         //Threads Start
 
-        /*Thread threadMC = new Thread(control);
+        Thread threadMC = new Thread(control);
         threadMC.start();
 
         Thread threadMDB = new Thread(backup);
         threadMDB.start();
 
         Thread threadMDR = new Thread(restore);
-        threadMDR.start();*/
+        threadMDR.start();
 
         Thread threadCMD = new Thread(cmd);
         threadCMD.start();
     }
+
+    public static MulticastChannel getControlChannel() {
+        return control;
+    }
+
+    public static MulticastChannel getBackupChannel() {
+        return backup;
+    }
+
+    public static MulticastChannel getRestoreChannel() {
+        return restore;
+    }
+
+
+    public static void runProtocol(String message) {
+        if(!protocol.run(message)) {
+            System.out.println("Something went wrong...");
+        }
+    }
+
+
 }

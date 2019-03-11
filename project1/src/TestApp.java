@@ -1,10 +1,10 @@
 public class TestApp {
 
-    private final static String BACKUP = "BACKUP";
-    private final static String RESTORE = "RESTORE";
-    private final static String DELETE = "DELETE";
-    private final static String RECLAIM = "RECLAIM";
-    private final static String STATE = "STATE";
+    public final static String BACKUP = "BACKUP";
+    public final static String RESTORE = "RESTORE";
+    public final static String DELETE = "DELETE";
+    public final static String RECLAIM = "RECLAIM";
+    public final static String STATE = "STATE";
 
     private static String sub_protocol;
     private static String opnd_1 = "";

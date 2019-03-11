@@ -6,7 +6,7 @@ public class MulticastChannel implements Runnable{
     private int PORT;
     private InetAddress address;
 
-    final static int MAX_CHUNK_SIZE = 64000;
+    private final static int MAX_CHUNK_SIZE = 64000;
 
     public MulticastChannel(String address, String port) {
         try {
@@ -30,7 +30,7 @@ public class MulticastChannel implements Runnable{
                 String msg = new String(buf, 0, buf.length);
 
                 //Should run appropriate cmd on Peer
-                System.out.println(msg);
+                System.out.println("READ: " + msg);
             }
         } catch (IOException ex) {
             ex.printStackTrace();

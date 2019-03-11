@@ -28,6 +28,9 @@ public class Channel implements Runnable {
                 socket.receive(packet);
                 String received = new String(packet.getData());
                 System.out.println("Echoed Message: " + received);
+                int indexCut = received.indexOf(0);
+                String receivedCut = received.substring(0, indexCut);
+                Peer.runProtocol(receivedCut);
             }
 
         } catch (Exception e) {
