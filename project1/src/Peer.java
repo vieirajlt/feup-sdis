@@ -73,5 +73,13 @@ public class Peer {
         }
     }
 
+    public static Float getProtocolVersion() {
+        return version;
+    }
+
+    public static Integer getServerId() {
+        return id;
+    }
+
 
 }

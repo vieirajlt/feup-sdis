@@ -6,7 +6,7 @@ public class MulticastChannel implements Runnable{
     private int PORT;
     private InetAddress address;
 
-    private final static int MAX_CHUNK_SIZE = 64000;
+
 
     public MulticastChannel(String address, String port) {
         try {
@@ -18,7 +18,7 @@ public class MulticastChannel implements Runnable{
     }
 
     public void read() {
-        byte[] buf = new byte[MAX_CHUNK_SIZE + 500];
+        byte[] buf = new byte[SplitFile.MAX_CHUNK_SIZE + 500];
 
         try (MulticastSocket clientSocket = new MulticastSocket(PORT)) {
             clientSocket.joinGroup(address);
