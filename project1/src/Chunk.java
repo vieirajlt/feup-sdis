@@ -1,18 +1,14 @@
 public class Chunk {
 
     private int chunkNo;
-    private String fileId;
-    private String body;
+    private byte[] body;
     private int size;
-    private int deseReplicationDegree;
     private int currReplicationDegree = 0;
 
-    public Chunk(String fileId, int chunkNo, int deseReplicationDegree, byte[] buffer) {
-        this.fileId = fileId;
+    public Chunk(int chunkNo, byte[] body) {
         this.chunkNo = chunkNo;
-        this.deseReplicationDegree = deseReplicationDegree;
-        this.body = new String(buffer);
-        this.size = buffer.length;
+        this.body = body;
+        this.size = body.length;
     }
 
 
