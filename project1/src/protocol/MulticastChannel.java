@@ -1,3 +1,5 @@
+package protocol;
+
 import java.io.IOException;
 import java.net.*;
 
@@ -29,7 +31,7 @@ public class MulticastChannel implements Runnable{
 
                 String msg = new String(buf, 0, buf.length);
 
-                //Should run appropriate cmd on Peer
+                //Should run appropriate cmd on protocol.Peer
                 System.out.println("READ: " + msg);
             }
         } catch (IOException ex) {

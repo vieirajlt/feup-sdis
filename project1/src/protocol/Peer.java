@@ -1,3 +1,5 @@
+package protocol;
+
 public class Peer {
 
     private static Float version;
@@ -14,7 +16,7 @@ public class Peer {
     public static void main(String[] args) {
 
         if (args.length != 6) {
-            System.out.println("Usage: Peer <protocol_version> <server_id> <service_ap> <MC_ip:MC_port> <MDB_ip:MDB_port> <MDR_ip:MDR_port>");
+            System.out.println("Usage: protocol.Peer <protocol_version> <server_id> <service_ap> <MC_ip:MC_port> <MDB_ip:MDB_port> <MDR_ip:MDR_port>");
             return;
         }
 

@@ -1,3 +1,7 @@
+package app;
+
+import protocol.Channel;
+
 public class TestApp {
 
     public final static String BACKUP = "BACKUP";
@@ -15,7 +19,7 @@ public class TestApp {
     public static void main(String[] args) {
 
         if (args.length < 2) {
-            System.out.println("Usage: TestApp <peer_ap> <sub_protocol> <opnd_1> <opnd_2> ");
+            System.out.println("Usage: app.TestApp <peer_ap> <sub_protocol> <opnd_1> <opnd_2> ");
             return;
         } else if(args.length < 5) {
             opnd_2 = args[3];
@@ -33,19 +37,19 @@ public class TestApp {
 
         //Parameters check
         if(sub_protocol.equals(BACKUP) && args.length != 4) {
-            System.out.println("Usage: TestApp <peer_ap> " + sub_protocol + "  <filepath> <replication_degree> ");
+            System.out.println("Usage: app.TestApp <peer_ap> " + sub_protocol + "  <filepath> <replication_degree> ");
             return;
         } else if(sub_protocol.equals(RESTORE) && args.length != 3) {
-            System.out.println("Usage: TestApp <peer_ap> " + sub_protocol + "  <filepath>");
+            System.out.println("Usage: app.TestApp <peer_ap> " + sub_protocol + "  <filepath>");
             return;
         } else if(sub_protocol.equals(DELETE) && args.length != 3) {
-            System.out.println("Usage: TestApp <peer_ap> " + sub_protocol + "  <filepath>");
+            System.out.println("Usage: app.TestApp <peer_ap> " + sub_protocol + "  <filepath>");
             return;
         } else if(sub_protocol.equals(RECLAIM) && args.length != 3) {
-            System.out.println("Usage: TestApp <peer_ap> " + sub_protocol + "  <max_size>");
+            System.out.println("Usage: app.TestApp <peer_ap> " + sub_protocol + "  <max_size>");
             return;
         } else if(sub_protocol.equals(STATE) && args.length != 2) {
-            System.out.println("Usage: TestApp <peer_ap> " + sub_protocol);
+            System.out.println("Usage: app.TestApp <peer_ap> " + sub_protocol);
             return;
         }
 

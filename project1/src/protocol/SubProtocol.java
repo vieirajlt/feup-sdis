@@ -1,3 +1,7 @@
+package protocol;
+
+import app.TestApp;
+
 public class SubProtocol {
 
     public final static char CR  = (char) 0x0D;
@@ -43,7 +47,7 @@ public class SubProtocol {
     }
 
     private synchronized void backup(String[] cmd) {
-        System.out.println("SubProtocol.backup");
+        System.out.println("protocol.SubProtocol.backup");
 
         //divide file in chunks
 
@@ -63,19 +67,19 @@ public class SubProtocol {
     }
 
     private synchronized void restore(String[] cmd) {
-        System.out.println("SubProtocol.restore");
+        System.out.println("protocol.SubProtocol.restore");
     }
 
     private synchronized void delete(String[] cmd) {
-        System.out.println("SubProtocol.delete");
+        System.out.println("protocol.SubProtocol.delete");
     }
 
     private synchronized void reclaim(String[] cmd) {
-        System.out.println("SubProtocol.reclaim");
+        System.out.println("protocol.SubProtocol.reclaim");
     }
 
     private synchronized void state(String[] cmd) {
-        System.out.println("SubProtocol.state");
+        System.out.println("protocol.SubProtocol.state");
     }
 
     private String buildHeader(String[] cmd, int configuration, int chunkNo) {
@@ -83,7 +87,7 @@ public class SubProtocol {
         String message = cmd[0];
         int config = configuration;
 
-        //Protocol Version
+        //protocol Version
         if(config % 2 == 1) {
             message += " " + Peer.getProtocolVersion();
         }

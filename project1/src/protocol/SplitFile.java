@@ -1,15 +1,15 @@
+package protocol;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileOwnerAttributeView;
-import java.nio.file.attribute.UserPrincipal;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class SplitFile {
 
@@ -36,7 +36,7 @@ public class SplitFile {
         System.out.println("Working Directory = " +
                 System.getProperty("user.dir"));
 
-        SplitFile sf = new SplitFile("src/FILES/img.png", 1);
+        SplitFile sf = new SplitFile("FILES/img.png", 1);
 
     }
 
