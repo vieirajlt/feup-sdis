@@ -2,6 +2,8 @@ package protocol;
 
 import app.TestApp;
 
+import java.nio.charset.StandardCharsets;
+
 public class SubProtocol {
 
     public final static char CR  = (char) 0x0D;
@@ -48,22 +50,27 @@ public class SubProtocol {
 
     private synchronized void backup(String[] cmd) {
         System.out.println("protocol.SubProtocol.backup");
+        String filepath = cmd[1];
+        int repDegree = Integer.parseInt(cmd[2]);
 
-        //divide file in chunks
+        SplitFile sf = new SplitFile(filepath, repDegree);
 
-        int chunkNo = 0;
-        String body = "This is a test";
-        String message = buildMessage(cmd, MSG_CONFIG_PUTCHUNK, chunkNo, body);
+        for (Chunk chunk: sf.getChunks()) {
 
-        Peer.getBackupChannel().write(message);
+            int chunkNo = chunk.getChunkNo();
+            String body =  new String(chunk.getBody(), StandardCharsets.UTF_8);
 
-        try {
-            Thread.sleep(SLEEP_TIME_MS);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+            String message = buildMessage(cmd, MSG_CONFIG_PUTCHUNK, chunkNo, body);
+
+            Peer.getBackupChannel().write(message);
+
+            try {
+                Thread.sleep(SLEEP_TIME_MS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
         }
-
-        //for each chunk, register stored
     }
 
     private synchronized void restore(String[] cmd) {
