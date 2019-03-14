@@ -1,5 +1,7 @@
 package protocol;
 
+import protocol.subprotocol.Initiator;
+
 public class Peer {
 
     private static Float version;
@@ -11,7 +13,7 @@ public class Peer {
 
     private static Channel cmd;
 
-    private static SubProtocol protocol;
+    private static Initiator protocol;
 
     public static void main(String[] args) {
 
@@ -39,7 +41,7 @@ public class Peer {
         String[] MDR = args[5].split(":");
         restore = new MulticastChannel(MDR[0], MDR[1]);
 
-        protocol = SubProtocol.getInstance();
+        protocol = Initiator.getInstance();
 
         //Threads Start
 

@@ -21,6 +21,11 @@ public class SplitFile {
     private int replicationDegree;
     private File file;
 
+    /**
+     *
+     * @param pathname
+     * @param replicationDegree
+     */
     public SplitFile(String pathname, int replicationDegree) {
         this.chunks = new ArrayList<>();
         this.pathname = pathname;
@@ -121,5 +126,9 @@ public class SplitFile {
         }
 
         return null;
+    }
+
+    public ArrayList<Chunk> getChunks() {
+        return chunks;
     }
 }

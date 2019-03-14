@@ -1,10 +1,13 @@
-package protocol;
+package protocol.subprotocol;
 
 import app.TestApp;
+import protocol.Chunk;
+import protocol.Peer;
+import protocol.SplitFile;
 
 import java.nio.charset.StandardCharsets;
 
-public class SubProtocol {
+public class Initiator {
 
     public final static char CR  = (char) 0x0D;
     public final static char LF  = (char) 0x0A;
@@ -17,14 +20,14 @@ public class SubProtocol {
 
     private final static int SLEEP_TIME_MS = 200;
 
-    private static SubProtocol instance = null;
+    private static Initiator instance = null;
 
-    private SubProtocol() {
+    private Initiator() {
     }
 
-    public static SubProtocol getInstance() {
+    public static Initiator getInstance() {
         if(instance == null) {
-            instance = new SubProtocol();
+            instance = new Initiator();
         }
         return instance;
     }
@@ -49,7 +52,7 @@ public class SubProtocol {
     }
 
     private synchronized void backup(String[] cmd) {
-        System.out.println("protocol.SubProtocol.backup");
+        System.out.println("protocol.subprotocol.Initiator.backup");
         String filepath = cmd[1];
         int repDegree = Integer.parseInt(cmd[2]);
 
@@ -74,19 +77,19 @@ public class SubProtocol {
     }
 
     private synchronized void restore(String[] cmd) {
-        System.out.println("protocol.SubProtocol.restore");
+        System.out.println("protocol.subprotocol.Initiator.restore");
     }
 
     private synchronized void delete(String[] cmd) {
-        System.out.println("protocol.SubProtocol.delete");
+        System.out.println("protocol.subprotocol.Initiator.delete");
     }
 
     private synchronized void reclaim(String[] cmd) {
-        System.out.println("protocol.SubProtocol.reclaim");
+        System.out.println("protocol.subprotocol.Initiator.reclaim");
     }
 
     private synchronized void state(String[] cmd) {
-        System.out.println("protocol.SubProtocol.state");
+        System.out.println("protocol.subprotocol.Initiator.state");
     }
 
     private String buildHeader(String[] cmd, int configuration, int chunkNo) {
