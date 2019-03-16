@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 public class Initiator extends Subprotocol {
 
     private static final int MAX_PUTCHUNK_REPEAT = 5;
+    private static final int PUTCHUNK_INBETWEEN_TIME_MS = 1000;
 
     public Initiator() {
 
@@ -70,7 +71,7 @@ public class Initiator extends Subprotocol {
 
                 //delay for stored msg receiving
                 try {
-                    Thread.sleep(1000);
+                    Thread.sleep(PUTCHUNK_INBETWEEN_TIME_MS);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
