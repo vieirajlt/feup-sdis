@@ -4,13 +4,11 @@ import app.TestApp;
 import protocol.Chunk;
 import protocol.Peer;
 import protocol.SplitFile;
+import protocol.subprotocol.handler.Putchunk;
 
 import java.nio.charset.StandardCharsets;
 
 public class Initiator extends Subprotocol {
-
-    private static final int MAX_PUTCHUNK_REPEAT = 5;
-    private static final int PUTCHUNK_INBETWEEN_TIME_MS = 1000;
 
     public Initiator() {
 
@@ -45,38 +43,8 @@ public class Initiator extends Subprotocol {
 
             SplitFile sf = new SplitFile(filepath, repDegree);
 
-            int repeatCnt = 0;
-            boolean repDone = false;
-
-            while(repeatCnt < MAX_PUTCHUNK_REPEAT && !repDone) {
-                System.out.println("protocol.subprotocol.Initiator.backup -> PUTCHUNK repeat number: " + repeatCnt);
-                repDone = true;
-
-                for (Chunk chunk : sf.getChunks()) {
-
-                    int chunkNo = chunk.getChunkNo();
-                    String chunkId = sf.getFileId() + "_" + chunkNo;
-                    if(Peer.getDataContainer().getCurrRepDegree(chunkId) >= sf.getReplicationDegree())
-                        continue;
-
-                    repDone = false;
-                    String body = new String(chunk.getBody(), StandardCharsets.UTF_8);
-
-                    String message = buildMessage(PUTCHUNK, MSG_CONFIG_PUTCHUNK, sf.getFileId(), chunkNo, sf.getReplicationDegree(), body);
-
-                    Peer.getBackupChannel().write(message);
-
-                }
-                ++repeatCnt;
-
-                //delay for stored msg receiving
-                try {
-                    Thread.sleep(PUTCHUNK_INBETWEEN_TIME_MS);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-
-            }
+            Putchunk putchunk = new Putchunk(sf);
+            new Thread(putchunk).start();
         }
     }
 

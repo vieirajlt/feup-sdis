@@ -2,6 +2,7 @@ package protocol.subprotocol;
 
 import protocol.Chunk;
 import protocol.Peer;
+import protocol.subprotocol.handler.Stored;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,6 +10,9 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+
+import static protocol.subprotocol.handler.Handler.CR;
+import static protocol.subprotocol.handler.Handler.LF;
 
 public class Receiver extends Subprotocol {
 
@@ -71,15 +75,8 @@ public class Receiver extends Subprotocol {
 
             chunk.store(fileId);
 
-            String message = buildMessage(STORED, MSG_CONFIG_STORED, fileId, chunkNo, -1, null);
-
-            try {
-                Thread.sleep(getSleep_time_ms());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            Peer.getControlChannel().write(message);
+            Stored stored = new Stored(fileId, chunkNo);
+            new Thread(stored).start();
         }
     }
 
