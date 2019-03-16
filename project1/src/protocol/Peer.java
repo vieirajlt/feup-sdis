@@ -17,6 +17,9 @@ public class Peer {
     private static Initiator protocolIni;
     private static Receiver protocolRec;
 
+    private static DataContainer dataContainer;
+
+    //TODO Make dataContainer save automatic on shutdown
     public static void main(String[] args) {
 
         if (args.length != 6) {
@@ -45,6 +48,13 @@ public class Peer {
 
         protocolIni = new Initiator();
         protocolRec = new Receiver();
+
+        dataContainer = DataContainer.load();
+
+        Thread hook = new Thread(() -> {
+            dataContainer.store();
+        });
+        Runtime.getRuntime().addShutdownHook(hook);
 
         //Threads Start
 
@@ -94,5 +104,7 @@ public class Peer {
         return id;
     }
 
-
+    public static DataContainer getDataContainer() {
+        return dataContainer;
+    }
 }

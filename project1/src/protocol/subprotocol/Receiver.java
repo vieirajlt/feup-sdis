@@ -116,14 +116,7 @@ public class Receiver extends Subprotocol {
         String fileId = header[3];
         int chunkNo = Integer.parseInt(header[4]);
 
-        //for Peer store of chunk actual replication degree
-        Chunk chunk = new Chunk();
-        chunk = chunk.load(fileId, chunkNo);
-        if(chunk != null) {
-            chunk.incCurrReplicationDegree();
-            chunk.store(fileId);
-        }
-
+        //for visual verification
         String log_message = fileId + "," + chunkNo + "," + senderId + "\n";
         try {
             Files.write(
@@ -133,6 +126,9 @@ public class Receiver extends Subprotocol {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        String chunkId = fileId + "_" + chunkNo;
+        Peer.getDataContainer().incCurrReoDegree(chunkId);
 
     }
 

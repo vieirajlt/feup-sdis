@@ -21,7 +21,6 @@ class ChunkTest {
 
         assertEquals(chunkNo,chunk.getChunkNo());
         assertEquals(arr,chunk.getBody());
-        assertEquals(0,chunk.getCurrReplicationDegree());
 
         chunk.delete(testname);
     }

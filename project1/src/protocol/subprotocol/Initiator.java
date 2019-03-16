@@ -9,6 +9,8 @@ import java.nio.charset.StandardCharsets;
 
 public class Initiator extends Subprotocol {
 
+    private static final int MAX_PUTCHUNK_REPEAT = 5;
+
     public Initiator() {
 
     }
@@ -42,21 +44,38 @@ public class Initiator extends Subprotocol {
 
             SplitFile sf = new SplitFile(filepath, repDegree);
 
-            for (Chunk chunk : sf.getChunks()) {
+            int repeatCnt = 0;
+            boolean repDone = false;
 
-                if(chunk.getCurrReplicationDegree() >= sf.getReplicationDegree())
-                    continue;
+            while(repeatCnt < MAX_PUTCHUNK_REPEAT && !repDone) {
+                System.out.println("protocol.subprotocol.Initiator.backup -> PUTCHUNK repeat number: " + repeatCnt);
+                repDone = true;
 
-                int chunkNo = chunk.getChunkNo();
-                String body = new String(chunk.getBody(), StandardCharsets.UTF_8);
+                for (Chunk chunk : sf.getChunks()) {
 
-                String message = buildMessage(PUTCHUNK, MSG_CONFIG_PUTCHUNK, sf.getFileId(), chunkNo, sf.getReplicationDegree(), body);
+                    int chunkNo = chunk.getChunkNo();
+                    String chunkId = sf.getFileId() + "_" + chunkNo;
+                    if(Peer.getDataContainer().getCurrRepDegree(chunkId) >= sf.getReplicationDegree())
+                        continue;
 
-                Peer.getBackupChannel().write(message);
+                    repDone = false;
+                    String body = new String(chunk.getBody(), StandardCharsets.UTF_8);
+
+                    String message = buildMessage(PUTCHUNK, MSG_CONFIG_PUTCHUNK, sf.getFileId(), chunkNo, sf.getReplicationDegree(), body);
+
+                    Peer.getBackupChannel().write(message);
+
+                }
+                ++repeatCnt;
+
+                //delay for stored msg receiving
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
             }
-
-
         }
     }
 

@@ -10,8 +10,6 @@ public class Chunk implements Serializable {
     private byte[] body;
     private int size;
 
-    private int currReplicationDegree = 0;
-
     private String pathname;
 
     public Chunk() {
@@ -35,10 +33,6 @@ public class Chunk implements Serializable {
 
     public int getSize() {
         return size;
-    }
-
-    public int getCurrReplicationDegree() {
-        return currReplicationDegree;
     }
 
     public void store(String fileId) {
@@ -81,10 +75,6 @@ public class Chunk implements Serializable {
         String chunkId = fileId + "_" + chunkNo + ".ser";
         File file = new File(pathname + chunkId);
         file.delete();
-    }
-
-    public void incCurrReplicationDegree() {
-        currReplicationDegree++;
     }
 
 }
