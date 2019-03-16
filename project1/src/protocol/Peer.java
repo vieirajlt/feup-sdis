@@ -1,6 +1,7 @@
 package protocol;
 
 import protocol.subprotocol.Initiator;
+import protocol.subprotocol.Receiver;
 
 public class Peer {
 
@@ -13,7 +14,8 @@ public class Peer {
 
     private static Channel cmd;
 
-    private static Initiator protocol;
+    private static Initiator protocolIni;
+    private static Receiver protocolRec;
 
     public static void main(String[] args) {
 
@@ -41,7 +43,8 @@ public class Peer {
         String[] MDR = args[5].split(":");
         restore = new MulticastChannel(MDR[0], MDR[1]);
 
-        protocol = Initiator.getInstance();
+        protocolIni = new Initiator();
+        protocolRec = new Receiver();
 
         //Threads Start
 
@@ -71,8 +74,14 @@ public class Peer {
     }
 
 
-    public static void runProtocol(String message) {
-        if(!protocol.run(message)) {
+    public static void initiateProtocol(String message) {
+        if(!protocolIni.run(message)) {
+            System.out.println("Something went wrong...");
+        }
+    }
+
+    public static void answerProtocol(String message) {
+        if(!protocolRec.run(message)) {
             System.out.println("Something went wrong...");
         }
     }

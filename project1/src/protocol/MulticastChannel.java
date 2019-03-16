@@ -8,8 +8,6 @@ public class MulticastChannel implements Runnable{
     private int PORT;
     private InetAddress address;
 
-
-
     public MulticastChannel(String address, String port) {
         try {
             this.PORT = Integer.parseInt(port);
@@ -30,9 +28,7 @@ public class MulticastChannel implements Runnable{
                 clientSocket.receive(msgPacket);
 
                 String msg = new String(buf, 0, buf.length);
-
-                //Should run appropriate cmd on protocol.Peer
-                System.out.println("READ: " + msg);
+                Peer.answerProtocol(msg);
             }
         } catch (IOException ex) {
             ex.printStackTrace();

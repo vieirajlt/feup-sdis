@@ -13,7 +13,10 @@ import java.util.Arrays;
 
 public class SplitFile {
 
-    public final static int MAX_CHUNK_SIZE = 64000;
+    /*Must be maxed to 64000 to be accordingly to max
+    chunck size. Not possible with UDP. TODO on RMI
+     */
+    public final static int MAX_CHUNK_SIZE = 1000;
 
     private ArrayList<Chunk> chunks;
     private String pathname;
@@ -22,7 +25,6 @@ public class SplitFile {
     private File file;
 
     /**
-     *
      * @param pathname
      * @param replicationDegree
      */
@@ -36,14 +38,14 @@ public class SplitFile {
         split();
     }
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
 
         System.out.println("Working Directory = " +
                 System.getProperty("user.dir"));
 
         SplitFile sf = new SplitFile("FILES/img.png", 1);
 
-    }
+    }*/
 
     private void split() {
 
@@ -54,7 +56,7 @@ public class SplitFile {
         try (FileInputStream fis = new FileInputStream(file);
              BufferedInputStream bis = new BufferedInputStream(fis)) {
 
-            int prevBytesRead = 0, bytesRead = 0;
+            int prevBytesRead = 0, bytesRead = bis.read(buffer);
             while (bytesRead > 0) {
 
                 byte[] body = Arrays.copyOf(buffer, bytesRead);
@@ -63,13 +65,13 @@ public class SplitFile {
                 chunks.add(chunk);
 
                 prevBytesRead = bytesRead;
-                Arrays.fill(buffer, (byte)0);
+                Arrays.fill(buffer, (byte) 0);
                 bytesRead = bis.read(buffer);
             }
 
             //case last chunk build is full sized
             //add other empty chunk
-            if(prevBytesRead == MAX_CHUNK_SIZE) {
+            if (prevBytesRead == MAX_CHUNK_SIZE) {
                 Chunk chunk = new Chunk(chunkNo, new byte[0]);
                 chunks.add(chunk);
             }
@@ -92,10 +94,10 @@ public class SplitFile {
 
             String fileIdUnhashed =
                     file.getName() +
-                    ownerAttribute.getOwner() +
-                    fileAttributes.size() +
-                    fileAttributes.creationTime() +
-                    fileAttributes.lastModifiedTime();
+                            ownerAttribute.getOwner() +
+                            fileAttributes.size() +
+                            fileAttributes.creationTime() +
+                            fileAttributes.lastModifiedTime();
 
             fileId = sha256(fileIdUnhashed);
 
@@ -130,5 +132,13 @@ public class SplitFile {
 
     public ArrayList<Chunk> getChunks() {
         return chunks;
+    }
+
+    public String getFileId() {
+        return fileId;
+    }
+
+    public int getReplicationDegree() {
+        return replicationDegree;
     }
 }
