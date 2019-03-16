@@ -19,7 +19,6 @@ public class Peer {
 
     private static DataContainer dataContainer;
 
-    //TODO Make dataContainer save automatic on shutdown
     public static void main(String[] args) {
 
         if (args.length != 6) {
