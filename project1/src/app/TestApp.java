@@ -26,7 +26,7 @@ public class TestApp {
         }
         opnd_1 = args[2];
 
-        String[] ap = args[0].split("/");
+        String[] ap = args[0].split(":");
         if(ap.length == 1) {
             cmd = new Channel("localhost", ap[0]);
         } else {

@@ -37,7 +37,7 @@ public class Peer {
         version = Float.parseFloat(args[0]);
         id = Integer.parseInt(args[1]);
 
-        String[] ap = args[2].split("/");
+        String[] ap = args[2].split(":");
         if(ap.length == 1) {
             cmd = new Channel("localhost", ap[0]);
         } else {
