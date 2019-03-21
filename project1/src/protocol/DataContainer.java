@@ -7,12 +7,22 @@ public class DataContainer implements Serializable {
 
     private final static String DATA_PATH = "TMP/Data/" + Peer.getServerId() + "/" + "data.ser";
 
-    //Key = chunkId
-    //Value = currReplicationDegree
+    // Key = chunkId
+    // Value = currReplicationDegree
     private ConcurrentHashMap<String, Integer> stored;
+
+    // Key = fileId
+    // Value = nrOfChunks
+    private ConcurrentHashMap<String, Integer> ownFiles;
+
+    // Key = chunkId
+    // Value = shipping state
+    private ConcurrentHashMap<String, Boolean> peersChunks;
 
     private DataContainer() {
         stored = new ConcurrentHashMap<>();
+        ownFiles = new ConcurrentHashMap<>();
+        peersChunks = new ConcurrentHashMap<>();
     }
 
     public void store() {
@@ -33,12 +43,11 @@ public class DataContainer implements Serializable {
     }
 
     public static DataContainer load() {
-        try (
-                FileInputStream fIn = new FileInputStream(DATA_PATH);
-                ObjectInputStream oIn = new ObjectInputStream(fIn)) {
+        try (FileInputStream fIn = new FileInputStream(DATA_PATH); ObjectInputStream oIn = new ObjectInputStream(fIn)) {
             return (DataContainer) oIn.readObject();
         } catch (FileNotFoundException e) {
-            //Do nothing
+            // Do nothing
+            System.out.print("error loading data container");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
@@ -59,4 +68,38 @@ public class DataContainer implements Serializable {
         else
             stored.replace(key, stored.get(key) + 1);
     }
+
+    public Integer getNrOfChunks(String key) {
+        return ownFiles.get(key);
+    }
+
+    public Boolean getChunkShippingState(String key) {
+        return peersChunks.get(key);
+    }
+
+    public void addOwnFile(String key, int nrOfChunks)
+    {
+        if(ownFiles.get(key) == null)
+            ownFiles.put(key, nrOfChunks);
+    }
+
+    public void addPeerChunk(String key)
+    { 
+        if(peersChunks.get(key) == null)
+          peersChunks.put(key, false);
+    }
+
+    public void setPeerChunk(String key, boolean state )
+    {
+        peersChunks.put(key, false);
+        //peersChunks.replace(key, state);
+    }
+
+    //TODO delete, function for debugging only
+    public int nrOwnFile()
+    {
+       return ownFiles.size();
+    }
+
+
 }

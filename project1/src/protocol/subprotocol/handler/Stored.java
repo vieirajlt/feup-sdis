@@ -2,6 +2,8 @@ package protocol.subprotocol.handler;
 
 import protocol.Peer;
 
+import protocol.Chunk;
+
 import static protocol.subprotocol.Subprotocol.STORED;
 
 public class Stored extends Handler implements Runnable {
@@ -17,6 +19,9 @@ public class Stored extends Handler implements Runnable {
 
     @Override
     public void run() {
+        String chunkId = Chunk.buildChunkId(fileId, chunkNo);
+        Peer.getDataContainer().addPeerChunk(chunkId);
+        
         String message = buildMessage(STORED, MSG_CONFIG_STORED, fileId, chunkNo, -1, null);
 
         try {

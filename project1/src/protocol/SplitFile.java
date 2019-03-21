@@ -38,6 +38,14 @@ public class SplitFile {
         split();
     }
 
+    public SplitFile(String pathname) {
+        this.chunks = new ArrayList<>();
+        this.pathname = pathname;
+        this.replicationDegree = 1;
+        file = new File(pathname);
+        buildId();
+    }
+
     /*public static void main(String[] args) {
 
         System.out.println("Working Directory = " +
@@ -48,7 +56,6 @@ public class SplitFile {
     }*/
 
     private void split() {
-
         int chunkNo = 0;
 
         byte[] buffer = new byte[MAX_CHUNK_SIZE];

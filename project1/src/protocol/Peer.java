@@ -3,6 +3,8 @@ package protocol;
 import protocol.subprotocol.Initiator;
 import protocol.subprotocol.Receiver;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 public class Peer {
 
     private static Float version;
@@ -18,6 +20,12 @@ public class Peer {
     private static Receiver protocolRec;
 
     private static DataContainer dataContainer;
+
+
+    //TODO : arranjar uma maneira melhor para guardar esta informaçao
+    // Key = ChunkId
+    // Value = Chunk body
+    private static ConcurrentHashMap<String, byte[]> restoredChunks = new ConcurrentHashMap<>();
 
     public static void main(String[] args) {
 
@@ -36,6 +44,7 @@ public class Peer {
             cmd = new Channel(ap[0], ap[1]);
         }
 
+        //address port
         String[] MC = args[3].split(":");
         control = new MulticastChannel(MC[0], MC[1]);
 
@@ -51,9 +60,12 @@ public class Peer {
         dataContainer = DataContainer.load();
 
         Thread hook = new Thread(() -> {
+            System.out.println("storing......................");
             dataContainer.store();
         });
         Runtime.getRuntime().addShutdownHook(hook);
+
+
 
         //Threads Start
 
@@ -83,6 +95,7 @@ public class Peer {
     }
 
 
+    //onde é que isto é chamado? channel.java -> read
     public static void initiateProtocol(String message) {
         if(!protocolIni.run(message)) {
             System.out.println("Something went wrong...");
@@ -106,4 +119,17 @@ public class Peer {
     public static DataContainer getDataContainer() {
         return dataContainer;
     }
+
+    //TODO
+    public static ConcurrentHashMap<String, byte[]> getRestoredChunks() {
+        return restoredChunks;
+    }
+
+    public static void addRestoredChunk(String key, byte[] body)
+    {
+        if(restoredChunks.get(key) == null)
+            restoredChunks.put(key,body);
+
+    }
+
 }

@@ -5,6 +5,9 @@ import protocol.Chunk;
 import protocol.Peer;
 import protocol.SplitFile;
 import protocol.subprotocol.handler.Putchunk;
+import protocol.subprotocol.handler.Getchunk;
+
+import protocol.subprotocol.handler.Handler;
 
 import java.nio.charset.StandardCharsets;
 
@@ -52,6 +55,15 @@ public class Initiator extends Subprotocol {
     protected void restore(String[] cmd) {
         synchronized (this) {
             System.out.println("protocol.subprotocol.Initiator.restore");
+
+            System.out.println(cmd[0]); // RESTORE
+            System.out.println(cmd[1]); // FILEPATH
+
+            String filepath = cmd[1];
+
+            SplitFile sf = new SplitFile(filepath);
+            Getchunk getchunk = new Getchunk(sf);
+            new Thread(getchunk).start();
         }
     }
 
@@ -74,6 +86,5 @@ public class Initiator extends Subprotocol {
             System.out.println("protocol.subprotocol.Initiator.state");
         }
     }
-
 
 }

@@ -21,7 +21,7 @@ public class TestApp {
         if (args.length < 2) {
             System.out.println("Usage: app.TestApp <peer_ap> <sub_protocol> <opnd_1> <opnd_2> ");
             return;
-        } else if(args.length < 5) {
+        } else if(args.length == 4) {
             opnd_2 = args[3];
         }
         opnd_1 = args[2];

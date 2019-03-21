@@ -23,6 +23,9 @@ public class Putchunk extends Handler implements Runnable{
 
     @Override
     public void run() {
+        Peer.getDataContainer().addOwnFile(sf.getFileId(), sf.getChunks().size());
+        //TODO reenvio de chunks quando o rep degree é inferior, nao do file todo!!!!!!!!!!!!!!!
+        //passar while para dentro do for???
         while(repeatCnt < MAX_PUTCHUNK_REPEAT && !repDone) {
             System.out.println("protocol.subprotocol.handler.Putchunk.run -> repeat number: " + repeatCnt);
             repDone = true;
@@ -38,9 +41,8 @@ public class Putchunk extends Handler implements Runnable{
                 String body = new String(chunk.getBody(), StandardCharsets.UTF_8);
 
                 String message = buildMessage(PUTCHUNK, MSG_CONFIG_PUTCHUNK, sf.getFileId(), chunkNo, sf.getReplicationDegree(), body);
-
+               
                 Peer.getBackupChannel().write(message);
-
             }
             ++repeatCnt;
 

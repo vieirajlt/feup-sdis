@@ -11,6 +11,10 @@ public class Handler {
 
     protected final static int MSG_CONFIG_STORED = 0b001111;
 
+    protected final static int MSG_CONFIG_SENDCHUNK = 0b101111;
+
+    protected final static int MSG_CONFIG_GETCHUNK = 0b001111;
+
     private final static int MAX_TIME_SLEEP_MS = 400;
 
     private int sleep_time_ms;
