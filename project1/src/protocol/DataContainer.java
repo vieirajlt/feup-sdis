@@ -1,6 +1,7 @@
 package protocol;
 
 import java.io.*;
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DataContainer implements Serializable {
@@ -19,13 +20,20 @@ public class DataContainer implements Serializable {
     // Value = shipping state
     private ConcurrentHashMap<String, Boolean> peersChunks;
 
+
+    // Key = fileId
+    // Value = chunks
+    private ConcurrentHashMap<String, Chunk[]> tmpChunks;
+
     private DataContainer() {
         stored = new ConcurrentHashMap<>();
         ownFiles = new ConcurrentHashMap<>();
         peersChunks = new ConcurrentHashMap<>();
+        tmpChunks = new ConcurrentHashMap<>();
     }
 
     public void store() {
+        tmpChunks.clear();
         File file = new File(DATA_PATH);
         file.getParentFile().mkdirs();
         try {
@@ -99,6 +107,15 @@ public class DataContainer implements Serializable {
     public int nrOwnFile()
     {
        return ownFiles.size();
+    }
+
+    public  Chunk[] getTmpChunksChunks(String fileId) {
+        return tmpChunks.get(fileId);
+    }
+
+    public void setTmpChunksChunks(String fileId, int chunksSize) {
+         tmpChunks.put(fileId, new Chunk[chunksSize]);
+         return;
     }
 
 

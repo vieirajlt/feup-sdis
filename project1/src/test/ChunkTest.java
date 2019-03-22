@@ -1,13 +1,13 @@
 package test;
 
 import protocol.Chunk;
-import org.junit.jupiter.api.Test;
+//import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+//import static org.junit.jupiter.api.Assertions.*;
 
 class ChunkTest {
 
-    @Test
+   /* @Test
     public void saveChunckTest() {
 
         int chunkNo = 34;
@@ -23,6 +23,6 @@ class ChunkTest {
         assertEquals(arr,chunk.getBody());
 
         chunk.delete(testname);
-    }
+    }*/
 
 }

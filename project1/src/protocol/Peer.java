@@ -22,11 +22,6 @@ public class Peer {
     private static DataContainer dataContainer;
 
 
-    //TODO : arranjar uma maneira melhor para guardar esta informaçao
-    // Key = ChunkId
-    // Value = Chunk body
-    private static ConcurrentHashMap<String, byte[]> restoredChunks = new ConcurrentHashMap<>();
-
     public static void main(String[] args) {
 
         if (args.length != 6) {
@@ -120,16 +115,5 @@ public class Peer {
         return dataContainer;
     }
 
-    //TODO
-    public static ConcurrentHashMap<String, byte[]> getRestoredChunks() {
-        return restoredChunks;
-    }
-
-    public static void addRestoredChunk(String key, byte[] body)
-    {
-        if(restoredChunks.get(key) == null)
-            restoredChunks.put(key,body);
-
-    }
 
 }
