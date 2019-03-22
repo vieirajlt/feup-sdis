@@ -1,7 +1,5 @@
 package protocol.subprotocol;
 
-import protocol.Peer;
-
 public abstract class Subprotocol {
 
     public final static String PUTCHUNK = "PUTCHUNK";
@@ -11,17 +9,5 @@ public abstract class Subprotocol {
     public final static String DELETE = "DELETE";
 
     public final static String STORED = "STORED";
-
-
-
-    public abstract boolean run(String message);
-
-    protected abstract void backup(String[] cmd);
-
-    protected abstract void restore(String[] cmd);
-
-    protected abstract void delete(String[] cmd);
-
-    protected abstract void reclaim(String[] cmd);
 
 }

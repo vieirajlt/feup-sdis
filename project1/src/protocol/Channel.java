@@ -4,6 +4,7 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.util.Arrays;
 
 public class Channel implements Runnable {
 
@@ -28,10 +29,9 @@ public class Channel implements Runnable {
 
             while(true) {
                 socket.receive(packet);
-                String received = new String(packet.getData());
-                int indexCut = received.indexOf(0);
-                String receivedCut = received.substring(0, indexCut);
-                Peer.initiateProtocol(receivedCut);
+                byte[] data = Arrays.copyOf( packet.getData(), packet.getLength());
+                //String receivedCut = received.substring(0, indexCut);
+                Peer.initiateProtocol(data);
             }
 
         } catch (Exception e) {
@@ -39,11 +39,10 @@ public class Channel implements Runnable {
         }
     }
 
-    public void write(String message) {
+    public void write(byte[] message) {
         try {
             DatagramSocket socket = new DatagramSocket();
-            byte[] sbuf = message.getBytes();
-            DatagramPacket packet = new DatagramPacket(sbuf, sbuf.length, address, PORT);
+            DatagramPacket packet = new DatagramPacket(message, message.length, address, PORT);
             socket.send(packet);
         } catch (Exception e) {
             e.printStackTrace();

@@ -4,6 +4,7 @@ import protocol.subprotocol.FileManagement.FileManager;
 
 import java.io.IOException;
 import java.net.*;
+import java.util.Arrays;
 
 public class MulticastChannel implements Runnable{
 
@@ -26,22 +27,21 @@ public class MulticastChannel implements Runnable{
             clientSocket.joinGroup(address);
 
             while (true) {
-                DatagramPacket msgPacket = new DatagramPacket(buf, buf.length);
-                clientSocket.receive(msgPacket);
-
-                String msg = new String(buf, 0, buf.length);
-                Peer.answerProtocol(msg);
+                DatagramPacket packet = new DatagramPacket(buf, buf.length);
+                clientSocket.receive(packet);
+                byte[] data = Arrays.copyOf( packet.getData(), packet.getLength());
+                Peer.answerProtocol(data);
             }
         } catch (IOException ex) {
             ex.printStackTrace();
         }
     }
 
-    public void write(String message) {
+    public void write(byte[] message) {
         try (DatagramSocket serverSocket = new DatagramSocket()) {
 
-            DatagramPacket msgPacket = new DatagramPacket(message.getBytes(),
-                    message.getBytes().length, address, PORT);
+            DatagramPacket msgPacket = new DatagramPacket(message,
+                    message.length, address, PORT);
             serverSocket.send(msgPacket);
 
         } catch (IOException ex) {

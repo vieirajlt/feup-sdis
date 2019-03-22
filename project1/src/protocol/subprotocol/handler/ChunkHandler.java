@@ -32,8 +32,8 @@ public class ChunkHandler extends Handler implements Runnable {
             }
             if (!Peer.getDataContainer().getChunkShippingState(chunkId))
             {
-                String body = new String(loaded.getBody(), StandardCharsets.UTF_8);
-                String message = buildMessage(CHUNK, MSG_CONFIG_SENDCHUNK, fileId, chunkNo, -1, body);
+                byte[] body = loaded.getBody();
+                byte[] message = buildMessage(CHUNK, MSG_CONFIG_SENDCHUNK, fileId, chunkNo, -1, body);
                 // System.out.println(message);
                 Peer.getRestoreChannel().write(message);
                 System.out.println("send message...");

@@ -38,9 +38,9 @@ public class PutchunkHandler extends Handler implements Runnable {
                     continue;
 
                 repDone = false;
-                String body = new String(chunk.getBody(), StandardCharsets.UTF_8);
+                byte[] body = chunk.getBody();
 
-                String message = buildMessage(PUTCHUNK, MSG_CONFIG_PUTCHUNK, sf.getFileId(), chunkNo, sf.getReplicationDegree(), body);
+                byte[] message = buildMessage(PUTCHUNK, MSG_CONFIG_PUTCHUNK, sf.getFileId(), chunkNo, sf.getReplicationDegree(), body);
 
                 Peer.getBackupChannel().write(message);
 

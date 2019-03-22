@@ -2,6 +2,8 @@ package app;
 
 import protocol.Channel;
 
+import java.nio.charset.StandardCharsets;
+
 public class TestApp {
 
     public final static String BACKUP = "BACKUP";
@@ -54,7 +56,8 @@ public class TestApp {
         }
 
         String message = sub_protocol + " " + opnd_1 + " " + opnd_2;
-        cmd.write(message);
+
+        cmd.write(message.getBytes(StandardCharsets.UTF_8));
         return;
     }
 }

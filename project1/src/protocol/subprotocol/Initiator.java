@@ -5,15 +5,18 @@ import protocol.subprotocol.FileManagement.SplitFile;
 import protocol.subprotocol.handler.PutchunkHandler;
 import protocol.subprotocol.handler.GetchunkHandler;
 
+import java.nio.charset.StandardCharsets;
+
 public class Initiator extends Subprotocol {
 
     public Initiator() {
 
     }
 
-    @Override
-    public boolean run(String message) {
-        String[] cmd = message.split(" ");
+
+    public boolean run(byte[] message) {
+        String strMessage = new String(message, StandardCharsets.UTF_8);
+        String[] cmd = strMessage.split(" ");
 
         if (cmd[0].equals(TestApp.BACKUP)) {
             backup(cmd);
@@ -31,10 +34,9 @@ public class Initiator extends Subprotocol {
         return true;
     }
 
-    @Override
-    protected void backup(String[] cmd) {
+    private void backup(String[] cmd) {
         synchronized (this) {
-            System.out.println("protocol.subprotocol.Initiator.backup");
+            System.out.println("protocol.subprotocol.Initiator.putchunk");
             String filepath = cmd[1];
             int repDegree = Integer.parseInt(cmd[2]);
 
@@ -45,10 +47,9 @@ public class Initiator extends Subprotocol {
         }
     }
 
-    @Override
-    protected void restore(String[] cmd) {
+    private void restore(String[] cmd) {
         synchronized (this) {
-            System.out.println("protocol.subprotocol.Initiator.restore");
+            System.out.println("protocol.subprotocol.Initiator.getchunk");
 
             System.out.println(cmd[0]); // RESTORE
             System.out.println(cmd[1]); // FILEPATH
@@ -56,22 +57,21 @@ public class Initiator extends Subprotocol {
             String filepath = cmd[1];
 
             SplitFile sf = new SplitFile(filepath);
+
             GetchunkHandler getchunkHandler = new GetchunkHandler(sf);
             new Thread(getchunkHandler).start();
         }
     }
 
-    @Override
-    protected void delete(String[] cmd) {
+    private void delete(String[] cmd) {
         synchronized (this) {
             System.out.println("protocol.subprotocol.Initiator.delete");
         }
     }
 
-    @Override
-    protected void reclaim(String[] cmd) {
+    private void reclaim(String[] cmd) {
         synchronized (this) {
-            System.out.println("protocol.subprotocol.Initiator.reclaim");
+            System.out.println("protocol.subprotocol.Initiator.removed");
         }
     }
 

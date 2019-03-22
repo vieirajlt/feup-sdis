@@ -16,13 +16,12 @@ public class StoredHandler extends Handler implements Runnable {
         this.chunkNo = chunkNo;
     }
 
-
     @Override
     public void run() {
         String chunkId = Chunk.buildChunkId(fileId, chunkNo);
         Peer.getDataContainer().addPeerChunk(chunkId);
-        
-        String message = buildMessage(STORED, MSG_CONFIG_STORED, fileId, chunkNo, -1, null);
+
+        byte[] message = buildMessage(STORED, MSG_CONFIG_STORED, fileId, chunkNo, -1, null);
 
         try {
             Thread.sleep(getSleep_time_ms());

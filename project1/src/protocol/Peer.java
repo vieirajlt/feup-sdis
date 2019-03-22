@@ -90,13 +90,13 @@ public class Peer {
 
 
     //onde é que isto é chamado? channel.java -> read
-    public static void initiateProtocol(String message) {
+    public static void initiateProtocol(byte[] message) {
         if(!protocolIni.run(message)) {
             System.out.println("Something went wrong...");
         }
     }
 
-    public static void answerProtocol(String message) {
+    public static void answerProtocol(byte[] message) {
         if(!protocolRec.run(message)) {
             System.out.println("Something went wrong...");
         }
