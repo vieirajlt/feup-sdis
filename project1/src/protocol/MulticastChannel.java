@@ -1,5 +1,7 @@
 package protocol;
 
+import protocol.subprotocol.FileManagement.FileManager;
+
 import java.io.IOException;
 import java.net.*;
 
@@ -18,7 +20,7 @@ public class MulticastChannel implements Runnable{
     }
 
     public void read() {
-        byte[] buf = new byte[SplitFile.MAX_CHUNK_SIZE + 500];
+        byte[] buf = new byte[FileManager.MAX_CHUNK_SIZE + 500];
 
         try (MulticastSocket clientSocket = new MulticastSocket(PORT)) {
             clientSocket.joinGroup(address);

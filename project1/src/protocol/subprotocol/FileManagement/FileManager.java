@@ -9,7 +9,7 @@ public class FileManager {
     /*Must be maxed to 64000 to be accordingly to max
     chunck size. Not possible with UDP. TODO on RMI
      */
-    protected final static int MAX_CHUNK_SIZE = 1000;
+    public final static int MAX_CHUNK_SIZE = 1000;
 
     private  String fileId;
     private ArrayList<Chunk> chunks = new ArrayList<>();

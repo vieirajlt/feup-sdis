@@ -1,6 +1,8 @@
-package protocol;
+package protocol.subprotocol.FileManagement;
 
 
+import protocol.Chunk;
+import protocol.Peer;
 import protocol.subprotocol.FileManagement.FileManager;
 
 import java.io.*;

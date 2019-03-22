@@ -1,7 +1,7 @@
 package protocol.subprotocol;
 
 import app.TestApp;
-import protocol.SplitFile;
+import protocol.subprotocol.FileManagement.SplitFile;
 import protocol.subprotocol.handler.PutchunkHandler;
 import protocol.subprotocol.handler.GetchunkHandler;
 

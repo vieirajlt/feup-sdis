@@ -2,10 +2,13 @@ package protocol.subprotocol.handler;
 
 import protocol.Peer;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+
 public class Handler {
 
-    public final static char CR  = (char) 0x0D;
-    public final static char LF  = (char) 0x0A;
+    public final static char CR = (char) 0x0D;
+    public final static char LF = (char) 0x0A;
 
     protected final static int MSG_CONFIG_PUTCHUNK = 0b111111;
 

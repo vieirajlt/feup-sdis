@@ -2,7 +2,7 @@ package protocol.subprotocol.handler;
 
 import protocol.Chunk;
 import protocol.Peer;
-import protocol.SplitFile;
+import protocol.subprotocol.FileManagement.SplitFile;
 
 import java.nio.charset.StandardCharsets;
 

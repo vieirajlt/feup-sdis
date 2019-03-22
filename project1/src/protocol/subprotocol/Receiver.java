@@ -2,7 +2,7 @@ package protocol.subprotocol;
 
 import protocol.Chunk;
 import protocol.Peer;
-import protocol.RestoreFile;
+import protocol.subprotocol.FileManagement.RestoreFile;
 import protocol.subprotocol.handler.StoredHandler;
 import protocol.subprotocol.handler.ChunkHandler;
 
@@ -126,7 +126,6 @@ public class Receiver extends Subprotocol {
     }
 
     private void stored(String[] cmd) {
-        System.out.println("protocol.subprotocol.Receiver.stored");
         String[] header = cmd[0].split(" ");
         String senderId = header[2];
         String fileId = header[3];
@@ -134,6 +133,7 @@ public class Receiver extends Subprotocol {
 
         if (!checkHeader(header))
             return;
+        System.out.println("protocol.subprotocol.Receiver.stored");
 
         // for visual verification
         String log_message = fileId + "," + chunkNo + "," + senderId + "\n";
@@ -149,11 +149,11 @@ public class Receiver extends Subprotocol {
     }
 
     private void chunk(String[] cmd) {
-        System.out.println("protocol.subprotocol.Receiver.chunk");
         String[] header = cmd[0].split(" ");
 
         if (!checkHeader(header))
             return;
+        System.out.println("protocol.subprotocol.Receiver.chunk");
 
         byte[] body = cmd[1].getBytes(StandardCharsets.UTF_8);
         String senderId = header[2];
