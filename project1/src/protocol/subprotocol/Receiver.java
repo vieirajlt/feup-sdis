@@ -3,8 +3,8 @@ package protocol.subprotocol;
 import protocol.Chunk;
 import protocol.Peer;
 import protocol.RestoreFile;
-import protocol.subprotocol.handler.Stored;
-import protocol.subprotocol.handler.Sendchunk;
+import protocol.subprotocol.handler.StoredHandler;
+import protocol.subprotocol.handler.ChunkHandler;
 
 import java.io.File;
 import java.io.IOException;
@@ -41,7 +41,6 @@ public class Receiver extends Subprotocol {
         String[] cmd = message.split(" ", 2);
         String regex = "" + CR + LF + CR + LF;
         String[] hb = message.split(regex, 2);
-        System.out.println("receiver.run");
         if (cmd[0].equals(PUTCHUNK)) {
             backup(hb);
         } else if (cmd[0].equals(GETCHUNK)) {
@@ -53,7 +52,7 @@ public class Receiver extends Subprotocol {
         } else if (cmd[0].equals(STORED)) {
             stored(hb);
         } else if (cmd[0].equals(CHUNK)) {
-            chunk(hb); // receivechunk?
+            chunk(hb);
         } else {
             return false;
         }
@@ -81,8 +80,8 @@ public class Receiver extends Subprotocol {
 
             chunk.store(fileId);
 
-            Stored stored = new Stored(fileId, chunkNo);
-            new Thread(stored).start();
+            StoredHandler storedHandler = new StoredHandler(fileId, chunkNo);
+            new Thread(storedHandler).start();
         }
     }
 
@@ -93,9 +92,6 @@ public class Receiver extends Subprotocol {
             String[] header = cmd[0].split(" ");
             String senderId = header[2];
 
-            if (!checkHeader(header))
-                return;
-
             int chunkNo = Integer.parseInt(header[4]);
             String fileId = header[3];
 
@@ -105,8 +101,8 @@ public class Receiver extends Subprotocol {
             System.out.println(fileId);
             System.out.println("loaded");
 
-            Sendchunk sendchunk = new Sendchunk(fileId, chunkNo); //CHUNK
-            new Thread(sendchunk).start();
+            ChunkHandler chunkHandler = new ChunkHandler(fileId, chunkNo); //CHUNK
+            new Thread(chunkHandler).start();
         }
     }
 
@@ -136,6 +132,9 @@ public class Receiver extends Subprotocol {
         String fileId = header[3];
         int chunkNo = Integer.parseInt(header[4]);
 
+        if (!checkHeader(header))
+            return;
+
         // for visual verification
         String log_message = fileId + "," + chunkNo + "," + senderId + "\n";
         try {
@@ -152,34 +151,34 @@ public class Receiver extends Subprotocol {
     private void chunk(String[] cmd) {
         System.out.println("protocol.subprotocol.Receiver.chunk");
         String[] header = cmd[0].split(" ");
-        //byte[] body = cmd[1].getBytes(StandardCharsets.UTF_8);
-        String body = cmd[1];
+
+        if (!checkHeader(header))
+            return;
+
+        byte[] body = cmd[1].getBytes(StandardCharsets.UTF_8);
         String senderId = header[2];
         String fileId = header[3];
         int chunkNo = Integer.parseInt(header[4]);
 
-        Chunk[] chunks = Peer.getDataContainer().getTmpChunksChunks(fileId);
-        int chunksSize = Peer.getDataContainer().getNrOfChunks(fileId);
+        ArrayList<Chunk> chunks = Peer.getDataContainer().getTmpChunksChunks(fileId);
 
-        if(chunks == null)
-        {
-            Peer.getDataContainer().setTmpChunksChunks(fileId, chunksSize);
-            Chunk[] chunks2 = Peer.getDataContainer().getTmpChunksChunks(fileId);
-            System.out.println("ME");
-
+        //if not initialized, start it full of nulls with the required size
+        if (chunks == null) {
+            int chunksSize = Peer.getDataContainer().getNrOfChunks(fileId);
+            Peer.getDataContainer().iniTmpChunksChunks(fileId, chunksSize);
+            chunks = Peer.getDataContainer().getTmpChunksChunks(fileId);
         }
 
-        if (Peer.getDataContainer().getNrOfChunks(fileId) != null) {
-            System.out.println("ME");
+        //if chunk already received, ignore it
+        if (chunks.get(chunkNo) == null) {
+            Chunk chunk = new Chunk(chunkNo, body);
+            chunks.set(chunkNo, chunk);
 
-
-
-            RestoreFile restoreFile = new RestoreFile(fileId);
-            new Thread(restoreFile).start();
-        } else {
-            System.out.println("NOT ME");
-            //update peersChunk table;
-            Peer.getDataContainer().setPeerChunk(Chunk.buildChunkId(fileId, chunkNo), true);
+            //if all chunks received, start restore
+            if (Peer.getDataContainer().isTmpChunksChunksComplete(fileId)) {
+                RestoreFile restoreFile = new RestoreFile(fileId);
+                new Thread(restoreFile).start();
+            }
         }
     }
 

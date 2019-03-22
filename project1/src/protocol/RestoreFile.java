@@ -1,45 +1,28 @@
 package protocol;
 
 
+import protocol.subprotocol.FileManagement.FileManager;
+
 import java.io.*;
 import java.util.ArrayList;
 
-public class RestoreFile implements Runnable {
-
-
-    private  String fileId;
-    private  ArrayList<Chunk> chunks;
-    private int chunksSize;
+public class RestoreFile extends FileManager implements Runnable {
 
     public RestoreFile(String fileId)  {
-        this.fileId = fileId;
-        this.chunks = new ArrayList<>();
-        this.chunksSize = Peer.getDataContainer().getNrOfChunks(fileId);
+        setFileId(fileId);
+        setChunks(Peer.getDataContainer().getTmpChunksChunks(getFileId()));
     }
 
-
-    private void loadChunks() {
-        for(int chunkNo = 0; chunkNo < chunksSize; chunkNo++)
-        {
-            Chunk chunk = new Chunk(chunkNo);
-            chunks.add(chunk.load(fileId,chunkNo));
-        }
-    }
-
-    //TODO not working as needed
     @Override
     public void run() {
-        loadChunks();
-        File file = new File("TMP/Data/" + Peer.getServerId() + "/" + "restored.png");
+        File file = new File("TMP/RESTORED/" + Peer.getServerId() + "/" + "restored.png");
         file.getParentFile().mkdirs();
         try {
             file.createNewFile();
             FileOutputStream fOut = new FileOutputStream(file, true);
 
-            for(int chunkNo = 0; chunkNo < chunksSize ; chunkNo++)
-            {
-               Chunk chunk = chunks.get(chunkNo);
-               fOut.write(chunk.getBody());
+            for(Chunk chunk : getChunks()) {
+                fOut.write(chunk.getBody());
             }
 
             fOut.close();

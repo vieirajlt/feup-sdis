@@ -7,12 +7,12 @@ import java.nio.charset.StandardCharsets;
 
 import static protocol.subprotocol.Subprotocol.CHUNK;
 
-public class Sendchunk extends Handler implements Runnable {
+public class ChunkHandler extends Handler implements Runnable {
 
     private String fileId;
     private int chunkNo;
 
-    public Sendchunk(String fileId, int chunkNo) {
+    public ChunkHandler(String fileId, int chunkNo) {
         this.fileId = fileId;
         this.chunkNo = chunkNo;
     }

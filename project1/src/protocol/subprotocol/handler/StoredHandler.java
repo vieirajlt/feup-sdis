@@ -6,12 +6,12 @@ import protocol.Chunk;
 
 import static protocol.subprotocol.Subprotocol.STORED;
 
-public class Stored extends Handler implements Runnable {
+public class StoredHandler extends Handler implements Runnable {
 
     private String fileId;
     private int chunkNo;
 
-    public Stored(String fileId, int chunkNo) {
+    public StoredHandler(String fileId, int chunkNo) {
         this.fileId = fileId;
         this.chunkNo = chunkNo;
     }

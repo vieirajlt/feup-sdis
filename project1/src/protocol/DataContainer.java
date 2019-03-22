@@ -2,6 +2,7 @@ package protocol;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DataContainer implements Serializable {
@@ -23,7 +24,7 @@ public class DataContainer implements Serializable {
 
     // Key = fileId
     // Value = chunks
-    private ConcurrentHashMap<String, Chunk[]> tmpChunks;
+    private ConcurrentHashMap<String, ArrayList<Chunk>> tmpChunks;
 
     private DataContainer() {
         stored = new ConcurrentHashMap<>();
@@ -109,13 +110,21 @@ public class DataContainer implements Serializable {
        return ownFiles.size();
     }
 
-    public  Chunk[] getTmpChunksChunks(String fileId) {
+    public  ArrayList<Chunk> getTmpChunksChunks(String fileId) {
         return tmpChunks.get(fileId);
     }
 
-    public void setTmpChunksChunks(String fileId, int chunksSize) {
-         tmpChunks.put(fileId, new Chunk[chunksSize]);
-         return;
+    public void iniTmpChunksChunks(String fileId, int chunksSize) {
+         tmpChunks.put(fileId, new ArrayList<>(Collections.nCopies(chunksSize, null)));
+    }
+
+    public boolean isTmpChunksChunksComplete(String fileId) {
+        ArrayList<Chunk> chunks = tmpChunks.get(fileId);
+        for(Chunk chunk : chunks) {
+            if(chunk == null)
+                return false;
+        }
+        return true;
     }
 
 

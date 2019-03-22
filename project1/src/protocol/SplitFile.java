@@ -1,5 +1,7 @@
 package protocol;
 
+import protocol.subprotocol.FileManagement.FileManager;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -11,16 +13,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class SplitFile {
+public class SplitFile extends FileManager {
 
-    /*Must be maxed to 64000 to be accordingly to max
-    chunck size. Not possible with UDP. TODO on RMI
-     */
-    public final static int MAX_CHUNK_SIZE = 1000;
-
-    private ArrayList<Chunk> chunks;
     private String pathname;
-    private String fileId;
     private int replicationDegree;
     private File file;
 
@@ -29,7 +24,6 @@ public class SplitFile {
      * @param replicationDegree
      */
     public SplitFile(String pathname, int replicationDegree) {
-        this.chunks = new ArrayList<>();
         this.pathname = pathname;
         this.replicationDegree = replicationDegree;
         file = new File(pathname);
@@ -39,21 +33,11 @@ public class SplitFile {
     }
 
     public SplitFile(String pathname) {
-        this.chunks = new ArrayList<>();
         this.pathname = pathname;
         this.replicationDegree = 1;
         file = new File(pathname);
         buildId();
     }
-
-    /*public static void main(String[] args) {
-
-        System.out.println("Working Directory = " +
-                System.getProperty("user.dir"));
-
-        SplitFile sf = new SplitFile("FILES/img.png", 1);
-
-    }*/
 
     private void split() {
         int chunkNo = 0;
@@ -69,7 +53,7 @@ public class SplitFile {
                 byte[] body = Arrays.copyOf(buffer, bytesRead);
                 Chunk chunk = new Chunk(chunkNo++, body);
 
-                chunks.add(chunk);
+                addChunksChunk(chunk);
 
                 prevBytesRead = bytesRead;
                 Arrays.fill(buffer, (byte) 0);
@@ -80,7 +64,7 @@ public class SplitFile {
             //add other empty chunk
             if (prevBytesRead == MAX_CHUNK_SIZE) {
                 Chunk chunk = new Chunk(chunkNo, new byte[0]);
-                chunks.add(chunk);
+                addChunksChunk(chunk);
             }
 
         } catch (FileNotFoundException e) {
@@ -106,7 +90,7 @@ public class SplitFile {
                             fileAttributes.creationTime() +
                             fileAttributes.lastModifiedTime();
 
-            fileId = sha256(fileIdUnhashed);
+            setFileId(sha256(fileIdUnhashed));
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -135,14 +119,6 @@ public class SplitFile {
         }
 
         return null;
-    }
-
-    public ArrayList<Chunk> getChunks() {
-        return chunks;
-    }
-
-    public String getFileId() {
-        return fileId;
     }
 
     public int getReplicationDegree() {

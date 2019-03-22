@@ -6,16 +6,11 @@ import protocol.SplitFile;
 
 import static protocol.subprotocol.Subprotocol.GETCHUNK;
 
-public class Getchunk extends Handler implements Runnable{
+public class GetchunkHandler extends Handler implements Runnable{
 
-    private static final int MAX_PUTCHUNK_REPEAT = 5;
-    private static final int PUTCHUNK_INBETWEEN_TIME_MS = 1000;
-
-    private int repeatCnt = 0;
-    private boolean repDone = false;
     private SplitFile sf;
 
-    public Getchunk(SplitFile sf) {
+    public GetchunkHandler(SplitFile sf) {
         this.sf = sf;
     }
 

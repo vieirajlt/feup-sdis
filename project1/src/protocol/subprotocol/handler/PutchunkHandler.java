@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets;
 
 import static protocol.subprotocol.Subprotocol.PUTCHUNK;
 
-public class Putchunk extends Handler implements Runnable {
+public class PutchunkHandler extends Handler implements Runnable {
 
     private static final int MAX_PUTCHUNK_REPEAT = 5;
     private static final int PUTCHUNK_INBETWEEN_TIME_MS = 1000;
@@ -17,7 +17,7 @@ public class Putchunk extends Handler implements Runnable {
     private boolean repDone = false;
     private SplitFile sf;
 
-    public Putchunk(SplitFile sf) {
+    public PutchunkHandler(SplitFile sf) {
         this.sf = sf;
     }
 
@@ -29,7 +29,7 @@ public class Putchunk extends Handler implements Runnable {
             repeatCnt = 0;
 
             while (repeatCnt < MAX_PUTCHUNK_REPEAT && !repDone) {
-                System.out.println("protocol.subprotocol.handler.Putchunk.run -> repeat number: " + repeatCnt + " Chunk: " + chunk.getChunkNo());
+                System.out.println("protocol.subprotocol.handler.PutchunkHandler.run -> repeat number: " + repeatCnt + " Chunk: " + chunk.getChunkNo());
                 repDone = true;
 
                 int chunkNo = chunk.getChunkNo();

@@ -1,15 +1,9 @@
 package protocol.subprotocol;
 
 import app.TestApp;
-import protocol.Chunk;
-import protocol.Peer;
 import protocol.SplitFile;
-import protocol.subprotocol.handler.Putchunk;
-import protocol.subprotocol.handler.Getchunk;
-
-import protocol.subprotocol.handler.Handler;
-
-import java.nio.charset.StandardCharsets;
+import protocol.subprotocol.handler.PutchunkHandler;
+import protocol.subprotocol.handler.GetchunkHandler;
 
 public class Initiator extends Subprotocol {
 
@@ -46,8 +40,8 @@ public class Initiator extends Subprotocol {
 
             SplitFile sf = new SplitFile(filepath, repDegree);
 
-            Putchunk putchunk = new Putchunk(sf);
-            new Thread(putchunk).start();
+            PutchunkHandler putchunkHandler = new PutchunkHandler(sf);
+            new Thread(putchunkHandler).start();
         }
     }
 
@@ -62,8 +56,8 @@ public class Initiator extends Subprotocol {
             String filepath = cmd[1];
 
             SplitFile sf = new SplitFile(filepath);
-            Getchunk getchunk = new Getchunk(sf);
-            new Thread(getchunk).start();
+            GetchunkHandler getchunkHandler = new GetchunkHandler(sf);
+            new Thread(getchunkHandler).start();
         }
     }
 

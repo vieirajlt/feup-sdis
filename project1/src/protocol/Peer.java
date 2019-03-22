@@ -55,7 +55,6 @@ public class Peer {
         dataContainer = DataContainer.load();
 
         Thread hook = new Thread(() -> {
-            System.out.println("storing......................");
             dataContainer.store();
         });
         Runtime.getRuntime().addShutdownHook(hook);
