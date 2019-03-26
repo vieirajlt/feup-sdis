@@ -104,11 +104,6 @@ public class DataContainer implements Serializable {
         //peersChunks.replace(key, state);
     }
 
-    //TODO delete, function for debugging only
-    public int nrOwnFile()
-    {
-       return ownFiles.size();
-    }
 
     public  ArrayList<Chunk> getTmpChunksChunks(String fileId) {
         return tmpChunks.get(fileId);

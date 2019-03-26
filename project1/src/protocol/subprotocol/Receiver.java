@@ -94,12 +94,6 @@ public class Receiver extends Subprotocol {
             int chunkNo = Integer.parseInt(header[4]);
             String fileId = header[3];
 
-            System.out.println("chunkNo: ");
-            System.out.println(chunkNo);
-            System.out.println("fileId: ");
-            System.out.println(fileId);
-            System.out.println("loaded");
-
             ChunkHandler chunkHandler = new ChunkHandler(fileId, chunkNo); //CHUNK
             new Thread(chunkHandler).start();
         }
@@ -108,6 +102,22 @@ public class Receiver extends Subprotocol {
     private void delete(String headerStr) {
         synchronized (this) {
             System.out.println("protocol.subprotocol.Receiver.delete");
+            String[] header = headerStr.split(" ");
+            String fileId = header[3];
+
+            if (!checkHeader(header))
+                return;
+
+            File folder = new File("TMP/STORED/" + Peer.getServerId());
+            File[] listOfFiles = folder.listFiles();
+
+            for (int i = 0; i < listOfFiles.length; i++) {
+                if (listOfFiles[i].isFile()) {
+                    String storedFileId = listOfFiles[i].getName().split("_")[0];
+                    if(storedFileId.equals(fileId))
+                        listOfFiles[i].delete();
+                }
+            }
         }
     }
 

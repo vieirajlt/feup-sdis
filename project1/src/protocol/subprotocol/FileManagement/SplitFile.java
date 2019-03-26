@@ -125,4 +125,6 @@ public class SplitFile extends FileManager {
     public int getReplicationDegree() {
         return replicationDegree;
     }
+
+    public File getFile() { return file; }
 }

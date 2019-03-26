@@ -2,6 +2,7 @@ package protocol.subprotocol;
 
 import app.TestApp;
 import protocol.subprotocol.FileManagement.SplitFile;
+import protocol.subprotocol.handler.DeleteHandler;
 import protocol.subprotocol.handler.PutchunkHandler;
 import protocol.subprotocol.handler.GetchunkHandler;
 
@@ -50,10 +51,6 @@ public class Initiator extends Subprotocol {
     private void restore(String[] cmd) {
         synchronized (this) {
             System.out.println("protocol.subprotocol.Initiator.getchunk");
-
-            System.out.println(cmd[0]); // RESTORE
-            System.out.println(cmd[1]); // FILEPATH
-
             String filepath = cmd[1];
 
             SplitFile sf = new SplitFile(filepath);
@@ -66,6 +63,10 @@ public class Initiator extends Subprotocol {
     private void delete(String[] cmd) {
         synchronized (this) {
             System.out.println("protocol.subprotocol.Initiator.delete");
+            String filepath = cmd[1];
+            SplitFile sf = new SplitFile(filepath);
+            DeleteHandler deleteHandler = new DeleteHandler(sf);
+            new Thread(deleteHandler).start();
         }
     }
 
