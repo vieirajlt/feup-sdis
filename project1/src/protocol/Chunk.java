@@ -4,7 +4,7 @@ import java.io.*;
 
 public class Chunk implements Serializable {
 
-    private final static String STORE_PATH = "TMP/STORED/";
+    public final static String STORE_PATH = "TMP/STORED/";
 
     static final long serialVersionUID = 42L;
 

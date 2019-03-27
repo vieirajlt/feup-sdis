@@ -108,7 +108,7 @@ public class Receiver extends Subprotocol {
             if (!checkHeader(header))
                 return;
 
-            File folder = new File("TMP/STORED/" + Peer.getServerId());
+            File folder = new File(Chunk.STORE_PATH + Peer.getServerId());
             File[] listOfFiles = folder.listFiles();
 
             String storedFileId, chunkId;
@@ -126,6 +126,9 @@ public class Receiver extends Subprotocol {
                     }
                 }
             }
+
+            //delete all the file chunks from peersChunks
+            Peer.getDataContainer().deletePeersFileChunks(fileId);
 
         }
     }
