@@ -64,7 +64,9 @@ public class Initiator extends Subprotocol {
         synchronized (this) {
             System.out.println("protocol.subprotocol.Initiator.delete");
             String filepath = cmd[1];
+
             SplitFile sf = new SplitFile(filepath);
+
             DeleteHandler deleteHandler = new DeleteHandler(sf);
             new Thread(deleteHandler).start();
         }

@@ -38,10 +38,13 @@ public class DeleteHandler extends Handler implements Runnable{
             }
         }
 
-        //deletes the file
+        //delete the file
         if(sf.getFile().delete())
             System.out.println("File deleted successfully");
         else
             System.out.println("Failed to delete the file");
+
+        //delete file from Peer's ownFiles
+        Peer.getDataContainer().deleteOwnFile(sf.getFileId());
     }
 }

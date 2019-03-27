@@ -111,13 +111,22 @@ public class Receiver extends Subprotocol {
             File folder = new File("TMP/STORED/" + Peer.getServerId());
             File[] listOfFiles = folder.listFiles();
 
+            String storedFileId, chunkId;
+
+            //delete all the chunks from the file
             for (int i = 0; i < listOfFiles.length; i++) {
                 if (listOfFiles[i].isFile()) {
-                    String storedFileId = listOfFiles[i].getName().split("_")[0];
-                    if(storedFileId.equals(fileId))
+                    chunkId = listOfFiles[i].getName();
+                    storedFileId = chunkId.split("_")[0];
+                    if(storedFileId.equals(fileId)) {
+                        //delete file
                         listOfFiles[i].delete();
+                        //delete file from stored map
+                        Peer.getDataContainer().deleteStoredChunk(chunkId);
+                    }
                 }
             }
+
         }
     }
 

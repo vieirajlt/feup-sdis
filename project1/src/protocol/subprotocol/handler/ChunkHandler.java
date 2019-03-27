@@ -36,7 +36,7 @@ public class ChunkHandler extends Handler implements Runnable {
                 byte[] message = buildMessage(CHUNK, MSG_CONFIG_SENDCHUNK, fileId, chunkNo, -1, body);
                 // System.out.println(message);
                 Peer.getRestoreChannel().write(message);
-                System.out.println("send message...");
+
                 Peer.getDataContainer().setPeerChunk(chunkId,true);
             }
         }

@@ -20,8 +20,7 @@ public class DataContainer implements Serializable {
     // Key = chunkId
     // Value = shipping state
     private ConcurrentHashMap<String, Boolean> peersChunks;
-
-
+    
     // Key = fileId
     // Value = chunks
     private ConcurrentHashMap<String, ArrayList<Chunk>> tmpChunks;
@@ -78,6 +77,8 @@ public class DataContainer implements Serializable {
             stored.replace(key, stored.get(key) + 1);
     }
 
+    public void deleteStoredChunk(String key) { stored.remove(key); }
+
     public Integer getNrOfChunks(String key) {
         return ownFiles.get(key);
     }
@@ -91,6 +92,8 @@ public class DataContainer implements Serializable {
         if(ownFiles.get(key) == null)
             ownFiles.put(key, nrOfChunks);
     }
+
+    public void deleteOwnFile(String key) { ownFiles.remove(key); }
 
     public void addPeerChunk(String key)
     { 
