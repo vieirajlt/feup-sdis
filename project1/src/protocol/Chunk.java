@@ -62,7 +62,6 @@ public class Chunk implements Serializable {
         }
     }
 
-    //AQUI usar isto para ir buscar o chunk
     public Chunk load(String fileId, int chunkNo) {
         Chunk loaded = null;
         String chunkId = buildChunkFileId(fileId, chunkNo);

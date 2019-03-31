@@ -69,6 +69,7 @@ public class Receiver extends Subprotocol {
             if (!checkHeader(header))
                 return;
 
+
             int chunkNo = Integer.parseInt(header[4]);
             Chunk chunk = new Chunk(chunkNo, body);
 
@@ -78,9 +79,15 @@ public class Receiver extends Subprotocol {
             if (chunk.load(fileId, chunkNo) != null)
                 return;
 
+            // case not enough space to store
+            if(!Peer.getDataContainer().incCurrStorageAmount(chunk.getSize()))
+                return;
+
             chunk.store(fileId);
 
-            StoredHandler storedHandler = new StoredHandler(fileId, chunkNo);
+            int repDegree = Integer.parseInt(header[5]);
+
+            StoredHandler storedHandler = new StoredHandler(fileId, chunkNo, repDegree);
             new Thread(storedHandler).start();
         }
     }
@@ -121,7 +128,7 @@ public class Receiver extends Subprotocol {
                     if(storedFileId.equals(fileId)) {
                         //delete file
                         listOfFiles[i].delete();
-                        //delete file from stored map
+                        //delete file from stored map TODO
                         Peer.getDataContainer().deleteStoredChunk(chunkId);
                     }
                 }
@@ -136,6 +143,16 @@ public class Receiver extends Subprotocol {
     private void removed(String headerStr) {
         synchronized (this) {
             System.out.println("protocol.subprotocol.Receiver.removed");
+            String[] header = headerStr.split(" ");
+
+            if (!checkHeader(header))
+                return;
+            String fileId = header[3];
+            int chunkNo = Integer.parseInt(header[4]);
+
+            System.out.println(fileId);
+            System.out.println(chunkNo);
+
         }
     }
 
@@ -160,6 +177,7 @@ public class Receiver extends Subprotocol {
 
             String chunkId = fileId + "_" + chunkNo;
             Peer.getDataContainer().incCurrReoDegree(chunkId);
+            Peer.getDataContainer().incBackedUpChunkCurrRepDegree(chunkId);
         }
     }
 
@@ -179,6 +197,8 @@ public class Receiver extends Subprotocol {
 
             //if not initialized, start it full of nulls with the required size
             if (chunks == null) {
+                if(Peer.getDataContainer().getNrOfChunks(fileId) == null)
+                    return;
                 int chunksSize = Peer.getDataContainer().getNrOfChunks(fileId);
                 Peer.getDataContainer().iniTmpChunksChunks(fileId, chunksSize);
                 chunks = Peer.getDataContainer().getTmpChunksChunks(fileId);

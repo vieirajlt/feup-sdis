@@ -5,6 +5,7 @@ import protocol.subprotocol.FileManagement.SplitFile;
 import protocol.subprotocol.handler.DeleteHandler;
 import protocol.subprotocol.handler.PutchunkHandler;
 import protocol.subprotocol.handler.GetchunkHandler;
+import protocol.subprotocol.handler.RemovedHandler;
 
 import java.nio.charset.StandardCharsets;
 
@@ -72,10 +73,20 @@ public class Initiator extends Subprotocol {
         }
     }
 
+    //java TestApp 1923 RECLAIM 0   To reclaim all the disk space being used by the service, you should invoke
+    //in the case of RECLAIM the maximum amount of disk space (in KByte)
+    // that the service can use to store the chunks. In the latter case,
+    // the peer should execute the RECLAIM protocol, upon deletion of any chunk
     private void reclaim(String[] cmd) {
         synchronized (this) {
             System.out.println("protocol.subprotocol.Initiator.removed");
+            int maxDiskSpace = Integer.parseInt(cmd[1]);
+
+            RemovedHandler removedHandler = new RemovedHandler(maxDiskSpace);
+            new Thread(removedHandler).start();
+
         }
+
     }
 
     private synchronized void state(String[] cmd) {

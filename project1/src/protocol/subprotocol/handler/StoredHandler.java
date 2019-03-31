@@ -10,16 +10,19 @@ public class StoredHandler extends Handler implements Runnable {
 
     private String fileId;
     private int chunkNo;
+    private int repDegree;
 
-    public StoredHandler(String fileId, int chunkNo) {
+    public StoredHandler(String fileId, int chunkNo, int repDegree) {
         this.fileId = fileId;
         this.chunkNo = chunkNo;
+        this.repDegree = repDegree;
     }
 
     @Override
     public void run() {
         String chunkId = Chunk.buildChunkId(fileId, chunkNo);
         Peer.getDataContainer().addPeerChunk(chunkId);
+        Peer.getDataContainer().addBackedUpChunk(chunkId,repDegree);
 
         byte[] message = buildMessage(STORED, MSG_CONFIG_STORED, fileId, chunkNo, -1, null);
 

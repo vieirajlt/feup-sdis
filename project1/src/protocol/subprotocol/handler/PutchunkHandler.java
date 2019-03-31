@@ -27,6 +27,7 @@ public class PutchunkHandler extends Handler implements Runnable {
 
         for (Chunk chunk : sf.getChunks()) {
             repeatCnt = 0;
+            repDone = false;
 
             while (repeatCnt < MAX_PUTCHUNK_REPEAT && !repDone) {
                 System.out.println("protocol.subprotocol.handler.PutchunkHandler.run -> repeat number: " + repeatCnt + " Chunk: " + chunk.getChunkNo());
@@ -36,6 +37,7 @@ public class PutchunkHandler extends Handler implements Runnable {
                 String chunkId = sf.getFileId() + "_" + chunkNo;
                 if (Peer.getDataContainer().getCurrRepDegree(chunkId) >= sf.getReplicationDegree())
                     continue;
+
 
                 repDone = false;
                 byte[] body = chunk.getBody();

@@ -89,7 +89,6 @@ public class Peer {
     }
 
 
-    //onde é que isto é chamado? channel.java -> read
     public static void initiateProtocol(byte[] message) {
         if(!protocolIni.run(message)) {
             System.out.println("Something went wrong...");

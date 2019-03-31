@@ -7,7 +7,7 @@ import java.util.ArrayList;
 public class FileManager {
 
     /*Must be maxed to 64000 to be accordingly to max
-    chunck size. Not possible with UDP. TODO on RMI
+    chunk size. Not possible with UDP. TODO on RMI
      */
     public final static int MAX_CHUNK_SIZE = 1000;
 
