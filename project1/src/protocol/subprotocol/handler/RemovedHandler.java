@@ -7,7 +7,6 @@ import protocol.subprotocol.FileManagement.ChunkInfo;
 
 import java.io.File;
 import java.util.List;
-import java.util.concurrent.ConcurrentHashMap;
 
 import static protocol.subprotocol.Subprotocol.REMOVED;
 

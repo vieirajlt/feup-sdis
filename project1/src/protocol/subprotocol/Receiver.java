@@ -3,7 +3,9 @@ package protocol.subprotocol;
 import protocol.Chunk;
 import protocol.Peer;
 import protocol.subprotocol.FileManagement.RestoreFile;
+import protocol.subprotocol.FileManagement.SplitFile;
 import protocol.subprotocol.handler.Handler;
+import protocol.subprotocol.handler.PutchunkHandler;
 import protocol.subprotocol.handler.StoredHandler;
 import protocol.subprotocol.handler.ChunkHandler;
 
@@ -152,21 +154,20 @@ public class Receiver extends Subprotocol {
             System.out.println("protocol.subprotocol.Receiver.removed");
             String[] header = headerStr.split(" ");
 
-            if (!checkHeader(header))
-                return;
             String fileId = header[3];
             int chunkNo = Integer.parseInt(header[4]);
-
-            System.out.println(fileId);
-            System.out.println(chunkNo);
 
             String chunkId = Chunk.buildChunkId(fileId,chunkNo);
             Peer.getDataContainer().decBackedUpChunkCurrRepDegree(chunkId);
 
+            //if the peer does not store the chunk
+            if(!Peer.getDataContainer().hasBackedUpChunk(chunkId))
+                return;
 
-            /*if(Peer.getDataContainer().getDifferenceBtCurrDesiredRepDegrees(chunkId) < 0) {
-
-            }*/
+            if(Peer.getDataContainer().getDifferenceBtCurrDesiredRepDegrees(chunkId) < 0) {
+              /*Chunk chunk = new Chunk(chunkNo);
+              chunk = chunk.load(fileId, chunkNo);*/
+            }
 
         }
     }

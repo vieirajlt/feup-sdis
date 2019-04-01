@@ -142,6 +142,12 @@ public class DataContainer implements Serializable {
        return backedUpChunks.get(key).getDifferenceBtCurrDesiredRepDegrees();
     }
 
+    public boolean hasBackedUpChunk(String key) {
+        if(backedUpChunks.get(key) == null)
+            return false;
+        return true;
+    }
+
     public Integer getNrOfChunks(String key) {
         return ownFiles.get(key);
     }

@@ -80,7 +80,7 @@ public class ChunkInfo implements Comparable<ChunkInfo>, Serializable {
     If the Integer is greater than the argument then 1 is returned.*/
     @Override
     public int compareTo(ChunkInfo o) {
-        if (this.chunkId.equals(o.getChunkId()) && this.currRepDegree.equals(o.getCurrRepDegree()) && this.desiredRepDegree.equals(o.getDesiredRepDegree()))
+        if (this.currRepDegree.equals(o.getCurrRepDegree()) && this.desiredRepDegree.equals(o.getDesiredRepDegree()))
             return 0;
         Integer this_difference = this.getDifferenceBtCurrDesiredRepDegrees();
         Integer o_difference = o.getDifferenceBtCurrDesiredRepDegrees();
