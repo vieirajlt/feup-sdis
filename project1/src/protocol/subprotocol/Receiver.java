@@ -79,12 +79,18 @@ public class Receiver extends Subprotocol {
             if (chunk.load(fileId, chunkNo) != null)
                 return;
 
-            // case not enough space to store
-
-            if(!Peer.getDataContainer().incCurrStorageAmount( (double)chunk.getSize()/1000.0))
-                return;
 
             chunk.store(fileId);
+
+            File chunkFile = new File(chunk.getPathname() + chunk.buildChunkFileId(fileId,chunkNo));
+
+            // case not enough space to store
+            if(!Peer.getDataContainer().incCurrStorageAmount( (double)chunkFile.length()/1000.0))
+            {
+                chunkFile.delete();
+                return;
+            }
+
 
             int repDegree = Integer.parseInt(header[5]);
 
@@ -153,6 +159,14 @@ public class Receiver extends Subprotocol {
 
             System.out.println(fileId);
             System.out.println(chunkNo);
+
+            String chunkId = Chunk.buildChunkId(fileId,chunkNo);
+            Peer.getDataContainer().decBackedUpChunkCurrRepDegree(chunkId);
+
+
+            /*if(Peer.getDataContainer().getDifferenceBtCurrDesiredRepDegrees(chunkId) < 0) {
+
+            }*/
 
         }
     }

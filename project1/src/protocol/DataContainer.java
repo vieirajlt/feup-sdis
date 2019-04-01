@@ -20,7 +20,7 @@ public class DataContainer implements Serializable {
     private ConcurrentHashMap<String, Integer> stored;
 
     // Key = chunkId
-    // Value = 0 - desiredRepDegree 1 - currRepDegree
+    // Value = 0 - chunkInfo
     private ConcurrentHashMap<String, ChunkInfo> backedUpChunks;
 
 
@@ -125,6 +125,16 @@ public class DataContainer implements Serializable {
         });
     }
 
+    public void decBackedUpChunkCurrRepDegree(String key) {
+        if(backedUpChunks.get(key)== null)
+            return;
+        backedUpChunks.get(key).setCurrRepDegree(backedUpChunks.get(key).getCurrRepDegree() - 1);
+        System.out.println("incBackedUpChunkCurrRepDegree");
+        backedUpChunks.forEach((k, v) -> {
+            System.out.println("" + k + "" + v);
+        });
+    }
+
     public void deleteBackedUpChunk(String key) { backedUpChunks.remove(key); }
 
 
@@ -216,8 +226,9 @@ public class DataContainer implements Serializable {
     public List<ChunkInfo> getBackedUpChunksSortedInfo()
     {
         List<ChunkInfo> sorted = new ArrayList<>(backedUpChunks.values());
-         Collections.sort( sorted);
-         return sorted;
+        Collections.sort(sorted);
+        Collections.reverse(sorted);
+        return sorted;
     }
 
 

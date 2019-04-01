@@ -83,7 +83,7 @@ public class Chunk implements Serializable {
         return fileId + "_" + chunkNo;
     }
 
-    private String buildChunkFileId(String fileId, int chunkNo) {
+    public String buildChunkFileId(String fileId, int chunkNo) {
         return buildChunkId(fileId, chunkNo) + ".ser";
     }
 
@@ -93,4 +93,7 @@ public class Chunk implements Serializable {
         file.delete();
     }
 
+    public String getPathname() {
+        return pathname;
+    }
 }
