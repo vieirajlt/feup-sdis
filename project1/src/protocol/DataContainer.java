@@ -1,8 +1,11 @@
 package protocol;
 
+import protocol.subprotocol.FileManagement.ChunkInfo;
+
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DataContainer implements Serializable {
@@ -18,7 +21,7 @@ public class DataContainer implements Serializable {
 
     // Key = chunkId
     // Value = 0 - desiredRepDegree 1 - currRepDegree
-    private ConcurrentHashMap<String, ArrayList<Integer>> backedUpChunks;
+    private ConcurrentHashMap<String, ChunkInfo> backedUpChunks;
 
 
     // Key = fileId
@@ -102,10 +105,8 @@ public class DataContainer implements Serializable {
     public void addBackedUpChunk(String key, int desiredRepDegree) {
         if(backedUpChunks.get(key) == null)
         {
-            ArrayList<Integer> degrees = new ArrayList<>();
-            degrees.add(0,desiredRepDegree);
-            degrees.add(1,1);
-            backedUpChunks.put(key, degrees);
+            ChunkInfo chunkInfo = new ChunkInfo(key, desiredRepDegree, 1);
+            backedUpChunks.put(key, chunkInfo);
         }
         System.out.println("addBackedUpChunk");
 
@@ -117,17 +118,18 @@ public class DataContainer implements Serializable {
     public void incBackedUpChunkCurrRepDegree(String key) {
         if(backedUpChunks.get(key)== null)
             return;
-        backedUpChunks.get(key).set(1, backedUpChunks.get(key).get(1) + 1);
+        backedUpChunks.get(key).setCurrRepDegree(backedUpChunks.get(key).getCurrRepDegree() + 1);
         System.out.println("incBackedUpChunkCurrRepDegree");
         backedUpChunks.forEach((k, v) -> {
-            System.out.println("" + k + "" + v);        });
+            System.out.println("" + k + "" + v);
+        });
     }
 
     public void deleteBackedUpChunk(String key) { backedUpChunks.remove(key); }
 
 
     public int getDifferenceBtCurrDesiredRepDegrees(String key) {
-       return backedUpChunks.get(key).get(1) - backedUpChunks.get(key).get(0);
+       return backedUpChunks.get(key).getDifferenceBtCurrDesiredRepDegrees();
     }
 
     public Integer getNrOfChunks(String key) {
@@ -209,6 +211,15 @@ public class DataContainer implements Serializable {
     public void decCurrStorageAmount(double amountOfstorage) {
         this.currStorageAmount -= amountOfstorage;
     }
+
+
+    public List<ChunkInfo> getBackedUpChunksSortedInfo()
+    {
+        List<ChunkInfo> sorted = new ArrayList<>(backedUpChunks.values());
+         Collections.sort( sorted);
+         return sorted;
+    }
+
 
 
 }

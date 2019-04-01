@@ -3,8 +3,10 @@ package protocol.subprotocol.handler;
 
 import protocol.Chunk;
 import protocol.Peer;
+import protocol.subprotocol.FileManagement.ChunkInfo;
 
 import java.io.File;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static protocol.subprotocol.Subprotocol.REMOVED;
@@ -27,37 +29,42 @@ public class RemovedHandler extends Handler implements Runnable {
         File folder = new File(Chunk.STORE_PATH + Peer.getServerId());
         File[] listOfFiles = folder.listFiles();
 
-        String  chunkId;
+        String  chunkId, pathname = Chunk.STORE_PATH + Peer.getServerId() + "/";
+        File chunkFile;
+        ChunkInfo chunkInfo;
 
-        //delete all the chunks from the file
-        for (int i = 0; i < listOfFiles.length; i++) {
-            if(Peer.getDataContainer().getCurrStorageAmount() <= Peer.getDataContainer().getStorageCapacity() )
-                return;
-            if (listOfFiles[i].isFile()) {
-                chunkId = listOfFiles[i].getName().split(".ser")[0];
-                int difference = Peer.getDataContainer().getDifferenceBtCurrDesiredRepDegrees(chunkId);
-                System.out.println(difference);
-                if( difference > 0) {
-                    //delete file
-                    listOfFiles[i].delete();
-                    Peer.getDataContainer().deleteBackedUpChunk(chunkId);
-                    byte[] message = buildMessage(REMOVED, MSG_CONFIG_REMOVED, chunkId.split("_")[0], -1, -1, null);
 
-                    try {
-                        Thread.sleep(REMOVED_INBETWEEN_TIME_MS);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+       List sortedBackedUpChunks = Peer.getDataContainer().getBackedUpChunksSortedInfo();
+       for(int i = 0; i < sortedBackedUpChunks.size(); i++)
+       {
+           if(Peer.getDataContainer().getCurrStorageAmount() <= Peer.getDataContainer().getStorageCapacity() )
+               return;
 
-                    Peer.getControlChannel().write(message);
-                }
-                /*else if (difference == 0){
+           chunkInfo = (ChunkInfo) sortedBackedUpChunks.get(i);
+           chunkId = chunkInfo.getChunkId();
+           chunkFile = new File(pathname + chunkId + ".ser");
 
-                }*/
-            }
-        }
+           Peer.getDataContainer().decCurrStorageAmount( (double) chunkFile.length()/1000.0);
+
+           System.out.println(Peer.getDataContainer().getCurrStorageAmount());
+
+           if (!chunkFile.delete())
+               continue;
+
+
+           Peer.getDataContainer().deleteBackedUpChunk(chunkId);
+           byte[] message = buildMessage(REMOVED, MSG_CONFIG_REMOVED, chunkInfo.getFileId(), chunkInfo.getChunkNo(), -1, null);
+
+           try {
+               Thread.sleep(REMOVED_INBETWEEN_TIME_MS);
+           } catch (InterruptedException e) {
+               e.printStackTrace();
+           }
+
+           Peer.getControlChannel().write(message);
+       }
     }
 
-
-
 }
+
+

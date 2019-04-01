@@ -80,7 +80,8 @@ public class Receiver extends Subprotocol {
                 return;
 
             // case not enough space to store
-            if(!Peer.getDataContainer().incCurrStorageAmount(chunk.getSize()))
+
+            if(!Peer.getDataContainer().incCurrStorageAmount( (double)chunk.getSize()/1000.0))
                 return;
 
             chunk.store(fileId);
