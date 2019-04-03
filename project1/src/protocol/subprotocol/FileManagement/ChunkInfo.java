@@ -22,10 +22,6 @@ public class ChunkInfo implements Comparable<ChunkInfo>, Serializable {
         String[] info = chunkId.split("_");
         fileId = info[0];
         chunkNo = Integer.parseInt(info[1]);
-
-        System.out.println("fileId " + fileId);
-        System.out.println("chunkNo " + chunkNo);
-
     }
 
     public String getChunkId() {

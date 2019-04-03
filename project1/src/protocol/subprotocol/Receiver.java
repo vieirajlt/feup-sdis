@@ -165,8 +165,12 @@ public class Receiver extends Subprotocol {
                 return;
 
             if(Peer.getDataContainer().getDifferenceBtCurrDesiredRepDegrees(chunkId) < 0) {
-              /*Chunk chunk = new Chunk(chunkNo);
-              chunk = chunk.load(fileId, chunkNo);*/
+              Chunk chunk = new Chunk(chunkNo);
+              chunk = chunk.load(fileId, chunkNo);
+              int replicationDegree = Peer.getDataContainer().getBackedUpChunkDesiredRepDegree(chunkId);
+              // desired replication degree use in PUTCHUNK message
+
+
             }
 
         }

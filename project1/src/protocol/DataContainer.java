@@ -142,6 +142,18 @@ public class DataContainer implements Serializable {
        return backedUpChunks.get(key).getDifferenceBtCurrDesiredRepDegrees();
     }
 
+    public int getBackedUpChunkCurrRepDegree(String key) {
+        if(backedUpChunks.get(key) == null)
+            return - 1;
+        return backedUpChunks.get(key).getCurrRepDegree();
+    }
+
+    public int getBackedUpChunkDesiredRepDegree(String key) {
+        if(backedUpChunks.get(key) == null)
+            return - 1;
+        return backedUpChunks.get(key).getDesiredRepDegree();
+    }
+
     public boolean hasBackedUpChunk(String key) {
         if(backedUpChunks.get(key) == null)
             return false;
@@ -234,6 +246,8 @@ public class DataContainer implements Serializable {
         List<ChunkInfo> sorted = new ArrayList<>(backedUpChunks.values());
         Collections.sort(sorted);
         Collections.reverse(sorted);
+        for (int i = 0; i < sorted.size(); i++)
+            System.out.println(sorted.get(i));
         return sorted;
     }
 
