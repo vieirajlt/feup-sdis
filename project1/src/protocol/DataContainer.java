@@ -12,7 +12,7 @@ public class DataContainer implements Serializable {
 
     private final static String DATA_PATH = "TMP/Data/" + Peer.getServerId() + "/" + "data.ser";
 
-    private final static int INITIAL_STORAGE_CAPACITY = 1000000;
+    private final static long INITIAL_STORAGE_CAPACITY = 1000000;
 
 
     // Key = chunkId
@@ -36,11 +36,11 @@ public class DataContainer implements Serializable {
     // Value = chunks
     private ConcurrentHashMap<String, ArrayList<Chunk>> tmpChunks;
 
-    // maximum amount of disk space that can be used to store chunks (in KBytes)
-    private double storageCapacity;
+    // maximum amount of disk space that can be used to store chunks (in Bytes)
+    private long storageCapacity;
 
-    // amount of storage used to backup the chunks (in KBytes)
-    private double currStorageAmount;
+    // amount of storage used to backup the chunks (in Bytes)
+    private long currStorageAmount;
 
     private DataContainer() {
         stored = new ConcurrentHashMap<>();
@@ -216,7 +216,7 @@ public class DataContainer implements Serializable {
         return true;
     }
 
-    public double getStorageCapacity() {
+    public long getStorageCapacity() {
         return storageCapacity;
     }
 
@@ -224,20 +224,20 @@ public class DataContainer implements Serializable {
         this.storageCapacity = storageCapacity;
     }
 
-    public double getCurrStorageAmount() {
+    public long getCurrStorageAmount() {
         return currStorageAmount;
     }
 
-    public boolean incCurrStorageAmount(double amountOfstorage) {
-        double newStorageAmount = this.currStorageAmount + amountOfstorage;
+    public boolean incCurrStorageAmount(long amountOfStorage) {
+        long newStorageAmount = this.currStorageAmount + amountOfStorage;
         if(newStorageAmount > this.storageCapacity)
             return false;
         this.currStorageAmount = newStorageAmount;
         return true;
     }
 
-    public void decCurrStorageAmount(double amountOfstorage) {
-        this.currStorageAmount -= amountOfstorage;
+    public void decCurrStorageAmount(long amountOfStorage) {
+        this.currStorageAmount -= amountOfStorage;
     }
 
 
@@ -250,7 +250,5 @@ public class DataContainer implements Serializable {
             System.out.println(sorted.get(i));
         return sorted;
     }
-
-
 
 }

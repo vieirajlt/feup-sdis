@@ -25,9 +25,6 @@ public class RemovedHandler extends Handler implements Runnable {
         System.out.println("protocol.subprotocol.handler.RemovedHandler.run");
         Peer.getDataContainer().setStorageCapacity(maxDiskSpace);
 
-        File folder = new File(Chunk.STORE_PATH + Peer.getServerId());
-        File[] listOfFiles = folder.listFiles();
-
         String  chunkId, pathname = Chunk.STORE_PATH + Peer.getServerId() + "/";
         File chunkFile;
         ChunkInfo chunkInfo;
@@ -43,7 +40,7 @@ public class RemovedHandler extends Handler implements Runnable {
            chunkId = chunkInfo.getChunkId();
            chunkFile = new File(pathname + chunkId + ".ser");
 
-           Peer.getDataContainer().decCurrStorageAmount( (double) chunkFile.length()/1000.0);
+           Peer.getDataContainer().decCurrStorageAmount(chunkFile.length());
 
            System.out.println(Peer.getDataContainer().getCurrStorageAmount());
 

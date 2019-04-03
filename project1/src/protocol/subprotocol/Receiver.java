@@ -77,7 +77,7 @@ public class Receiver extends Subprotocol {
 
             String fileId = header[3];
 
-            //case it Peer's own file
+            //case it is Peer's own file
             if(Peer.getDataContainer().getNrOfChunks(fileId) !=  null)
                 return;
 
@@ -91,12 +91,11 @@ public class Receiver extends Subprotocol {
             File chunkFile = new File(chunk.getPathname() + chunk.buildChunkFileId(fileId,chunkNo));
 
             // case not enough space to store
-            if(!Peer.getDataContainer().incCurrStorageAmount( (double)chunkFile.length()/1000.0))
+            if(!Peer.getDataContainer().incCurrStorageAmount(chunkFile.length()))
             {
                 chunkFile.delete();
                 return;
             }
-
 
             int repDegree = Integer.parseInt(header[5]);
 
