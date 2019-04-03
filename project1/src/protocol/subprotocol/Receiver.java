@@ -134,6 +134,7 @@ public class Receiver extends Subprotocol {
                 if (listOfFiles[i].isFile()) {
                     chunkId = listOfFiles[i].getName();
                     storedFileId = chunkId.split("_")[0];
+
                     if(storedFileId.equals(fileId)) {
                         //delete file
                         listOfFiles[i].delete();
@@ -164,15 +165,22 @@ public class Receiver extends Subprotocol {
             if(!Peer.getDataContainer().hasBackedUpChunk(chunkId))
                 return;
 
-            if(Peer.getDataContainer().getDifferenceBtCurrDesiredRepDegrees(chunkId) < 0) {
-              Chunk chunk = new Chunk(chunkNo);
-              chunk = chunk.load(fileId, chunkNo);
-              int replicationDegree = Peer.getDataContainer().getBackedUpChunkDesiredRepDegree(chunkId);
-              // desired replication degree use in PUTCHUNK message
-
-
+            //random delay uniformly distributed between 0 and 400 ms
+            try {
+                Thread.sleep(Handler.buildSleep_time_ms());
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
 
+            //if no putchunk message was received send one
+            if(Peer.getDataContainer().getDifferenceBtCurrDesiredRepDegrees(chunkId) < 0) {
+
+              Chunk chunk = new Chunk(chunkNo);
+              int replicationDegree = Peer.getDataContainer().getBackedUpChunkDesiredRepDegree(chunkId);
+
+              PutchunkHandler putchunkHandler = new PutchunkHandler(chunk.load(fileId, chunkNo),fileId,replicationDegree);
+              new Thread(putchunkHandler).start();
+            }
         }
     }
 

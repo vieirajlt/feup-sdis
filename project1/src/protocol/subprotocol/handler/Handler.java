@@ -28,7 +28,7 @@ public class Handler {
     private int sleep_time_ms;
 
     public Handler() {
-        sleep_time_ms = (int) (Math.random() * (MAX_TIME_SLEEP_MS + 1));
+        sleep_time_ms = buildSleep_time_ms();
     }
 
     private byte[] buildHeader(String type, int configuration, String fileId, int chunkNo, int replicationDegree) {
@@ -91,5 +91,9 @@ public class Handler {
 
     public int getSleep_time_ms() {
         return sleep_time_ms;
+    }
+
+    public static int buildSleep_time_ms() {
+        return (int) (Math.random() * (MAX_TIME_SLEEP_MS + 1));
     }
 }
