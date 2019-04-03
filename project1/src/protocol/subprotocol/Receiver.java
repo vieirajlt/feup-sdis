@@ -132,6 +132,8 @@ public class Receiver extends Subprotocol {
 
             String storedFileId, chunkId;
 
+            long length;
+
             //delete all the chunks from the file
             for (int i = 0; i < listOfFiles.length; i++) {
                 if (listOfFiles[i].isFile()) {
@@ -139,10 +141,22 @@ public class Receiver extends Subprotocol {
                     storedFileId = chunkId.split("_")[0];
 
                     if(storedFileId.equals(fileId)) {
+
+                        length = listOfFiles[i].length();
+                        //dec current storage amount
+
                         //delete file
-                        listOfFiles[i].delete();
-                        //delete file from stored map TODO
-                        Peer.getDataContainer().deleteStoredChunk(chunkId);
+                       if(!listOfFiles[i].delete())
+                       {
+                           System.out.println("Failed to delete the file");
+                           return;
+                       }
+
+                       //decrement current storage amount
+                       Peer.getDataContainer().decCurrStorageAmount(length);
+
+                       //delete file from backedUpChunks map
+                        Peer.getDataContainer().deleteBackedUpChunk(chunkId);
                     }
                 }
             }

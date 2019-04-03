@@ -17,24 +17,25 @@ public class DataContainer implements Serializable {
 
     // Key = chunkId
     // Value = currReplicationDegree
-    private ConcurrentHashMap<String, Integer> stored;
-
-    // Key = chunkId
-    // Value = 0 - chunkInfo
-    private ConcurrentHashMap<String, ChunkInfo> backedUpChunks;
-
+    private ConcurrentHashMap<String, Integer> stored; //all the chunks of the Peer's own files
 
     // Key = fileId
     // Value = nrOfChunks
-    private ConcurrentHashMap<String, Integer> ownFiles;
+    private ConcurrentHashMap<String, Integer> ownFiles; // all the Peer's own files
+
+
+    // Key = chunkId
+    // Value = 0 - chunkInfo
+    private ConcurrentHashMap<String, ChunkInfo> backedUpChunks; //all the chunks the Peer is backing up for another Peer
+
 
     // Key = chunkId
     // Value = shipping state
-    private ConcurrentHashMap<String, Boolean> peersChunks;
+    private ConcurrentHashMap<String, Boolean> peersChunks; //used in restore
 
     // Key = fileId
     // Value = chunks
-    private ConcurrentHashMap<String, ArrayList<Chunk>> tmpChunks;
+    private ConcurrentHashMap<String, ArrayList<Chunk>> tmpChunks; //used in restore
 
     // maximum amount of disk space that can be used to store chunks (in Bytes)
     private long storageCapacity;
@@ -249,6 +250,24 @@ public class DataContainer implements Serializable {
         for (int i = 0; i < sorted.size(); i++)
             System.out.println(sorted.get(i));
         return sorted;
+    }
+
+    public void deleteOwnFileAndChunks(String fileId)
+    {
+        if(getNrOfChunks(fileId) == null)
+            return;
+
+        int nrOfChunks = getNrOfChunks(fileId);
+        deleteOwnFile(fileId);
+
+        String chunkId;
+
+        for(int chunkNo = 0; chunkNo < nrOfChunks; chunkNo++)
+        {
+            chunkId = Chunk.buildChunkId(fileId, chunkNo);
+            deleteStoredChunk(chunkId);
+        }
+
     }
 
 }
