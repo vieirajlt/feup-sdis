@@ -77,6 +77,10 @@ public class Receiver extends Subprotocol {
 
             String fileId = header[3];
 
+            //case it Peer's own file
+            if(Peer.getDataContainer().getNrOfChunks(fileId) !=  null)
+                return;
+
             // case already backed up
             if (chunk.load(fileId, chunkNo) != null)
                 return;
