@@ -1,9 +1,9 @@
 package test;
 
-import org.junit.Test;
+import org.testng.annotations.Test;
 import protocol.subprotocol.FileManagement.ChunkInfo;
 
-import static org.junit.Assert.*;
+import static org.testng.AssertJUnit.assertEquals;
 
 public class ChunkInfoTest {
 

@@ -13,49 +13,56 @@ public class PutchunkHandler extends Handler implements Runnable {
     private static final int MAX_PUTCHUNK_REPEAT = 5;
     private static final int PUTCHUNK_INBETWEEN_TIME_MS = 1000;
 
-    private int repeatCnt = 0;
-    private boolean repDone = false;
-    private SplitFile sf;
+    private int repeatCnt;
+    private boolean repDone;
+    private Chunk chunk;
+    private String fileId;
+    private int repDegree;
 
-    public PutchunkHandler(SplitFile sf) {
-        this.sf = sf;
+    public PutchunkHandler(Chunk chunk, String fileId, int repDegree) {
+        this.chunk = chunk;
+        this.fileId = fileId;
+        this.repDegree = repDegree;
+        repeatCnt = 0;
+        repDone = false;
+    }
+
+    public PutchunkHandler(Chunk chunk, SplitFile sf) {
+        this.chunk = chunk;
+        this.fileId = sf.getFileId();
+        this.repDegree = sf.getReplicationDegree();
+        repeatCnt = 0;
+        repDone = false;
     }
 
     @Override
     public void run() {
-        Peer.getDataContainer().addOwnFile(sf.getFileId(), sf.getChunks().size());
+        while (repeatCnt < MAX_PUTCHUNK_REPEAT && !repDone) {
+            System.out.println("protocol.subprotocol.handler.PutchunkHandler.run -> repeat number: " + repeatCnt + " Chunk: " + chunk.getChunkNo());
+            repDone = true;
 
-        for (Chunk chunk : sf.getChunks()) {
-            repeatCnt = 0;
+            int chunkNo = chunk.getChunkNo();
+            String chunkId = fileId + "_" + chunkNo;
+            if (Peer.getDataContainer().getCurrRepDegree(chunkId) >= repDegree)
+                continue;
+
+
             repDone = false;
+            byte[] body = chunk.getBody();
 
-            while (repeatCnt < MAX_PUTCHUNK_REPEAT && !repDone) {
-                System.out.println("protocol.subprotocol.handler.PutchunkHandler.run -> repeat number: " + repeatCnt + " Chunk: " + chunk.getChunkNo());
-                repDone = true;
+            byte[] message = buildMessage(PUTCHUNK, MSG_CONFIG_PUTCHUNK, fileId, chunkNo, repDegree, body);
 
-                int chunkNo = chunk.getChunkNo();
-                String chunkId = sf.getFileId() + "_" + chunkNo;
-                if (Peer.getDataContainer().getCurrRepDegree(chunkId) >= sf.getReplicationDegree())
-                    continue;
+            Peer.getBackupChannel().write(message);
 
+            ++repeatCnt;
 
-                repDone = false;
-                byte[] body = chunk.getBody();
-
-                byte[] message = buildMessage(PUTCHUNK, MSG_CONFIG_PUTCHUNK, sf.getFileId(), chunkNo, sf.getReplicationDegree(), body);
-
-                Peer.getBackupChannel().write(message);
-
-                ++repeatCnt;
-
-                //delay for stored msg receiving
-                try {
-                    Thread.sleep(PUTCHUNK_INBETWEEN_TIME_MS);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+            //delay for stored msg receiving
+            try {
+                Thread.sleep(PUTCHUNK_INBETWEEN_TIME_MS);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-
         }
     }
+
 }

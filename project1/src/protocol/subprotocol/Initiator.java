@@ -1,6 +1,8 @@
 package protocol.subprotocol;
 
 import app.TestApp;
+import protocol.Chunk;
+import protocol.Peer;
 import protocol.subprotocol.FileManagement.SplitFile;
 import protocol.subprotocol.handler.DeleteHandler;
 import protocol.subprotocol.handler.PutchunkHandler;
@@ -44,8 +46,12 @@ public class Initiator extends Subprotocol {
 
             SplitFile sf = new SplitFile(filepath, repDegree);
 
-            PutchunkHandler putchunkHandler = new PutchunkHandler(sf);
-            new Thread(putchunkHandler).start();
+            Peer.getDataContainer().addOwnFile(sf.getFileId(), sf.getChunks().size());
+
+            for (Chunk chunk : sf.getChunks()) {
+                PutchunkHandler putchunkHandler = new PutchunkHandler(chunk, sf);
+                new Thread(putchunkHandler).start();
+            }
         }
     }
 
