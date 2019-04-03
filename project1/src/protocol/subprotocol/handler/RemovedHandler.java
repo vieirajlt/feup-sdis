@@ -14,8 +14,8 @@ public class RemovedHandler extends Handler implements Runnable {
 
     private static final int REMOVED_INBETWEEN_TIME_MS = 1000;
 
-    private int maxDiskSpace;
-    public RemovedHandler(int maxDiskSpace) {
+    private long maxDiskSpace;
+    public RemovedHandler(long maxDiskSpace) {
         this.maxDiskSpace = maxDiskSpace;
     }
 
@@ -23,7 +23,7 @@ public class RemovedHandler extends Handler implements Runnable {
     @Override
     public void run() {
         System.out.println("protocol.subprotocol.handler.RemovedHandler.run");
-        Peer.getDataContainer().setStorageCapacity(maxDiskSpace);
+        Peer.getDataContainer().setStorageCapacity(maxDiskSpace * 1000);
 
         String  chunkId, pathname = Chunk.STORE_PATH + Peer.getServerId() + "/";
         File chunkFile;

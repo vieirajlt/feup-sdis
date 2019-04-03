@@ -220,7 +220,7 @@ public class DataContainer implements Serializable {
         return storageCapacity;
     }
 
-    public void setStorageCapacity(int storageCapacity) {
+    public void setStorageCapacity(long storageCapacity) {
         this.storageCapacity = storageCapacity;
     }
 

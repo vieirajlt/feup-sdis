@@ -83,7 +83,8 @@ public class Initiator extends Subprotocol {
     private void reclaim(String[] cmd) {
         synchronized (this) {
             System.out.println("protocol.subprotocol.Initiator.removed");
-            int maxDiskSpace = Integer.parseInt(cmd[1]);
+
+            long maxDiskSpace = Long.parseLong(cmd[1]);
 
             RemovedHandler removedHandler = new RemovedHandler(maxDiskSpace);
             new Thread(removedHandler).start();
