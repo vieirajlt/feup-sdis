@@ -4,10 +4,7 @@ import app.TestApp;
 import protocol.Chunk;
 import protocol.Peer;
 import protocol.subprotocol.FileManagement.SplitFile;
-import protocol.subprotocol.handler.DeleteHandler;
-import protocol.subprotocol.handler.PutchunkHandler;
-import protocol.subprotocol.handler.GetchunkHandler;
-import protocol.subprotocol.handler.RemovedHandler;
+import protocol.subprotocol.handler.*;
 
 import java.nio.charset.StandardCharsets;
 
@@ -46,7 +43,7 @@ public class Initiator extends Subprotocol {
 
             SplitFile sf = new SplitFile(filepath, repDegree);
 
-            Peer.getDataContainer().addOwnFile(sf.getFileId(), sf.getFile().getName(), sf.getChunks().size());
+            Peer.getDataContainer().addOwnFile(sf.getFileId(), sf.getFile().getName(), sf.getChunks().size(), sf.getReplicationDegree());
 
             for (Chunk chunk : sf.getChunks()) {
                 String chunkId = sf.getFileId() + "_" + chunk.getChunkNo();
@@ -98,6 +95,9 @@ public class Initiator extends Subprotocol {
     private synchronized void state(String[] cmd) {
         synchronized (this) {
             System.out.println("protocol.subprotocol.Initiator.state");
+
+            StateHandler stateHandler = new StateHandler();
+            new Thread(stateHandler).start();
         }
     }
 

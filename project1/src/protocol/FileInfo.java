@@ -1,13 +1,17 @@
 package protocol;
 
-class FileInfo {
+import java.io.Serializable;
+
+public class FileInfo implements Serializable {
 
     private String name;
     private int nrOfChunks;
+    private int repDegree;
 
-    public FileInfo(String name, int nrOfChunks) {
+    public FileInfo(String name, int nrOfChunks, int repDegree) {
         this.name = name;
         this.nrOfChunks = nrOfChunks;
+        this.repDegree = repDegree;
     }
 
     public String getName() {
@@ -25,4 +29,14 @@ class FileInfo {
     public void setNrOfChunks(int nrOfChunks) {
         this.nrOfChunks = nrOfChunks;
     }
+
+    public int getRepDegree() {
+        return repDegree;
+    }
+
+    public void setRepDegree(int repDegree) {
+        this.repDegree = repDegree;
+    }
+
+
 }

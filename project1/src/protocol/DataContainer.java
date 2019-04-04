@@ -148,6 +148,10 @@ public class DataContainer implements Serializable {
         return backedUpChunks.get(key).getDifferenceBtCurrDesiredRepDegrees();
     }
 
+    public ConcurrentHashMap<String, ChunkInfo> getBackedUpChunks() {
+        return backedUpChunks;
+    }
+
     public int getBackedUpChunkCurrRepDegree(String key) {
         if (backedUpChunks.get(key) == null)
             return -1;
@@ -172,6 +176,10 @@ public class DataContainer implements Serializable {
         if (ci == null)
             return;
         ci.setOnPeer(onPeer);
+    }
+
+    public ConcurrentHashMap<String, FileInfo> getOwnFiles() {
+        return ownFiles;
     }
 
     public FileInfo getOwnFile(String key) {
@@ -199,9 +207,9 @@ public class DataContainer implements Serializable {
         }
     }
 
-    public void addOwnFile(String key, String name, int nrOfChunks) {
+    public void addOwnFile(String key, String name, int nrOfChunks, int repDegree) {
         if (ownFiles.get(key) == null) {
-            FileInfo fi = new FileInfo(name, nrOfChunks);
+            FileInfo fi = new FileInfo(name, nrOfChunks, repDegree);
             ownFiles.put(key, fi);
         }
     }
