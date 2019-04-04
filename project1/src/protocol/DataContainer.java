@@ -86,79 +86,96 @@ public class DataContainer implements Serializable {
     }
 
 
-    public Integer getCurrRepDegree(String key) {
+    public Integer getStoredCurrRepDegree(String key) {
         if (stored.get(key) == null)
             stored.put(key, 0);
         return stored.get(key);
     }
 
-    public void incCurrReoDegree(String key) {
+    public void incStoredCurrRepDegree(String key) {
         /*if (stored.get(key) == null)
             stored.put(key, 1);
         else
             stored.replace(key, stored.get(key) + 1);*/
-        if(stored.get(key)!= null)
+        if (stored.get(key) != null)
             stored.replace(key, stored.get(key) + 1);
     }
 
-    public void deleteStoredChunk(String key) { stored.remove(key); }
+    public void deleteStoredChunk(String key) {
+        stored.remove(key);
+    }
 
     public void addBackedUpChunk(String key, int desiredRepDegree) {
-        if(backedUpChunks.get(key) == null)
-        {
-            ChunkInfo chunkInfo = new ChunkInfo(key, desiredRepDegree, 1);
+        if (backedUpChunks.get(key) == null) {
+            ChunkInfo chunkInfo = new ChunkInfo(key, desiredRepDegree, 0, false);
             backedUpChunks.put(key, chunkInfo);
         }
-        System.out.println("addBackedUpChunk");
+        /*System.out.println("addBackedUpChunk");
 
         backedUpChunks.forEach((k, v) -> {
             System.out.println("" + k + "" + v);
-        });
+        });*/
     }
 
     public void incBackedUpChunkCurrRepDegree(String key) {
-        if(backedUpChunks.get(key)== null)
+        if (backedUpChunks.get(key) == null)
             return;
         backedUpChunks.get(key).setCurrRepDegree(backedUpChunks.get(key).getCurrRepDegree() + 1);
-        System.out.println("incBackedUpChunkCurrRepDegree");
+        /*System.out.println("incBackedUpChunkCurrRepDegree");
         backedUpChunks.forEach((k, v) -> {
             System.out.println("" + k + "" + v);
-        });
+        });*/
     }
 
     public void decBackedUpChunkCurrRepDegree(String key) {
-        if(backedUpChunks.get(key)== null)
+        if (backedUpChunks.get(key) == null)
             return;
         backedUpChunks.get(key).setCurrRepDegree(backedUpChunks.get(key).getCurrRepDegree() - 1);
-        System.out.println("incBackedUpChunkCurrRepDegree");
+        /*System.out.println("incBackedUpChunkCurrRepDegree");
         backedUpChunks.forEach((k, v) -> {
             System.out.println("" + k + "" + v);
-        });
+        });*/
     }
 
-    public void deleteBackedUpChunk(String key) { backedUpChunks.remove(key); }
+    public void deleteBackedUpChunk(String key) {
+        backedUpChunks.remove(key);
+    }
 
 
     public int getDifferenceBtCurrDesiredRepDegrees(String key) {
-       return backedUpChunks.get(key).getDifferenceBtCurrDesiredRepDegrees();
+        return backedUpChunks.get(key).getDifferenceBtCurrDesiredRepDegrees();
     }
 
     public int getBackedUpChunkCurrRepDegree(String key) {
-        if(backedUpChunks.get(key) == null)
-            return - 1;
+        if (backedUpChunks.get(key) == null)
+            return -1;
         return backedUpChunks.get(key).getCurrRepDegree();
     }
 
     public int getBackedUpChunkDesiredRepDegree(String key) {
-        if(backedUpChunks.get(key) == null)
-            return - 1;
+        if (backedUpChunks.get(key) == null)
+            return -1;
         return backedUpChunks.get(key).getDesiredRepDegree();
     }
 
     public boolean hasBackedUpChunk(String key) {
-        if(backedUpChunks.get(key) == null)
+        if (backedUpChunks.get(key) == null)
             return false;
         return true;
+    }
+
+    public boolean isBackedUpChunkOnPeer(String key) {
+        ChunkInfo ci = backedUpChunks.get(key);
+        if (ci == null)
+            return false;
+        return ci.isOnPeer();
+    }
+
+    public void setBackedUpChunkOnPeer(String key, boolean onPeer) {
+        ChunkInfo ci = backedUpChunks.get(key);
+        if (ci == null)
+            return;
+        ci.setOnPeer(onPeer);
     }
 
     public Integer getNrOfChunks(String key) {
@@ -169,49 +186,47 @@ public class DataContainer implements Serializable {
         return peersChunks.get(key);
     }
 
-    public void deletePeersFileChunks(String fileId)
-    {
+    public void deletePeersFileChunks(String fileId) {
         String chunkFileId;
-        for(String key : peersChunks.keySet()) {
+        for (String key : peersChunks.keySet()) {
             chunkFileId = key.split("-")[0];
-            if(chunkFileId.equals(fileId))
+            if (chunkFileId.equals(fileId))
                 peersChunks.remove(key);
         }
     }
 
-    public void addOwnFile(String key, int nrOfChunks)
-    {
-        if(ownFiles.get(key) == null)
+    public void addOwnFile(String key, int nrOfChunks) {
+        if (ownFiles.get(key) == null)
             ownFiles.put(key, nrOfChunks);
     }
 
-    public void deleteOwnFile(String key) { ownFiles.remove(key); }
-
-    public void addPeerChunk(String key)
-    { 
-        if(peersChunks.get(key) == null)
-          peersChunks.put(key, false);
+    public void deleteOwnFile(String key) {
+        ownFiles.remove(key);
     }
 
-    public void setPeerChunk(String key, boolean state )
-    {
+    public void addPeerChunk(String key) {
+        if (peersChunks.get(key) == null)
+            peersChunks.put(key, false);
+    }
+
+    public void setPeerChunk(String key, boolean state) {
         peersChunks.put(key, false);
         //peersChunks.replace(key, state);
     }
 
 
-    public  ArrayList<Chunk> getTmpChunksChunks(String fileId) {
+    public ArrayList<Chunk> getTmpChunksChunks(String fileId) {
         return tmpChunks.get(fileId);
     }
 
     public void iniTmpChunksChunks(String fileId, int chunksSize) {
-         tmpChunks.put(fileId, new ArrayList<>(Collections.nCopies(chunksSize, null)));
+        tmpChunks.put(fileId, new ArrayList<>(Collections.nCopies(chunksSize, null)));
     }
 
     public boolean isTmpChunksChunksComplete(String fileId) {
         ArrayList<Chunk> chunks = tmpChunks.get(fileId);
-        for(Chunk chunk : chunks) {
-            if(chunk == null)
+        for (Chunk chunk : chunks) {
+            if (chunk == null)
                 return false;
         }
         return true;
@@ -231,7 +246,7 @@ public class DataContainer implements Serializable {
 
     public boolean incCurrStorageAmount(long amountOfStorage) {
         long newStorageAmount = this.currStorageAmount + amountOfStorage;
-        if(newStorageAmount > this.storageCapacity)
+        if (newStorageAmount > this.storageCapacity)
             return false;
         this.currStorageAmount = newStorageAmount;
         return true;
@@ -242,8 +257,7 @@ public class DataContainer implements Serializable {
     }
 
 
-    public List<ChunkInfo> getBackedUpChunksSortedInfo()
-    {
+    public List<ChunkInfo> getBackedUpChunksSortedInfo() {
         List<ChunkInfo> sorted = new ArrayList<>(backedUpChunks.values());
         Collections.sort(sorted);
         Collections.reverse(sorted);
@@ -252,9 +266,8 @@ public class DataContainer implements Serializable {
         return sorted;
     }
 
-    public void deleteOwnFileAndChunks(String fileId)
-    {
-        if(getNrOfChunks(fileId) == null)
+    public void deleteOwnFileAndChunks(String fileId) {
+        if (getNrOfChunks(fileId) == null)
             return;
 
         int nrOfChunks = getNrOfChunks(fileId);
@@ -262,8 +275,7 @@ public class DataContainer implements Serializable {
 
         String chunkId;
 
-        for(int chunkNo = 0; chunkNo < nrOfChunks; chunkNo++)
-        {
+        for (int chunkNo = 0; chunkNo < nrOfChunks; chunkNo++) {
             chunkId = Chunk.buildChunkId(fileId, chunkNo);
             deleteStoredChunk(chunkId);
         }

@@ -45,7 +45,7 @@ public class Chunk implements Serializable {
     }
 
     public void store(String fileId) {
-        String chunkId = fileId + "_" + chunkNo + ".ser";
+        String chunkId = buildChunkFileId(fileId, chunkNo);
         try {
             File file = new File(pathname + chunkId);
             file.getParentFile().mkdirs();

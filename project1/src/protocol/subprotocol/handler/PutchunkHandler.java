@@ -4,8 +4,6 @@ import protocol.Chunk;
 import protocol.Peer;
 import protocol.subprotocol.FileManagement.SplitFile;
 
-import java.nio.charset.StandardCharsets;
-
 import static protocol.subprotocol.Subprotocol.PUTCHUNK;
 
 public class PutchunkHandler extends Handler implements Runnable {
@@ -38,12 +36,13 @@ public class PutchunkHandler extends Handler implements Runnable {
     @Override
     public void run() {
         while (repeatCnt < MAX_PUTCHUNK_REPEAT && !repDone) {
-            System.out.println("protocol.subprotocol.handler.PutchunkHandler.run -> repeat number: " + repeatCnt + " Chunk: " + chunk.getChunkNo());
             repDone = true;
 
             int chunkNo = chunk.getChunkNo();
             String chunkId = fileId + "_" + chunkNo;
-            if (Peer.getDataContainer().getCurrRepDegree(chunkId) >= repDegree)
+            System.out.println("protocol.subprotocol.handler.PutchunkHandler.run -> repeat number: " + repeatCnt + " Chunk: " + chunk.getChunkNo() +
+                    "\n\tcurr: " + Peer.getDataContainer().getStoredCurrRepDegree(chunkId) + " repDegree: " + repDegree);
+            if (Peer.getDataContainer().getStoredCurrRepDegree(chunkId) >= repDegree)
                 continue;
 
 

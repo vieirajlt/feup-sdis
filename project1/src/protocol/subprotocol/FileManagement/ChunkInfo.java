@@ -10,11 +10,12 @@ public class ChunkInfo implements Comparable<ChunkInfo>, Serializable {
     private String chunkId;
     private Integer currRepDegree;
     private Integer desiredRepDegree;
+    private boolean onPeer;
 
     private String fileId;
     private int chunkNo;
 
-    public ChunkInfo(String chunkId, Integer desiredRepDegree, Integer currRepDegree){
+    public ChunkInfo(String chunkId, Integer desiredRepDegree, Integer currRepDegree, boolean onPeer){
         this.chunkId = chunkId;
         this.currRepDegree = currRepDegree;
         this.desiredRepDegree = desiredRepDegree;
@@ -60,12 +61,20 @@ public class ChunkInfo implements Comparable<ChunkInfo>, Serializable {
         return currRepDegree - desiredRepDegree;
     }
 
+    public boolean isOnPeer() {
+        return onPeer;
+    }
+
+    public void setOnPeer(boolean onPeer) {
+        this.onPeer = onPeer;
+    }
 
     @Override
     public String toString() {
         return "ChunkInfo{" +
                 "currRepDegree=" + currRepDegree +
                 ", desiredRepDegree=" + desiredRepDegree +
+                ", onPeer=" + onPeer +
                 '}';
     }
 

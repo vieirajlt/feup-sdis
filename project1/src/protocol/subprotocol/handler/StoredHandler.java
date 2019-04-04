@@ -1,30 +1,37 @@
 package protocol.subprotocol.handler;
 
+import protocol.Chunk;
 import protocol.Peer;
 
-import protocol.Chunk;
+import java.io.File;
 
 import static protocol.subprotocol.Subprotocol.STORED;
 
 public class StoredHandler extends Handler implements Runnable {
 
     private String fileId;
-    private int chunkNo;
+    private Chunk chunk;
     private int repDegree;
 
-    public StoredHandler(String fileId, int chunkNo, int repDegree) {
+    public StoredHandler(String fileId, Chunk chunk, int repDegree) {
         this.fileId = fileId;
-        this.chunkNo = chunkNo;
+        this.chunk = chunk;
         this.repDegree = repDegree;
     }
 
     @Override
     public void run() {
-        String chunkId = Chunk.buildChunkId(fileId, chunkNo);
-        Peer.getDataContainer().addPeerChunk(chunkId);
-        Peer.getDataContainer().addBackedUpChunk(chunkId,repDegree);
 
-        byte[] message = buildMessage(STORED, MSG_CONFIG_STORED, fileId, chunkNo, -1, null);
+        String chunkId = Chunk.buildChunkId(fileId, chunk.getChunkNo());
+        byte[] message = buildMessage(STORED, MSG_CONFIG_STORED, fileId, chunk.getChunkNo(), -1, null);
+
+        //add even if not saved on Peer for other peers info collection
+        Peer.getDataContainer().addBackedUpChunk(chunkId, repDegree);
+
+        // case already backed up
+        if (Peer.getDataContainer().isBackedUpChunkOnPeer(chunkId)) {
+            return;
+        }
 
         try {
             Thread.sleep(getSleep_time_ms());
@@ -32,6 +39,21 @@ public class StoredHandler extends Handler implements Runnable {
             e.printStackTrace();
         }
 
+        chunk.store(fileId);
+
+        File chunkFile = new File(chunk.getPathname() + chunk.buildChunkFileId(fileId, chunk.getChunkNo()));
+
+        // case not enough space to store
+        // OR repDegree exceeded
+        if (!Peer.getDataContainer().incCurrStorageAmount(chunkFile.length()) ||
+                Peer.getDataContainer().getBackedUpChunkCurrRepDegree(chunkId) >= repDegree) {
+            chunkFile.delete();
+            return;
+        }
+
         Peer.getControlChannel().write(message);
+        Peer.getDataContainer().addPeerChunk(chunkId);
+        Peer.getDataContainer().setBackedUpChunkOnPeer(chunkId, true);
+        Peer.getDataContainer().incBackedUpChunkCurrRepDegree(chunkId);
     }
 }

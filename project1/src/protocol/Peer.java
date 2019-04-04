@@ -3,8 +3,6 @@ package protocol;
 import protocol.subprotocol.Initiator;
 import protocol.subprotocol.Receiver;
 
-import java.util.concurrent.ConcurrentHashMap;
-
 public class Peer {
 
     private static Float version;
@@ -33,7 +31,7 @@ public class Peer {
         id = Integer.parseInt(args[1]);
 
         String[] ap = args[2].split(":");
-        if(ap.length == 1) {
+        if (ap.length == 1) {
             cmd = new Channel("localhost", ap[0]);
         } else {
             cmd = new Channel(ap[0], ap[1]);
@@ -58,7 +56,6 @@ public class Peer {
             dataContainer.store();
         });
         Runtime.getRuntime().addShutdownHook(hook);
-
 
 
         //Threads Start
@@ -90,13 +87,13 @@ public class Peer {
 
 
     public static void initiateProtocol(byte[] message) {
-        if(!protocolIni.run(message)) {
+        if (!protocolIni.run(message)) {
             System.out.println("Something went wrong...");
         }
     }
 
     public static void answerProtocol(byte[] message) {
-        if(!protocolRec.run(message)) {
+        if (!protocolRec.run(message)) {
             System.out.println("Something went wrong...");
         }
     }

@@ -3,18 +3,14 @@ package protocol.subprotocol;
 import protocol.Chunk;
 import protocol.Peer;
 import protocol.subprotocol.FileManagement.RestoreFile;
-import protocol.subprotocol.FileManagement.SplitFile;
+import protocol.subprotocol.handler.ChunkHandler;
 import protocol.subprotocol.handler.Handler;
 import protocol.subprotocol.handler.PutchunkHandler;
 import protocol.subprotocol.handler.StoredHandler;
-import protocol.subprotocol.handler.ChunkHandler;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -81,25 +77,9 @@ public class Receiver extends Subprotocol {
             if(Peer.getDataContainer().getNrOfChunks(fileId) !=  null)
                 return;
 
-            // case already backed up
-            if (chunk.load(fileId, chunkNo) != null)
-                return;
-
-
-            chunk.store(fileId);
-
-            File chunkFile = new File(chunk.getPathname() + chunk.buildChunkFileId(fileId,chunkNo));
-
-            // case not enough space to store
-            if(!Peer.getDataContainer().incCurrStorageAmount(chunkFile.length()))
-            {
-                chunkFile.delete();
-                return;
-            }
-
             int repDegree = Integer.parseInt(header[5]);
 
-            StoredHandler storedHandler = new StoredHandler(fileId, chunkNo, repDegree);
+            StoredHandler storedHandler = new StoredHandler(fileId, chunk, repDegree);
             new Thread(storedHandler).start();
         }
     }
@@ -212,16 +192,8 @@ public class Receiver extends Subprotocol {
                 return;
             System.out.println("protocol.subprotocol.Receiver.stored");
 
-            // for visual verification
-            String log_message = fileId + "," + chunkNo + "," + senderId + "\n";
-            try {
-                Files.write(Paths.get(pathname), log_message.getBytes(), StandardOpenOption.APPEND);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
             String chunkId = fileId + "_" + chunkNo;
-            Peer.getDataContainer().incCurrReoDegree(chunkId);
+            Peer.getDataContainer().incStoredCurrRepDegree(chunkId);
             Peer.getDataContainer().incBackedUpChunkCurrRepDegree(chunkId);
         }
     }
