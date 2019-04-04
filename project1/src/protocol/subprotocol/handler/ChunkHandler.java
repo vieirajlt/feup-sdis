@@ -3,8 +3,6 @@ package protocol.subprotocol.handler;
 import protocol.Peer;
 import protocol.Chunk;
 
-import java.nio.charset.StandardCharsets;
-
 import static protocol.subprotocol.Subprotocol.CHUNK;
 
 public class ChunkHandler extends Handler implements Runnable {
@@ -23,7 +21,7 @@ public class ChunkHandler extends Handler implements Runnable {
         Chunk chunk = new Chunk(chunkNo);
         Chunk loaded = chunk.load(fileId, chunkNo);
         if (loaded != null) {
-            String chunkId = Chunk.buildChunkId(fileId,chunkNo);
+            String chunkId = Chunk.buildChunkKey(fileId,chunkNo);
             Peer.getDataContainer().setPeerChunk(chunkId,false );
             try {
                 Thread.sleep(getSleep_time_ms());

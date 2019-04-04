@@ -3,7 +3,7 @@ package protocol.subprotocol.handler;
 
 import protocol.Chunk;
 import protocol.Peer;
-import protocol.subprotocol.FileManagement.ChunkInfo;
+import protocol.ChunkInfo;
 
 import java.io.File;
 import java.util.List;
@@ -26,7 +26,7 @@ public class RemovedHandler extends Handler implements Runnable {
         System.out.println("protocol.subprotocol.handler.RemovedHandler.run");
         Peer.getDataContainer().setStorageCapacity(maxDiskSpace * 1000);
 
-        String chunkId, pathname = Chunk.STORE_PATH + Peer.getServerId() + "/";
+        String chunkId, fileId, pathname = Chunk.getPathname();
         File chunkFile;
         ChunkInfo chunkInfo;
 
@@ -37,18 +37,19 @@ public class RemovedHandler extends Handler implements Runnable {
                 return;
 
             chunkInfo = (ChunkInfo) sortedBackedUpChunks.get(i);
-            chunkId = chunkInfo.getChunkId();
-            chunkFile = new File(pathname + chunkId + ".ser");
+            chunkId = Chunk.buildChunkFileId(chunkInfo.getChunkNo());
+            fileId = chunkInfo.getFileId();
+            chunkFile = new File(pathname + fileId + "/" + chunkId);
 
-            Peer.getDataContainer().decCurrStorageAmount(chunkFile.length());
-
-            System.out.println(Peer.getDataContainer().getCurrStorageAmount());
+            long chunkFileLength = chunkFile.length();
 
             if (!chunkFile.delete())
                 continue;
 
-
-            Peer.getDataContainer().deleteBackedUpChunk(chunkId);
+            Peer.getDataContainer().decCurrStorageAmount(chunkFileLength);
+            System.out.println(Peer.getDataContainer().getCurrStorageAmount());
+            String chunkKey = Chunk.buildChunkKey(fileId, chunkInfo.getChunkNo());
+            Peer.getDataContainer().setBackedUpChunkOnPeer(chunkKey, false);
             byte[] message = buildMessage(REMOVED, MSG_CONFIG_REMOVED, chunkInfo.getFileId(), chunkInfo.getChunkNo(), -1, null);
 
             try {

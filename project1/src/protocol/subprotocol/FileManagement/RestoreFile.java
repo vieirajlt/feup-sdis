@@ -3,10 +3,11 @@ package protocol.subprotocol.FileManagement;
 
 import protocol.Chunk;
 import protocol.Peer;
-import protocol.subprotocol.FileManagement.FileManager;
 
-import java.io.*;
-import java.util.ArrayList;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
 public class RestoreFile extends FileManager implements Runnable {
 
@@ -17,7 +18,8 @@ public class RestoreFile extends FileManager implements Runnable {
 
     @Override
     public void run() {
-        File file = new File("TMP/RESTORED/" + Peer.getServerId() + "/" + "restored.png");
+        String fileName = Peer.getDataContainer().getOwnFileName(getFileId());
+        File file = new File("TMP/" + Peer.getServerId() + "/restored/" + fileName);
         file.getParentFile().mkdirs();
         try {
             file.createNewFile();

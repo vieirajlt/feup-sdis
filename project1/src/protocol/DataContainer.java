@@ -1,7 +1,5 @@
 package protocol;
 
-import protocol.subprotocol.FileManagement.ChunkInfo;
-
 import java.io.*;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -21,7 +19,7 @@ public class DataContainer implements Serializable {
 
     // Key = fileId
     // Value = nrOfChunks
-    private ConcurrentHashMap<String, Integer> ownFiles; // all the Peer's own files
+    private ConcurrentHashMap<String, FileInfo> ownFiles; // all the Peer's own files
 
 
     // Key = chunkId
@@ -86,9 +84,13 @@ public class DataContainer implements Serializable {
     }
 
 
+    public void addStored(String key) {
+        stored.put(key, 0);
+    }
+
     public Integer getStoredCurrRepDegree(String key) {
         if (stored.get(key) == null)
-            stored.put(key, 0);
+            return -1;
         return stored.get(key);
     }
 
@@ -158,12 +160,6 @@ public class DataContainer implements Serializable {
         return backedUpChunks.get(key).getDesiredRepDegree();
     }
 
-    public boolean hasBackedUpChunk(String key) {
-        if (backedUpChunks.get(key) == null)
-            return false;
-        return true;
-    }
-
     public boolean isBackedUpChunkOnPeer(String key) {
         ChunkInfo ci = backedUpChunks.get(key);
         if (ci == null)
@@ -178,8 +174,16 @@ public class DataContainer implements Serializable {
         ci.setOnPeer(onPeer);
     }
 
-    public Integer getNrOfChunks(String key) {
+    public FileInfo getOwnFile(String key) {
         return ownFiles.get(key);
+    }
+
+    public Integer getOwnFileNrOfChunks(String key) {
+        return ownFiles.get(key).getNrOfChunks();
+    }
+
+    public String getOwnFileName(String key) {
+        return ownFiles.get(key).getName();
     }
 
     public Boolean getChunkShippingState(String key) {
@@ -195,9 +199,11 @@ public class DataContainer implements Serializable {
         }
     }
 
-    public void addOwnFile(String key, int nrOfChunks) {
-        if (ownFiles.get(key) == null)
-            ownFiles.put(key, nrOfChunks);
+    public void addOwnFile(String key, String name, int nrOfChunks) {
+        if (ownFiles.get(key) == null) {
+            FileInfo fi = new FileInfo(name, nrOfChunks);
+            ownFiles.put(key, fi);
+        }
     }
 
     public void deleteOwnFile(String key) {
@@ -267,16 +273,16 @@ public class DataContainer implements Serializable {
     }
 
     public void deleteOwnFileAndChunks(String fileId) {
-        if (getNrOfChunks(fileId) == null)
+        if (getOwnFile(fileId) == null)
             return;
 
-        int nrOfChunks = getNrOfChunks(fileId);
+        int nrOfChunks = getOwnFileNrOfChunks(fileId);
         deleteOwnFile(fileId);
 
         String chunkId;
 
         for (int chunkNo = 0; chunkNo < nrOfChunks; chunkNo++) {
-            chunkId = Chunk.buildChunkId(fileId, chunkNo);
+            chunkId = Chunk.buildChunkKey(fileId, chunkNo);
             deleteStoredChunk(chunkId);
         }
 

@@ -41,10 +41,11 @@ public class PutchunkHandler extends Handler implements Runnable {
             int chunkNo = chunk.getChunkNo();
             String chunkId = fileId + "_" + chunkNo;
             System.out.println("protocol.subprotocol.handler.PutchunkHandler.run -> repeat number: " + repeatCnt + " Chunk: " + chunk.getChunkNo() +
-                    "\n\tcurr: " + Peer.getDataContainer().getStoredCurrRepDegree(chunkId) + " repDegree: " + repDegree);
-            if (Peer.getDataContainer().getStoredCurrRepDegree(chunkId) >= repDegree)
+                    "\n\tcurr: " + Peer.getDataContainer().getStoredCurrRepDegree(chunkId) + " " +
+                    Peer.getDataContainer().getBackedUpChunkCurrRepDegree(chunkId) + " repDegree: " + repDegree);
+            if (Peer.getDataContainer().getStoredCurrRepDegree(chunkId) >= repDegree ||
+                    Peer.getDataContainer().getBackedUpChunkCurrRepDegree(chunkId) >= repDegree)
                 continue;
-
 
             repDone = false;
             byte[] body = chunk.getBody();

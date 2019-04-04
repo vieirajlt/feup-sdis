@@ -16,7 +16,7 @@ public class GetchunkHandler extends Handler implements Runnable{
     @Override
     public void run() {
         System.out.println("protocol.subprotocol.handler.getchunk.run");
-        int chunksSize = Peer.getDataContainer().getNrOfChunks(sf.getFileId());
+        int chunksSize = Peer.getDataContainer().getOwnFileNrOfChunks(sf.getFileId());
         for(int chunkNo = 0; chunkNo < chunksSize; chunkNo++ )
         {
             byte[] message = buildMessage(GETCHUNK, MSG_CONFIG_GETCHUNK, sf.getFileId(), chunkNo, -1,null);

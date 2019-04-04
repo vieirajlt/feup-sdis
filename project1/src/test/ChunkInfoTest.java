@@ -1,7 +1,7 @@
 package test;
 
 import org.testng.annotations.Test;
-import protocol.subprotocol.FileManagement.ChunkInfo;
+import protocol.ChunkInfo;
 
 import static org.testng.AssertJUnit.assertEquals;
 

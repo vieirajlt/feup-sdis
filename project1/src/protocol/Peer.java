@@ -6,7 +6,7 @@ import protocol.subprotocol.Receiver;
 public class Peer {
 
     private static Float version;
-    private static Integer id;
+    private static String id;
 
     private static MulticastChannel control;
     private static MulticastChannel backup;
@@ -28,7 +28,7 @@ public class Peer {
         }
 
         version = Float.parseFloat(args[0]);
-        id = Integer.parseInt(args[1]);
+        id = args[1];
 
         String[] ap = args[2].split(":");
         if (ap.length == 1) {
@@ -102,7 +102,7 @@ public class Peer {
         return version;
     }
 
-    public static Integer getServerId() {
+    public static String getServerId() {
         return id;
     }
 

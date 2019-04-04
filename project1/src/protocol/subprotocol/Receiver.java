@@ -74,7 +74,7 @@ public class Receiver extends Subprotocol {
             String fileId = header[3];
 
             //case it is Peer's own file
-            if(Peer.getDataContainer().getNrOfChunks(fileId) !=  null)
+            if (Peer.getDataContainer().getOwnFile(fileId) != null)
                 return;
 
             int repDegree = Integer.parseInt(header[5]);
@@ -107,38 +107,39 @@ public class Receiver extends Subprotocol {
             if (!checkHeader(header))
                 return;
 
-            File folder = new File(Chunk.STORE_PATH + Peer.getServerId());
+            System.out.println(Chunk.getChunkFolderPath(fileId));
+            File folder = new File(Chunk.getChunkFolderPath(fileId));
+            if(!folder.exists())
+                return;
             File[] listOfFiles = folder.listFiles();
-
-            String storedFileId, chunkId;
 
             long length;
 
             //delete all the chunks from the file
-            for (int i = 0; i < listOfFiles.length; i++) {
-                if (listOfFiles[i].isFile()) {
-                    chunkId = listOfFiles[i].getName();
-                    storedFileId = chunkId.split("_")[0];
+            for (File file : listOfFiles) {
+                if (file.isFile()) {
+                    String chunkNoStr = ((file.getName()).substring(3)).split("\\.")[0];
+                    int chunkNo = Integer.parseInt(chunkNoStr);
+                    String key = Chunk.buildChunkKey(fileId, chunkNo);
+                    length = file.length();
+                    //dec current storage amount
 
-                    if(storedFileId.equals(fileId)) {
-
-                        length = listOfFiles[i].length();
-                        //dec current storage amount
-
-                        //delete file
-                       if(!listOfFiles[i].delete())
-                       {
-                           System.out.println("Failed to delete the file");
-                           return;
-                       }
-
-                       //decrement current storage amount
-                       Peer.getDataContainer().decCurrStorageAmount(length);
-
-                       //delete file from backedUpChunks map
-                        Peer.getDataContainer().deleteBackedUpChunk(chunkId);
+                    //delete file
+                    if (!file.delete()) {
+                        System.out.println("Failed to delete the file");
+                        return;
                     }
+
+                    //decrement current storage amount
+                    Peer.getDataContainer().decCurrStorageAmount(length);
+
+                    //delete file from backedUpChunks map
+                    Peer.getDataContainer().deleteBackedUpChunk(key);
                 }
+            }
+
+            if(folder.list().length == 0) {
+                folder.delete();
             }
 
             //delete all the file chunks from peersChunks
@@ -155,11 +156,11 @@ public class Receiver extends Subprotocol {
             String fileId = header[3];
             int chunkNo = Integer.parseInt(header[4]);
 
-            String chunkId = Chunk.buildChunkId(fileId,chunkNo);
+            String chunkId = Chunk.buildChunkKey(fileId, chunkNo);
             Peer.getDataContainer().decBackedUpChunkCurrRepDegree(chunkId);
 
             //if the peer does not store the chunk
-            if(!Peer.getDataContainer().hasBackedUpChunk(chunkId))
+            if (!Peer.getDataContainer().isBackedUpChunkOnPeer(chunkId))
                 return;
 
             //random delay uniformly distributed between 0 and 400 ms
@@ -170,13 +171,13 @@ public class Receiver extends Subprotocol {
             }
 
             //if no putchunk message was received send one
-            if(Peer.getDataContainer().getDifferenceBtCurrDesiredRepDegrees(chunkId) < 0) {
+            if (Peer.getDataContainer().getDifferenceBtCurrDesiredRepDegrees(chunkId) < 0) {
 
-              Chunk chunk = new Chunk(chunkNo);
-              int replicationDegree = Peer.getDataContainer().getBackedUpChunkDesiredRepDegree(chunkId);
+                Chunk chunk = new Chunk(chunkNo);
+                int replicationDegree = Peer.getDataContainer().getBackedUpChunkDesiredRepDegree(chunkId);
 
-              PutchunkHandler putchunkHandler = new PutchunkHandler(chunk.load(fileId, chunkNo),fileId,replicationDegree);
-              new Thread(putchunkHandler).start();
+                PutchunkHandler putchunkHandler = new PutchunkHandler(chunk.load(fileId, chunkNo), fileId, replicationDegree);
+                new Thread(putchunkHandler).start();
             }
         }
     }
@@ -190,7 +191,7 @@ public class Receiver extends Subprotocol {
 
             if (!checkHeader(header))
                 return;
-            System.out.println("protocol.subprotocol.Receiver.stored");
+            System.out.println("protocol.subprotocol.Receiver.stored from " + senderId + " of chunkNo " + chunkNo);
 
             String chunkId = fileId + "_" + chunkNo;
             Peer.getDataContainer().incStoredCurrRepDegree(chunkId);
@@ -214,9 +215,9 @@ public class Receiver extends Subprotocol {
 
             //if not initialized, start it full of nulls with the required size
             if (chunks == null) {
-                if(Peer.getDataContainer().getNrOfChunks(fileId) == null)
+                if (Peer.getDataContainer().getOwnFile(fileId) == null)
                     return;
-                int chunksSize = Peer.getDataContainer().getNrOfChunks(fileId);
+                int chunksSize = Peer.getDataContainer().getOwnFileNrOfChunks(fileId);
                 Peer.getDataContainer().iniTmpChunksChunks(fileId, chunksSize);
                 chunks = Peer.getDataContainer().getTmpChunksChunks(fileId);
             }
@@ -237,7 +238,7 @@ public class Receiver extends Subprotocol {
 
     private boolean checkHeader(String[] header) {
         return Float.parseFloat(header[1]) == Peer.getProtocolVersion()
-                && Integer.parseInt(header[2]) != Peer.getServerId();
+                && !header[2].equals(Peer.getServerId());
     }
 
     private ArrayList<byte[]> headerBodySeparator(byte[] byteMessage) {

@@ -1,7 +1,6 @@
 package protocol.subprotocol.FileManagement;
 
 import protocol.Chunk;
-import protocol.subprotocol.FileManagement.FileManager;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -11,7 +10,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileOwnerAttributeView;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
 import java.util.Arrays;
 
 public class SplitFile extends FileManager {

@@ -46,9 +46,11 @@ public class Initiator extends Subprotocol {
 
             SplitFile sf = new SplitFile(filepath, repDegree);
 
-            Peer.getDataContainer().addOwnFile(sf.getFileId(), sf.getChunks().size());
+            Peer.getDataContainer().addOwnFile(sf.getFileId(), sf.getFile().getName(), sf.getChunks().size());
 
             for (Chunk chunk : sf.getChunks()) {
+                String chunkId = sf.getFileId() + "_" + chunk.getChunkNo();
+                Peer.getDataContainer().addStored(chunkId);
                 PutchunkHandler putchunkHandler = new PutchunkHandler(chunk, sf);
                 new Thread(putchunkHandler).start();
             }

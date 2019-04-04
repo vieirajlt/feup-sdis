@@ -1,13 +1,12 @@
-package protocol.subprotocol.FileManagement;
+package protocol;
 
 import java.io.Serializable;
-import java.lang.Integer;
 
 
 //TODO mudar de sitio...nao devia estar aqui provavelmente
 public class ChunkInfo implements Comparable<ChunkInfo>, Serializable {
 
-    private String chunkId;
+    private String chunkKey;
     private Integer currRepDegree;
     private Integer desiredRepDegree;
     private boolean onPeer;
@@ -15,22 +14,23 @@ public class ChunkInfo implements Comparable<ChunkInfo>, Serializable {
     private String fileId;
     private int chunkNo;
 
-    public ChunkInfo(String chunkId, Integer desiredRepDegree, Integer currRepDegree, boolean onPeer){
-        this.chunkId = chunkId;
+    public ChunkInfo(String chunkKey, Integer desiredRepDegree, Integer currRepDegree, boolean onPeer){
+        this.chunkKey = chunkKey;
         this.currRepDegree = currRepDegree;
         this.desiredRepDegree = desiredRepDegree;
+        this.onPeer = onPeer;
 
-        String[] info = chunkId.split("_");
+        String[] info = chunkKey.split("_");
         fileId = info[0];
         chunkNo = Integer.parseInt(info[1]);
     }
 
-    public String getChunkId() {
-        return chunkId;
+    public String getChunkKey() {
+        return chunkKey;
     }
 
-    public void setChunkId(String chunkId) {
-        this.chunkId = chunkId;
+    public void setChunkKey(String chunkKey) {
+        this.chunkKey = chunkKey;
     }
 
     public Integer getCurrRepDegree() {

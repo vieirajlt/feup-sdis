@@ -4,29 +4,23 @@ import java.io.*;
 
 public class Chunk implements Serializable {
 
-    public final static String STORE_PATH = "TMP/STORED/";
-
     static final long serialVersionUID = 42L;
 
     private int chunkNo;
     private byte[] body;
     private int size;
 
-    private String pathname;
+    private static String pathname = "TMP/" + Peer.getServerId() + "/backup/";
 
-    public Chunk() {
-        this.pathname = STORE_PATH + Peer.getServerId() + "/";
-    }
+    public Chunk() {}
 
     public Chunk(int chunkNo, byte[] body) {
-        this.pathname = STORE_PATH + Peer.getServerId() + "/";
         this.chunkNo = chunkNo;
         this.body = body;
         this.size = body.length;
     }
 
     public Chunk(int chunkNo) {
-        this.pathname = STORE_PATH + Peer.getServerId() + "/";
         this.chunkNo = chunkNo;
         this.body = null;
         this.size = 0;
@@ -45,9 +39,9 @@ public class Chunk implements Serializable {
     }
 
     public void store(String fileId) {
-        String chunkId = buildChunkFileId(fileId, chunkNo);
+        String chunkId = buildChunkFileId(chunkNo);
         try {
-            File file = new File(pathname + chunkId);
+            File file = new File(pathname + fileId + "/" + chunkId);
             file.getParentFile().mkdirs();
             file.createNewFile();
             FileOutputStream fOut = new FileOutputStream(file, false);
@@ -64,9 +58,9 @@ public class Chunk implements Serializable {
 
     public Chunk load(String fileId, int chunkNo) {
         Chunk loaded = null;
-        String chunkId = buildChunkFileId(fileId, chunkNo);
+        String chunkId = buildChunkFileId(chunkNo);
         try (
-                FileInputStream fIn = new FileInputStream(pathname + chunkId);
+                FileInputStream fIn = new FileInputStream(pathname + fileId + "/" + chunkId);
                 ObjectInputStream oIn = new ObjectInputStream(fIn)) {
             loaded = (Chunk) oIn.readObject();
         } catch (FileNotFoundException e) {
@@ -79,21 +73,29 @@ public class Chunk implements Serializable {
         return loaded;
     }
 
-    public static String buildChunkId(String fileId, int chunkNo) {
+    public static String buildChunkKey(String fileId, int chunkNo) {
         return fileId + "_" + chunkNo;
     }
 
-    public String buildChunkFileId(String fileId, int chunkNo) {
-        return buildChunkId(fileId, chunkNo) + ".ser";
+    public static String buildChunkId(int chunkNo) {
+        return "chk" + chunkNo;
+    }
+
+    public static String buildChunkFileId(int chunkNo) {
+        return buildChunkId(chunkNo) + ".ser";
     }
 
     public void delete(String fileId) {
-        String chunkId = buildChunkFileId(fileId, chunkNo);
-        File file = new File(pathname + chunkId);
+        String chunkId = buildChunkFileId(chunkNo);
+        File file = new File(pathname + fileId + "/" + chunkId);
         file.delete();
     }
 
-    public String getPathname() {
+    public static String getPathname() {
         return pathname;
+    }
+
+    public static String getChunkFolderPath(String fileId) {
+        return pathname + fileId + "/";
     }
 }

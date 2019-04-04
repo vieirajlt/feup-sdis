@@ -22,7 +22,7 @@ public class StoredHandler extends Handler implements Runnable {
     @Override
     public void run() {
 
-        String chunkId = Chunk.buildChunkId(fileId, chunk.getChunkNo());
+        String chunkId = Chunk.buildChunkKey(fileId, chunk.getChunkNo());
         byte[] message = buildMessage(STORED, MSG_CONFIG_STORED, fileId, chunk.getChunkNo(), -1, null);
 
         //add even if not saved on Peer for other peers info collection
@@ -41,13 +41,17 @@ public class StoredHandler extends Handler implements Runnable {
 
         chunk.store(fileId);
 
-        File chunkFile = new File(chunk.getPathname() + chunk.buildChunkFileId(fileId, chunk.getChunkNo()));
+        File chunkFile = new File(chunk.getChunkFolderPath(fileId) + chunk.buildChunkFileId(chunk.getChunkNo()));
 
         // case not enough space to store
         // OR repDegree exceeded
         if (!Peer.getDataContainer().incCurrStorageAmount(chunkFile.length()) ||
                 Peer.getDataContainer().getBackedUpChunkCurrRepDegree(chunkId) >= repDegree) {
             chunkFile.delete();
+            File dir = new File(chunk.getChunkFolderPath(fileId));
+            if(dir.isDirectory() && dir.list().length == 0) {
+                dir.delete();
+            }
             return;
         }
 
