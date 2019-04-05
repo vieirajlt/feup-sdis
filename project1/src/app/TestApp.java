@@ -1,8 +1,11 @@
 package app;
 
-import protocol.Channel;
+import protocol.RMIInterface;
 
-import java.nio.charset.StandardCharsets;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 
 public class TestApp {
 
@@ -15,8 +18,6 @@ public class TestApp {
     private static String sub_protocol;
     private static String opnd_1 = "";
     private static String opnd_2 = "";
-
-    private static Channel cmd;
 
     public static void main(String[] args) {
 
@@ -32,35 +33,63 @@ public class TestApp {
         }
 
         String[] ap = args[0].split(":");
+        String host, peer_ap;
         if (ap.length == 1) {
-            cmd = new Channel("localhost", ap[0]);
+            host = "localhost";
+            peer_ap = ap[0];
         } else {
-            cmd = new Channel(ap[0], ap[1]);
+            host = ap[0];
+            peer_ap = ap[1];
         }
 
         sub_protocol = args[1];
 
-        //Parameters check
-        if (sub_protocol.equals(BACKUP) && args.length != 4) {
-            System.out.println("Usage: app.TestApp <peer_ap> " + sub_protocol + "  <filepath> <replication_degree> ");
-            return;
-        } else if (sub_protocol.equals(RESTORE) && args.length != 3) {
-            System.out.println("Usage: app.TestApp <peer_ap> " + sub_protocol + "  <filepath>");
-            return;
-        } else if (sub_protocol.equals(DELETE) && args.length != 3) {
-            System.out.println("Usage: app.TestApp <peer_ap> " + sub_protocol + "  <filepath>");
-            return;
-        } else if (sub_protocol.equals(RECLAIM) && args.length != 3) {
-            System.out.println("Usage: app.TestApp <peer_ap> " + sub_protocol + "  <max_size>");
-            return;
-        } else if (sub_protocol.equals(STATE) && args.length != 2) {
-            System.out.println("Usage: app.TestApp <peer_ap> " + sub_protocol);
-            return;
+        try {
+            Registry registry = LocateRegistry.getRegistry(host);
+            RMIInterface initiator = (RMIInterface) registry.lookup(peer_ap);
+
+            String message = sub_protocol + " " + opnd_1 + " " + opnd_2;
+            String[] cmd = message.split(" ");
+
+            //Parameters check
+            if (sub_protocol.equals(BACKUP)) {
+                if (args.length != 4) {
+                    System.out.println("Usage: app.TestApp <peer_ap> " + sub_protocol + "  <filepath> <replication_degree> ");
+                    return;
+                }
+                initiator.backup(cmd);
+            } else if (sub_protocol.equals(RESTORE)) {
+                if (args.length != 3) {
+                    System.out.println("Usage: app.TestApp <peer_ap> " + sub_protocol + "  <filepath>");
+                    return;
+                }
+                initiator.restore(cmd);
+            } else if (sub_protocol.equals(DELETE)) {
+                if (args.length != 3) {
+                    System.out.println("Usage: app.TestApp <peer_ap> " + sub_protocol + "  <filepath>");
+                    return;
+                }
+                initiator.delete(cmd);
+            } else if (sub_protocol.equals(RECLAIM)) {
+                if (args.length != 3) {
+                    System.out.println("Usage: app.TestApp <peer_ap> " + sub_protocol + "  <max_size>");
+                    return;
+                }
+                initiator.reclaim(cmd);
+            } else if (sub_protocol.equals(STATE)) {
+                if (args.length != 2) {
+                    System.out.println("Usage: app.TestApp <peer_ap> " + sub_protocol);
+                    return;
+                }
+                initiator.state(cmd);
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } catch (NotBoundException e) {
+            e.printStackTrace();
         }
 
-        String message = sub_protocol + " " + opnd_1 + " " + opnd_2;
 
-        cmd.write(message.getBytes(StandardCharsets.UTF_8));
 
         if (sub_protocol.equals(STATE)) {
             // TODO implement RMI... this read wont work couse address is in use by Peer Channel

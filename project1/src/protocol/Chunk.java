@@ -10,7 +10,7 @@ public class Chunk implements Serializable {
     private byte[] body;
     private int size;
 
-    private static String pathname = "TMP/" + Peer.getServerId() + "/backup/";
+    private static String pathname = "TMP/peer" + Peer.getServerId() + "/backup/";
 
     public Chunk() {}
 

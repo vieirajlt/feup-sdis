@@ -6,7 +6,6 @@ import protocol.FileInfo;
 import protocol.Peer;
 
 import java.io.File;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 public class StateHandler extends Handler implements Runnable {
@@ -72,6 +71,6 @@ public class StateHandler extends Handler implements Runnable {
         used_capacity /= 1000;
         stateInfo += "Max Storage Capacity(KBytes): " + max_capacity + "\tUsed Storage Capacity(KBytes): " + used_capacity + "\n";
 
-        Peer.getCmd().write(stateInfo.getBytes(StandardCharsets.UTF_8));
+        System.out.println(stateInfo);
     }
 }

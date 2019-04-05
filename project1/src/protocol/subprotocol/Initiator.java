@@ -3,17 +3,31 @@ package protocol.subprotocol;
 import app.TestApp;
 import protocol.Chunk;
 import protocol.Peer;
+import protocol.RMIInterface;
 import protocol.subprotocol.FileManagement.SplitFile;
 import protocol.subprotocol.handler.*;
 
 import java.nio.charset.StandardCharsets;
+import java.rmi.AlreadyBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+import java.rmi.server.UnicastRemoteObject;
 
-public class Initiator extends Subprotocol {
+public class Initiator extends Subprotocol implements RMIInterface {
 
-    public Initiator() {
-
+    public static void startInitiator() {
+        try {
+            Initiator obj = new Initiator();
+            RMIInterface stub = (RMIInterface) UnicastRemoteObject.exportObject(obj, 0);
+            Registry registry = LocateRegistry.getRegistry();
+            registry.bind(Peer.getAp(), stub);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        } catch (AlreadyBoundException e) {
+            e.printStackTrace();
+        }
     }
-
 
     public boolean run(byte[] message) {
         String strMessage = new String(message, StandardCharsets.UTF_8);
@@ -35,70 +49,58 @@ public class Initiator extends Subprotocol {
         return true;
     }
 
-    private void backup(String[] cmd) {
-        synchronized (this) {
-            System.out.println("protocol.subprotocol.Initiator.putchunk");
-            String filepath = cmd[1];
-            int repDegree = Integer.parseInt(cmd[2]);
+    public synchronized void backup(String[] cmd) {
+        System.out.println("protocol.subprotocol.Initiator.putchunk");
+        String filepath = cmd[1];
+        int repDegree = Integer.parseInt(cmd[2]);
 
-            SplitFile sf = new SplitFile(filepath, repDegree);
+        SplitFile sf = new SplitFile(filepath, repDegree);
 
-            Peer.getDataContainer().addOwnFile(sf.getFileId(), sf.getFile().getName(), sf.getChunks().size(), sf.getReplicationDegree());
+        Peer.getDataContainer().addOwnFile(sf.getFileId(), sf.getFile().getName(), sf.getChunks().size(), sf.getReplicationDegree());
 
-            for (Chunk chunk : sf.getChunks()) {
-                String chunkId = sf.getFileId() + "_" + chunk.getChunkNo();
-                Peer.getDataContainer().addStored(chunkId);
-                PutchunkHandler putchunkHandler = new PutchunkHandler(chunk, sf);
-                new Thread(putchunkHandler).start();
-            }
+        for (Chunk chunk : sf.getChunks()) {
+            String chunkId = sf.getFileId() + "_" + chunk.getChunkNo();
+            Peer.getDataContainer().addStored(chunkId);
+            PutchunkHandler putchunkHandler = new PutchunkHandler(chunk, sf);
+            new Thread(putchunkHandler).start();
         }
     }
 
-    private void restore(String[] cmd) {
-        synchronized (this) {
-            System.out.println("protocol.subprotocol.Initiator.getchunk");
-            String filepath = cmd[1];
+    public synchronized void restore(String[] cmd) {
+        System.out.println("protocol.subprotocol.Initiator.getchunk");
+        String filepath = cmd[1];
 
-            SplitFile sf = new SplitFile(filepath);
+        SplitFile sf = new SplitFile(filepath);
 
-            GetchunkHandler getchunkHandler = new GetchunkHandler(sf);
-            new Thread(getchunkHandler).start();
-        }
+        GetchunkHandler getchunkHandler = new GetchunkHandler(sf);
+        new Thread(getchunkHandler).start();
     }
 
-    private void delete(String[] cmd) {
-        synchronized (this) {
-            System.out.println("protocol.subprotocol.Initiator.delete");
-            String filepath = cmd[1];
+    public synchronized void delete(String[] cmd) {
+        System.out.println("protocol.subprotocol.Initiator.delete");
+        String filepath = cmd[1];
 
-            SplitFile sf = new SplitFile(filepath);
+        SplitFile sf = new SplitFile(filepath);
 
-            DeleteHandler deleteHandler = new DeleteHandler(sf);
-            new Thread(deleteHandler).start();
-        }
+        DeleteHandler deleteHandler = new DeleteHandler(sf);
+        new Thread(deleteHandler).start();
     }
 
 
-    private void reclaim(String[] cmd) {
-        synchronized (this) {
-            System.out.println("protocol.subprotocol.Initiator.removed");
+    public synchronized void reclaim(String[] cmd) {
+        System.out.println("protocol.subprotocol.Initiator.removed");
 
-            long maxDiskSpace = Long.parseLong(cmd[1]);
+        long maxDiskSpace = Long.parseLong(cmd[1]);
 
-            RemovedHandler removedHandler = new RemovedHandler(maxDiskSpace);
-            new Thread(removedHandler).start();
-
-        }
-
+        RemovedHandler removedHandler = new RemovedHandler(maxDiskSpace);
+        new Thread(removedHandler).start();
     }
 
-    private synchronized void state(String[] cmd) {
-        synchronized (this) {
-            System.out.println("protocol.subprotocol.Initiator.state");
+    public synchronized void state(String[] cmd) {
+        System.out.println("protocol.subprotocol.Initiator.state");
 
-            StateHandler stateHandler = new StateHandler();
-            new Thread(stateHandler).start();
-        }
+        StateHandler stateHandler = new StateHandler();
+        new Thread(stateHandler).start();
     }
 
 }

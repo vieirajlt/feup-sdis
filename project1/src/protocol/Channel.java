@@ -31,7 +31,7 @@ public class Channel implements Runnable {
                 socket.receive(packet);
                 byte[] data = Arrays.copyOf( packet.getData(), packet.getLength());
                 //String receivedCut = received.substring(0, indexCut);
-                Peer.initiateProtocol(data, acceptText);
+                //Peer.initiateProtocol(data, acceptText);
             }
 
         } catch (Exception e) {
