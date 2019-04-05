@@ -6,6 +6,7 @@ import protocol.FileInfo;
 import protocol.Peer;
 
 import java.io.File;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 
 public class StateHandler extends Handler implements Runnable {
@@ -67,26 +68,10 @@ public class StateHandler extends Handler implements Runnable {
         long max_capacity = Peer.getDataContainer().getStorageCapacity();
         max_capacity /= 1000;
         File dir = new File(Chunk.getPathname());
-        long used_capacity = 0;
-        if(dir.exists()) {
-            used_capacity = folderSize(dir);
-        }
+        long used_capacity = Peer.getDataContainer().getCurrStorageAmount();
         used_capacity /= 1000;
         stateInfo += "Max Storage Capacity(KBytes): " + max_capacity + "\tUsed Storage Capacity(KBytes): " + used_capacity + "\n";
 
-        //To be sent to TestApp
-        //This way for test only
-        System.out.println(stateInfo);
-    }
-
-    private static long folderSize(File directory) {
-        long length = 0;
-        for (File file : directory.listFiles()) {
-            if (file.isFile())
-                length += file.length();
-            else
-                length += folderSize(file);
-        }
-        return length;
+        Peer.getCmd().write(stateInfo.getBytes(StandardCharsets.UTF_8));
     }
 }

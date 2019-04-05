@@ -61,6 +61,12 @@ public class TestApp {
         String message = sub_protocol + " " + opnd_1 + " " + opnd_2;
 
         cmd.write(message.getBytes(StandardCharsets.UTF_8));
+
+        if (sub_protocol.equals(STATE)) {
+            // TODO implement RMI... this read wont work couse address is in use by Peer Channel
+            //cmd.read(true);
+        }
+
         return;
     }
 }

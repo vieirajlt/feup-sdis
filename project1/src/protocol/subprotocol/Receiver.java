@@ -130,9 +130,6 @@ public class Receiver extends Subprotocol {
                         return;
                     }
 
-                    //decrement current storage amount
-                    Peer.getDataContainer().decCurrStorageAmount(length);
-
                     //delete file from backedUpChunks map
                     Peer.getDataContainer().deleteBackedUpChunk(key);
                 }

@@ -38,9 +38,6 @@ public class DataContainer implements Serializable {
     // maximum amount of disk space that can be used to store chunks (in Bytes)
     private long storageCapacity;
 
-    // amount of storage used to backup the chunks (in Bytes)
-    private long currStorageAmount;
-
     private DataContainer() {
         stored = new ConcurrentHashMap<>();
         backedUpChunks = new ConcurrentHashMap<>();
@@ -48,7 +45,6 @@ public class DataContainer implements Serializable {
         peersChunks = new ConcurrentHashMap<>();
         tmpChunks = new ConcurrentHashMap<>();
         storageCapacity = INITIAL_STORAGE_CAPACITY;
-        currStorageAmount = 0;
     }
 
     public void store() {
@@ -255,21 +251,23 @@ public class DataContainer implements Serializable {
     }
 
     public long getCurrStorageAmount() {
-        return currStorageAmount;
+        File dir = new File(Chunk.getPathname());
+        if(dir.exists()) {
+            return folderSize(dir);
+        }
+        return 0;
     }
 
-    public boolean incCurrStorageAmount(long amountOfStorage) {
-        long newStorageAmount = this.currStorageAmount + amountOfStorage;
-        if (newStorageAmount > this.storageCapacity)
-            return false;
-        this.currStorageAmount = newStorageAmount;
-        return true;
+    private static long folderSize(File directory) {
+        long length = 0;
+        for (File file : directory.listFiles()) {
+            if (file.isFile())
+                length += file.length();
+            else
+                length += folderSize(file);
+        }
+        return length;
     }
-
-    public void decCurrStorageAmount(long amountOfStorage) {
-        this.currStorageAmount -= amountOfStorage;
-    }
-
 
     public List<ChunkInfo> getBackedUpChunksSortedInfo() {
         List<ChunkInfo> sorted = new ArrayList<>(backedUpChunks.values());

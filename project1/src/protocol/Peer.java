@@ -3,6 +3,8 @@ package protocol;
 import protocol.subprotocol.Initiator;
 import protocol.subprotocol.Receiver;
 
+import java.nio.charset.StandardCharsets;
+
 public class Peer {
 
     private static Float version;
@@ -85,10 +87,16 @@ public class Peer {
         return restore;
     }
 
+    public static Channel getCmd() {
+        return cmd;
+    }
 
-    public static void initiateProtocol(byte[] message) {
+    public static void initiateProtocol(byte[] message, boolean acceptText) {
         if (!protocolIni.run(message)) {
-            System.out.println("Something went wrong...");
+            if (acceptText) {
+                String strMessage = new String(message, StandardCharsets.UTF_8);
+                System.out.println(strMessage);
+            }
         }
     }
 

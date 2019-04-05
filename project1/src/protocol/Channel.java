@@ -22,7 +22,7 @@ public class Channel implements Runnable {
         }
     }
 
-    public void read() {
+    public void read(boolean acceptText) {
         try (DatagramSocket socket = new DatagramSocket(PORT)) {
             byte[] rbuf = new byte[MAX_BUFFER_SIZE];
             DatagramPacket packet = new DatagramPacket(rbuf, rbuf.length);
@@ -31,7 +31,7 @@ public class Channel implements Runnable {
                 socket.receive(packet);
                 byte[] data = Arrays.copyOf( packet.getData(), packet.getLength());
                 //String receivedCut = received.substring(0, indexCut);
-                Peer.initiateProtocol(data);
+                Peer.initiateProtocol(data, acceptText);
             }
 
         } catch (Exception e) {
@@ -51,6 +51,6 @@ public class Channel implements Runnable {
 
     @Override
     public void run() {
-        read();
+        read(false);
     }
 }

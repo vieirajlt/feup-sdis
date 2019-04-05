@@ -46,7 +46,6 @@ public class RemovedHandler extends Handler implements Runnable {
             if (!chunkFile.delete())
                 continue;
 
-            Peer.getDataContainer().decCurrStorageAmount(chunkFileLength);
             System.out.println(Peer.getDataContainer().getCurrStorageAmount());
             String chunkKey = Chunk.buildChunkKey(fileId, chunkInfo.getChunkNo());
             Peer.getDataContainer().setBackedUpChunkOnPeer(chunkKey, false);
