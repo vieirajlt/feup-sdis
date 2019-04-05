@@ -1,6 +1,6 @@
 package app;
 
-import protocol.RMIInterface;
+import protocol.subprotocol.RMIInterface;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;

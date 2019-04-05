@@ -1,13 +1,10 @@
 package protocol.subprotocol;
 
-import app.TestApp;
 import protocol.Chunk;
 import protocol.Peer;
-import protocol.RMIInterface;
 import protocol.subprotocol.FileManagement.SplitFile;
 import protocol.subprotocol.handler.*;
 
-import java.nio.charset.StandardCharsets;
 import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -29,26 +26,6 @@ public class Initiator extends Subprotocol implements RMIInterface {
         }
     }
 
-    public boolean run(byte[] message) {
-        String strMessage = new String(message, StandardCharsets.UTF_8);
-        String[] cmd = strMessage.split(" ");
-
-        if (cmd[0].equals(TestApp.BACKUP)) {
-            backup(cmd);
-        } else if (cmd[0].equals(TestApp.RESTORE)) {
-            restore(cmd);
-        } else if (cmd[0].equals(TestApp.DELETE)) {
-            delete(cmd);
-        } else if (cmd[0].equals(TestApp.RECLAIM)) {
-            reclaim(cmd);
-        } else if (cmd[0].equals(TestApp.STATE)) {
-            state(cmd);
-        } else {
-            return false;
-        }
-        return true;
-    }
-
     public synchronized void backup(String[] cmd) {
         System.out.println("protocol.subprotocol.Initiator.putchunk");
         String filepath = cmd[1];
@@ -62,7 +39,7 @@ public class Initiator extends Subprotocol implements RMIInterface {
             String chunkId = sf.getFileId() + "_" + chunk.getChunkNo();
             Peer.getDataContainer().addStored(chunkId);
             PutchunkHandler putchunkHandler = new PutchunkHandler(chunk, sf);
-            new Thread(putchunkHandler).start();
+            Peer.getExecutor().execute(putchunkHandler);
         }
     }
 
@@ -73,7 +50,7 @@ public class Initiator extends Subprotocol implements RMIInterface {
         SplitFile sf = new SplitFile(filepath);
 
         GetchunkHandler getchunkHandler = new GetchunkHandler(sf);
-        new Thread(getchunkHandler).start();
+        getchunkHandler.handle();
     }
 
     public synchronized void delete(String[] cmd) {
@@ -83,7 +60,7 @@ public class Initiator extends Subprotocol implements RMIInterface {
         SplitFile sf = new SplitFile(filepath);
 
         DeleteHandler deleteHandler = new DeleteHandler(sf);
-        new Thread(deleteHandler).start();
+        deleteHandler.handle();
     }
 
 
@@ -93,14 +70,14 @@ public class Initiator extends Subprotocol implements RMIInterface {
         long maxDiskSpace = Long.parseLong(cmd[1]);
 
         RemovedHandler removedHandler = new RemovedHandler(maxDiskSpace);
-        new Thread(removedHandler).start();
+        removedHandler.handle();
     }
 
     public synchronized void state(String[] cmd) {
         System.out.println("protocol.subprotocol.Initiator.state");
 
         StateHandler stateHandler = new StateHandler();
-        new Thread(stateHandler).start();
+        stateHandler.handle();
     }
 
 }

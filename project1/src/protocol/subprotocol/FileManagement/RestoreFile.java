@@ -9,15 +9,14 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class RestoreFile extends FileManager implements Runnable {
+public class RestoreFile extends FileManager{
 
     public RestoreFile(String fileId)  {
         setFileId(fileId);
         setChunks(Peer.getDataContainer().getTmpChunksChunks(getFileId()));
     }
 
-    @Override
-    public void run() {
+    public void process() {
         String fileName = Peer.getDataContainer().getOwnFileName(getFileId());
         File file = new File("TMP/" + Peer.getServerId() + "/restored/" + fileName);
         file.getParentFile().mkdirs();

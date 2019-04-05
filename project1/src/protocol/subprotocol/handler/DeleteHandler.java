@@ -5,7 +5,7 @@ import protocol.subprotocol.FileManagement.SplitFile;
 
 import static protocol.subprotocol.Subprotocol.DELETE;
 
-public class DeleteHandler extends Handler implements Runnable{
+public class DeleteHandler extends Handler{
 
     private static final int MAX_DELETE_REPEAT = 5;
 
@@ -20,7 +20,7 @@ public class DeleteHandler extends Handler implements Runnable{
     }
 
     @Override
-    public void run() {
+    public void handle() {
 
         byte[] message = buildMessage(DELETE, MSG_CONFIG_DELETE, sf.getFileId(), -1, -1, null);
 

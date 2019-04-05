@@ -8,13 +8,13 @@ import protocol.Peer;
 import java.io.File;
 import java.util.HashMap;
 
-public class StateHandler extends Handler implements Runnable {
+public class StateHandler extends Handler{
 
     public StateHandler() {
     }
 
     @Override
-    public void run() {
+    public void handle() {
 
         String stateInfo = "Own Files:\n";
 

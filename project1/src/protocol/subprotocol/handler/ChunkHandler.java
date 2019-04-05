@@ -5,7 +5,7 @@ import protocol.Chunk;
 
 import static protocol.subprotocol.Subprotocol.CHUNK;
 
-public class ChunkHandler extends Handler implements Runnable {
+public class ChunkHandler extends Handler{
 
     private String fileId;
     private int chunkNo;
@@ -16,7 +16,7 @@ public class ChunkHandler extends Handler implements Runnable {
     }
 
     @Override
-    public void run() {
+    public void handle() {
         System.out.println("protocol.subprotocol.handler.senchunk.run");
         Chunk chunk = new Chunk(chunkNo);
         Chunk loaded = chunk.load(fileId, chunkNo);

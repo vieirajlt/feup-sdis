@@ -4,6 +4,8 @@ import protocol.Chunk;
 import protocol.Peer;
 import protocol.subprotocol.FileManagement.SplitFile;
 
+import java.util.concurrent.TimeUnit;
+
 import static protocol.subprotocol.Subprotocol.PUTCHUNK;
 
 public class PutchunkHandler extends Handler implements Runnable {
@@ -12,7 +14,6 @@ public class PutchunkHandler extends Handler implements Runnable {
     private static final int PUTCHUNK_INBETWEEN_TIME_MS = 1000;
 
     private int repeatCnt;
-    private boolean repDone;
     private Chunk chunk;
     private String fileId;
     private int repDegree;
@@ -21,22 +22,24 @@ public class PutchunkHandler extends Handler implements Runnable {
         this.chunk = chunk;
         this.fileId = fileId;
         this.repDegree = repDegree;
-        repeatCnt = 0;
-        repDone = false;
+        this.repeatCnt = 0;
     }
 
     public PutchunkHandler(Chunk chunk, SplitFile sf) {
         this.chunk = chunk;
         this.fileId = sf.getFileId();
         this.repDegree = sf.getReplicationDegree();
-        repeatCnt = 0;
-        repDone = false;
+        this.repeatCnt = 0;
     }
 
     @Override
     public void run() {
-        while (repeatCnt < MAX_PUTCHUNK_REPEAT && !repDone) {
-            repDone = true;
+        handle();
+    }
+
+    @Override
+    public void handle() {
+        if (repeatCnt < MAX_PUTCHUNK_REPEAT) {
 
             int chunkNo = chunk.getChunkNo();
             String chunkId = fileId + "_" + chunkNo;
@@ -45,9 +48,8 @@ public class PutchunkHandler extends Handler implements Runnable {
                     Peer.getDataContainer().getBackedUpChunkCurrRepDegree(chunkId) + " repDegree: " + repDegree);
             if (Peer.getDataContainer().getStoredCurrRepDegree(chunkId) >= repDegree ||
                     Peer.getDataContainer().getBackedUpChunkCurrRepDegree(chunkId) >= repDegree)
-                continue;
+                return;
 
-            repDone = false;
             byte[] body = chunk.getBody();
 
             byte[] message = buildMessage(PUTCHUNK, MSG_CONFIG_PUTCHUNK, fileId, chunkNo, repDegree, body);
@@ -57,12 +59,7 @@ public class PutchunkHandler extends Handler implements Runnable {
             ++repeatCnt;
 
             //delay for stored msg receiving
-            try {
-                Thread.sleep(PUTCHUNK_INBETWEEN_TIME_MS);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            Peer.getExecutor().schedule(this, PUTCHUNK_INBETWEEN_TIME_MS, TimeUnit.MILLISECONDS);
         }
     }
-
 }

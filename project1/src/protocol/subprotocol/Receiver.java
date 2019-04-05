@@ -2,10 +2,12 @@ package protocol.subprotocol;
 
 import protocol.Chunk;
 import protocol.Peer;
-import protocol.subprotocol.FileManagement.RestoreFile;
+import protocol.subprotocol.action.ChunkAction;
+import protocol.subprotocol.action.DeleteAction;
+import protocol.subprotocol.action.RemovedAction;
+import protocol.subprotocol.action.StoredAction;
 import protocol.subprotocol.handler.ChunkHandler;
 import protocol.subprotocol.handler.Handler;
-import protocol.subprotocol.handler.PutchunkHandler;
 import protocol.subprotocol.handler.StoredHandler;
 
 import java.io.File;
@@ -14,14 +16,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class Receiver extends Subprotocol {
+public class Receiver extends Subprotocol implements Runnable{
 
     private final static String LOG_PATH_1 = "TMP/LOGS/";
     private final static String LOG_PATH_2 = "/replication.log";
 
     private static String pathname;
+    private byte[] message;
 
-    public Receiver() {
+    public Receiver(byte[] byteMessage) {
         pathname = LOG_PATH_1 + Peer.getServerId() + LOG_PATH_2;
         File file = new File(pathname);
         file.getParentFile().mkdirs();
@@ -30,207 +33,104 @@ public class Receiver extends Subprotocol {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        message = byteMessage;
     }
 
-    public boolean run(byte[] byteMessage) {
+    @Override
+    public void run() {
 
-        ArrayList<byte[]> separator = headerBodySeparator(byteMessage);
+        ArrayList<byte[]> separator = headerBodySeparator(message);
 
         String header = new String(separator.get(0), StandardCharsets.UTF_8);
         byte[] body = separator.get(1);
 
-        String[] cmd = header.split(" ", 2);
+        String[] cmd = header.split(" ");
+
+        if (!checkHeader(cmd))
+            return;
 
         if (cmd[0].equals(PUTCHUNK)) {
-            putchunk(header, body);
+            putchunk(cmd, body);
         } else if (cmd[0].equals(GETCHUNK)) {
-            getchunk(header);
+            getchunk(cmd);
         } else if (cmd[0].equals(REMOVED)) {
-            removed(header);
+            removed(cmd);
         } else if (cmd[0].equals(DELETE)) {
-            delete(header);
+            delete(cmd);
         } else if (cmd[0].equals(STORED)) {
-            stored(header);
+            stored(cmd);
         } else if (cmd[0].equals(CHUNK)) {
-            chunk(header, body);
-        } else {
-            return false;
-        }
-        return true;
-    }
-
-    private void putchunk(String headerStr, byte[] body) {
-        synchronized (this) {
-            System.out.println("protocol.subprotocol.Receiver.putchunk");
-            String[] header = headerStr.split(" ");
-
-            if (!checkHeader(header))
-                return;
-
-
-            int chunkNo = Integer.parseInt(header[4]);
-            Chunk chunk = new Chunk(chunkNo, body);
-
-            String fileId = header[3];
-
-            //case it is Peer's own file
-            if (Peer.getDataContainer().getOwnFile(fileId) != null)
-                return;
-
-            int repDegree = Integer.parseInt(header[5]);
-
-            StoredHandler storedHandler = new StoredHandler(fileId, chunk, repDegree);
-            new Thread(storedHandler).start();
+            chunk(cmd, body);
         }
     }
 
-    private void getchunk(String headerStr) {
-        synchronized (this) {
-            System.out.println("protocol.subprotocol.Receiver.getchunk");
-            String[] header = headerStr.split(" ");
-            String senderId = header[2];
+    private synchronized void putchunk(String[] header, byte[] body) {
+        System.out.println("protocol.subprotocol.Receiver.putchunk");
 
-            int chunkNo = Integer.parseInt(header[4]);
-            String fileId = header[3];
+        int chunkNo = Integer.parseInt(header[4]);
+        Chunk chunk = new Chunk(chunkNo, body);
 
-            ChunkHandler chunkHandler = new ChunkHandler(fileId, chunkNo); //CHUNK
-            new Thread(chunkHandler).start();
-        }
+        String fileId = header[3];
+
+        int repDegree = Integer.parseInt(header[5]);
+
+        StoredHandler handler = new StoredHandler(fileId, chunk, repDegree);
+        handler.handle();
     }
 
-    private void delete(String headerStr) {
-        synchronized (this) {
-            System.out.println("protocol.subprotocol.Receiver.delete");
-            String[] header = headerStr.split(" ");
-            String fileId = header[3];
+    private synchronized void getchunk(String[] header) {
+        System.out.println("protocol.subprotocol.Receiver.getchunk");
 
-            if (!checkHeader(header))
-                return;
+        //TODO what to do with this??
+        String senderId = header[2];
 
-            System.out.println(Chunk.getChunkFolderPath(fileId));
-            File folder = new File(Chunk.getChunkFolderPath(fileId));
-            if(!folder.exists())
-                return;
-            File[] listOfFiles = folder.listFiles();
+        int chunkNo = Integer.parseInt(header[4]);
+        String fileId = header[3];
 
-            long length;
-
-            //delete all the chunks from the file
-            for (File file : listOfFiles) {
-                if (file.isFile()) {
-                    String chunkNoStr = ((file.getName()).substring(3)).split("\\.")[0];
-                    int chunkNo = Integer.parseInt(chunkNoStr);
-                    String key = Chunk.buildChunkKey(fileId, chunkNo);
-                    length = file.length();
-                    //dec current storage amount
-
-                    //delete file
-                    if (!file.delete()) {
-                        System.out.println("Failed to delete the file");
-                        return;
-                    }
-
-                    //delete file from backedUpChunks map
-                    Peer.getDataContainer().deleteBackedUpChunk(key);
-                }
-            }
-
-            if(folder.list().length == 0) {
-                folder.delete();
-            }
-
-            //delete all the file chunks from peersChunks
-            Peer.getDataContainer().deletePeersFileChunks(fileId);
-
-        }
+        ChunkHandler handler = new ChunkHandler(fileId, chunkNo); //CHUNK
+        handler.handle();
     }
 
-    private void removed(String headerStr) {
-        synchronized (this) {
-            System.out.println("protocol.subprotocol.Receiver.removed");
-            String[] header = headerStr.split(" ");
+    private synchronized void delete(String[] header) {
+        System.out.println("protocol.subprotocol.Receiver.delete");
+        String fileId = header[3];
 
-            String fileId = header[3];
-            int chunkNo = Integer.parseInt(header[4]);
-
-            String chunkId = Chunk.buildChunkKey(fileId, chunkNo);
-            Peer.getDataContainer().decBackedUpChunkCurrRepDegree(chunkId);
-
-            //if the peer does not store the chunk
-            if (!Peer.getDataContainer().isBackedUpChunkOnPeer(chunkId))
-                return;
-
-            //random delay uniformly distributed between 0 and 400 ms
-            try {
-                Thread.sleep(Handler.buildSleep_time_ms());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
-            //if no putchunk message was received send one
-            if (Peer.getDataContainer().getDifferenceBtCurrDesiredRepDegrees(chunkId) < 0) {
-
-                Chunk chunk = new Chunk(chunkNo);
-                int replicationDegree = Peer.getDataContainer().getBackedUpChunkDesiredRepDegree(chunkId);
-
-                PutchunkHandler putchunkHandler = new PutchunkHandler(chunk.load(fileId, chunkNo), fileId, replicationDegree);
-                new Thread(putchunkHandler).start();
-            }
-        }
+        DeleteAction action = new DeleteAction(fileId);
+        action.process();
     }
 
-    private void stored(String headerStr) {
-        synchronized (this) {
-            String[] header = headerStr.split(" ");
-            String senderId = header[2];
-            String fileId = header[3];
-            int chunkNo = Integer.parseInt(header[4]);
+    private synchronized void removed(String[] header) {
+        System.out.println("protocol.subprotocol.Receiver.removed");
 
-            if (!checkHeader(header))
-                return;
-            System.out.println("protocol.subprotocol.Receiver.stored from " + senderId + " of chunkNo " + chunkNo);
+        String fileId = header[3];
+        int chunkNo = Integer.parseInt(header[4]);
+        String chunkKey = Chunk.buildChunkKey(fileId, chunkNo);
 
-            String chunkId = fileId + "_" + chunkNo;
-            Peer.getDataContainer().incStoredCurrRepDegree(chunkId);
-            Peer.getDataContainer().incBackedUpChunkCurrRepDegree(chunkId);
-        }
+        RemovedAction action = new RemovedAction(fileId, chunkKey, chunkNo);
+        action.process();
     }
 
-    private void chunk(String headerStr, byte[] body) {
-        synchronized (this) {
-            String[] header = headerStr.split(" ");
+    private synchronized void stored(String[] header) {
+        String senderId = header[2];
+        String fileId = header[3];
+        int chunkNo = Integer.parseInt(header[4]);
 
-            if (!checkHeader(header))
-                return;
-            System.out.println("protocol.subprotocol.Receiver.chunk");
+        System.out.println("protocol.subprotocol.Receiver.stored from " + senderId + " of chunkNo " + chunkNo);
 
-            String senderId = header[2];
-            String fileId = header[3];
-            int chunkNo = Integer.parseInt(header[4]);
+        StoredAction action = new StoredAction(fileId, chunkNo);
+        action.process();
+    }
 
-            ArrayList<Chunk> chunks = Peer.getDataContainer().getTmpChunksChunks(fileId);
+    private synchronized void chunk(String[] header, byte[] body) {
+        System.out.println("protocol.subprotocol.Receiver.chunk");
+        //TODO what to do with this??
+        String senderId = header[2];
+        String fileId = header[3];
+        int chunkNo = Integer.parseInt(header[4]);
 
-            //if not initialized, start it full of nulls with the required size
-            if (chunks == null) {
-                if (Peer.getDataContainer().getOwnFile(fileId) == null)
-                    return;
-                int chunksSize = Peer.getDataContainer().getOwnFileNrOfChunks(fileId);
-                Peer.getDataContainer().iniTmpChunksChunks(fileId, chunksSize);
-                chunks = Peer.getDataContainer().getTmpChunksChunks(fileId);
-            }
+        ChunkAction action = new ChunkAction(fileId, body, chunkNo);
+        action.process();
 
-            //if chunk already received, ignore it
-            if (chunks.get(chunkNo) == null) {
-                Chunk chunk = new Chunk(chunkNo, body);
-                chunks.set(chunkNo, chunk);
-
-                //if all chunks received, start getchunk
-                if (Peer.getDataContainer().isTmpChunksChunksComplete(fileId)) {
-                    RestoreFile restoreFile = new RestoreFile(fileId);
-                    new Thread(restoreFile).start();
-                }
-            }
-        }
     }
 
     private boolean checkHeader(String[] header) {
@@ -256,5 +156,4 @@ public class Receiver extends Subprotocol {
         }
         return null;
     }
-
 }

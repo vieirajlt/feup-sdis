@@ -4,11 +4,11 @@ import protocol.subprotocol.Initiator;
 import protocol.subprotocol.Receiver;
 
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 public class Peer {
 
-    private static final int MAX_THREAD_POOL_SIZE = 100;
+    private static final int MAX_THREAD_POOL_SIZE = Runtime.getRuntime().availableProcessors() * 2;
 
     private static Float version;
     private static int id;
@@ -18,11 +18,9 @@ public class Peer {
     private static MulticastChannel backup;
     private static MulticastChannel restore;
 
-    private static Receiver protocolRec;
-
     private static DataContainer dataContainer;
 
-    private static ThreadPoolExecutor executor;
+    private static ScheduledThreadPoolExecutor executor;
 
     public static void main(String[] args) {
 
@@ -46,7 +44,6 @@ public class Peer {
         restore = new MulticastChannel(MDR[0], MDR[1]);
 
         Initiator.startInitiator();
-        protocolRec = new Receiver();
 
         dataContainer = DataContainer.load();
 
@@ -55,7 +52,7 @@ public class Peer {
         });
         Runtime.getRuntime().addShutdownHook(hook);
 
-        executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(MAX_THREAD_POOL_SIZE);
+        executor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(MAX_THREAD_POOL_SIZE);
 
         executor.execute(control);
         executor.execute(backup);
@@ -75,9 +72,8 @@ public class Peer {
     }
 
     public static void answerProtocol(byte[] message) {
-        if (!protocolRec.run(message)) {
-            System.out.println("Something went wrong...");
-        }
+        Receiver receiver = new Receiver(message);
+        executor.execute(receiver);
     }
 
     public static Float getProtocolVersion() {
@@ -94,5 +90,9 @@ public class Peer {
 
     public static String getAp() {
         return ap;
+    }
+
+    public static ScheduledThreadPoolExecutor getExecutor() {
+        return executor;
     }
 }

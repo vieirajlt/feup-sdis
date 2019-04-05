@@ -6,7 +6,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
-public class Handler {
+public abstract class Handler {
 
     public final static char CR = (char) 0x0D;
     public final static char LF = (char) 0x0A;
@@ -96,4 +96,6 @@ public class Handler {
     public static int buildSleep_time_ms() {
         return (int) (Math.random() * (MAX_TIME_SLEEP_MS + 1));
     }
+
+    public abstract void handle();
 }

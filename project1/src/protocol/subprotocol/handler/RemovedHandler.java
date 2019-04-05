@@ -10,7 +10,7 @@ import java.util.List;
 
 import static protocol.subprotocol.Subprotocol.REMOVED;
 
-public class RemovedHandler extends Handler implements Runnable {
+public class RemovedHandler extends Handler{
 
     private static final int REMOVED_INBETWEEN_TIME_MS = 1000;
 
@@ -20,9 +20,8 @@ public class RemovedHandler extends Handler implements Runnable {
         this.maxDiskSpace = maxDiskSpace;
     }
 
-
     @Override
-    public void run() {
+    public void handle() {
         System.out.println("protocol.subprotocol.handler.RemovedHandler.run");
         Peer.getDataContainer().setStorageCapacity(maxDiskSpace * 1000);
 
@@ -40,8 +39,6 @@ public class RemovedHandler extends Handler implements Runnable {
             chunkId = Chunk.buildChunkFileId(chunkInfo.getChunkNo());
             fileId = chunkInfo.getFileId();
             chunkFile = new File(pathname + fileId + "/" + chunkId);
-
-            long chunkFileLength = chunkFile.length();
 
             if (!chunkFile.delete())
                 continue;

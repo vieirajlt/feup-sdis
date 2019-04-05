@@ -8,7 +8,7 @@ import java.io.File;
 
 import static protocol.subprotocol.Subprotocol.STORED;
 
-public class StoredHandler extends Handler implements Runnable {
+public class StoredHandler extends Handler{
 
     private String fileId;
     private Chunk chunk;
@@ -21,7 +21,11 @@ public class StoredHandler extends Handler implements Runnable {
     }
 
     @Override
-    public void run() {
+    public void handle() {
+
+        //case it is Peer's own file
+        if (Peer.getDataContainer().getOwnFile(fileId) != null)
+            return;
 
         DataContainer dataContainer = Peer.getDataContainer();
 

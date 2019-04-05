@@ -5,7 +5,7 @@ import protocol.subprotocol.FileManagement.SplitFile;
 
 import static protocol.subprotocol.Subprotocol.GETCHUNK;
 
-public class GetchunkHandler extends Handler implements Runnable{
+public class GetchunkHandler extends Handler{
 
     private SplitFile sf;
 
@@ -14,7 +14,7 @@ public class GetchunkHandler extends Handler implements Runnable{
     }
 
     @Override
-    public void run() {
+    public void handle() {
         System.out.println("protocol.subprotocol.handler.getchunk.run");
         int chunksSize = Peer.getDataContainer().getOwnFileNrOfChunks(sf.getFileId());
         for(int chunkNo = 0; chunkNo < chunksSize; chunkNo++ )
