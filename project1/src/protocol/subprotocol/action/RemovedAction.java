@@ -5,7 +5,9 @@ import protocol.Peer;
 import protocol.subprotocol.handler.Handler;
 import protocol.subprotocol.handler.PutchunkHandler;
 
-public class RemovedAction extends Action {
+import java.util.concurrent.TimeUnit;
+
+public class RemovedAction extends Action implements Runnable {
 
     private String fileId;
     private String chunkKey;
@@ -25,13 +27,11 @@ public class RemovedAction extends Action {
         if (!Peer.getDataContainer().isBackedUpChunkOnPeer(chunkKey))
             return;
 
-        //random delay uniformly distributed between 0 and 400 ms
-        try {
-            Thread.sleep(Handler.buildSleep_time_ms());
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        Peer.getExecutor().schedule(this, Handler.buildSleep_time_ms(), TimeUnit.MILLISECONDS);
+    }
 
+    @Override
+    public void run() {
         //if no putchunk message was received send one
         if (Peer.getDataContainer().getDifferenceBtCurrDesiredRepDegrees(chunkKey) < 0) {
 

@@ -3,12 +3,15 @@ package protocol.subprotocol.handler;
 import protocol.Peer;
 import protocol.Chunk;
 
+import java.util.concurrent.TimeUnit;
+
 import static protocol.subprotocol.Subprotocol.CHUNK;
 
-public class ChunkHandler extends Handler{
+public class ChunkHandler extends Handler implements Runnable {
 
     private String fileId;
     private int chunkNo;
+    private String chunkKey;
 
     public ChunkHandler(String fileId, int chunkNo) {
         this.fileId = fileId;
@@ -21,22 +24,23 @@ public class ChunkHandler extends Handler{
         Chunk chunk = new Chunk(chunkNo);
         Chunk loaded = chunk.load(fileId, chunkNo);
         if (loaded != null) {
-            String chunkId = Chunk.buildChunkKey(fileId,chunkNo);
-            Peer.getDataContainer().setPeerChunk(chunkId,false );
-            try {
-                Thread.sleep(getSleep_time_ms());
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-            if (!Peer.getDataContainer().getChunkShippingState(chunkId))
-            {
-                byte[] body = loaded.getBody();
-                byte[] message = buildMessage(CHUNK, MSG_CONFIG_SENDCHUNK, fileId, chunkNo, -1, body);
-                // System.out.println(message);
-                Peer.getRestoreChannel().write(message);
+            chunkKey = Chunk.buildChunkKey(fileId, chunkNo);
+            Peer.getDataContainer().setPeerChunk(chunkKey, false);
+            Peer.getExecutor().schedule(this, getSleep_time_ms(), TimeUnit.MILLISECONDS);
+        }
+    }
 
-                Peer.getDataContainer().setPeerChunk(chunkId,true);
-            }
+    @Override
+    public void run() {
+        Chunk chunk = new Chunk(chunkNo);
+        Chunk loaded = chunk.load(fileId, chunkNo);
+        if (!Peer.getDataContainer().getChunkShippingState(chunkKey)) {
+            byte[] body = loaded.getBody();
+            byte[] message = buildMessage(CHUNK, MSG_CONFIG_SENDCHUNK, fileId, chunkNo, -1, body);
+            // System.out.println(message);
+            Peer.getRestoreChannel().write(message);
+
+            Peer.getDataContainer().setPeerChunk(chunkKey, true);
         }
     }
 }

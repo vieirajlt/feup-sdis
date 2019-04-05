@@ -24,6 +24,8 @@ public class Peer {
 
     public static void main(String[] args) {
 
+        System.out.println(MAX_THREAD_POOL_SIZE);
+
         if (args.length != 5) {
             System.out.println("Usage: protocol.Peer <protocol_version> <server_id> <MC_ip:MC_port> <MDB_ip:MDB_port> <MDR_ip:MDR_port>");
             return;

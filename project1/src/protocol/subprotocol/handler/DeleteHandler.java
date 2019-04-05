@@ -3,9 +3,11 @@ package protocol.subprotocol.handler;
 import protocol.Peer;
 import protocol.subprotocol.FileManagement.SplitFile;
 
+import java.util.concurrent.TimeUnit;
+
 import static protocol.subprotocol.Subprotocol.DELETE;
 
-public class DeleteHandler extends Handler{
+public class DeleteHandler extends Handler implements Runnable {
 
     private static final int MAX_DELETE_REPEAT = 5;
 
@@ -15,6 +17,8 @@ public class DeleteHandler extends Handler{
 
     private SplitFile sf;
 
+    private byte[] message;
+
     public DeleteHandler(SplitFile sf) {
         this.sf = sf;
     }
@@ -22,32 +26,28 @@ public class DeleteHandler extends Handler{
     @Override
     public void handle() {
 
-        byte[] message = buildMessage(DELETE, MSG_CONFIG_DELETE, sf.getFileId(), -1, -1, null);
+        message = buildMessage(DELETE, MSG_CONFIG_DELETE, sf.getFileId(), -1, -1, null);
 
-        while (repeatCnt < MAX_DELETE_REPEAT )
-        {
-            Peer.getControlChannel().write(message);
-
-            ++repeatCnt;
-
-            //delay
-            try {
-                Thread.sleep(DELETE_INBETWEEN_TIME_MS);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
+        Peer.getExecutor().execute(this);
 
         //delete the file
-        if(sf.getFile().delete())
+        if (sf.getFile().delete())
             System.out.println("File deleted successfully");
-        else
-        {
+        else {
             System.out.println("Failed to delete the file");
             return;
         }
 
         //delete file from Peer's ownFiles and file chunks from stored
         Peer.getDataContainer().deleteOwnFileAndChunks(sf.getFileId());
+    }
+
+    @Override
+    public void run() {
+        if (repeatCnt < MAX_DELETE_REPEAT) {
+            Peer.getControlChannel().write(message);
+            ++repeatCnt;
+            Peer.getExecutor().schedule(this, DELETE_INBETWEEN_TIME_MS, TimeUnit.MILLISECONDS);
+        }
     }
 }
