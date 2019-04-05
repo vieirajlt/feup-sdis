@@ -88,14 +88,5 @@ public class TestApp {
         } catch (NotBoundException e) {
             e.printStackTrace();
         }
-
-
-
-        if (sub_protocol.equals(STATE)) {
-            // TODO implement RMI... this read wont work couse address is in use by Peer Channel
-            //cmd.read(true);
-        }
-
-        return;
     }
 }

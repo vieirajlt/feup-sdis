@@ -3,7 +3,12 @@ package protocol;
 import protocol.subprotocol.Initiator;
 import protocol.subprotocol.Receiver;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+
 public class Peer {
+
+    private static final int MAX_THREAD_POOL_SIZE = 100;
 
     private static Float version;
     private static int id;
@@ -16,6 +21,8 @@ public class Peer {
     private static Receiver protocolRec;
 
     private static DataContainer dataContainer;
+
+    private static ThreadPoolExecutor executor;
 
     public static void main(String[] args) {
 
@@ -48,17 +55,11 @@ public class Peer {
         });
         Runtime.getRuntime().addShutdownHook(hook);
 
-        //Threads Start
+        executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(MAX_THREAD_POOL_SIZE);
 
-        Thread threadMC = new Thread(control);
-        threadMC.start();
-
-        Thread threadMDB = new Thread(backup);
-        threadMDB.start();
-
-        Thread threadMDR = new Thread(restore);
-        threadMDR.start();
-
+        executor.execute(control);
+        executor.execute(backup);
+        executor.execute(restore);
     }
 
     public static MulticastChannel getControlChannel() {
