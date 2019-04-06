@@ -2,10 +2,13 @@ package protocol.subprotocol.handler;
 
 
 import protocol.Chunk;
+import protocol.info.ChunkInfo;
 import protocol.Peer;
-import protocol.ChunkInfo;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -36,26 +39,34 @@ public class RemovedHandler extends Handler implements Runnable {
             return;
 
         String chunkId, fileId, pathname = Chunk.getPathname();
-        File chunkFile;
         ChunkInfo chunkInfo;
 
-        List sortedBackedUpChunks = Peer.getDataContainer().getBackedUpChunksSortedInfo();
+        List sortedBackedUpChunks = Peer.getDataContainer().getBackedUpChunksOnPeerSortedInfo();
 
         if(sortedBackedUpChunks.size() < 1)
             return;
 
         chunkInfo = (ChunkInfo) sortedBackedUpChunks.get(0);
-        chunkId = Chunk.buildChunkFileId(chunkInfo.getChunkNo());
+        Chunk chunk = new Chunk(chunkInfo.getChunkNo());
+        chunkId = chunk.buildChunkId();
         fileId = chunkInfo.getFileId();
-        chunkFile = new File(pathname + fileId + "/" + chunkId);
 
-        if (!chunkFile.delete()) {
+        Path path = Paths.get(pathname + fileId + "/" + chunkId);
+        long length;
+
+        try {
+            length = Files.size(path);
+            Files.delete(path);
+        } catch (IOException e) {
+            e.printStackTrace();
             System.out.println("Error Deleting...");
             return;
         }
 
+        Peer.getDataContainer().decCurrStorageAmount(length);
+
         System.out.println(Peer.getDataContainer().getCurrStorageAmount());
-        String chunkKey = Chunk.buildChunkKey(fileId, chunkInfo.getChunkNo());
+        String chunkKey = chunk.buildChunkKey(fileId);
         Peer.getDataContainer().setBackedUpChunkOnPeer(chunkKey, false);
         byte[] message = buildMessage(REMOVED, MSG_CONFIG_REMOVED, chunkInfo.getFileId(), chunkInfo.getChunkNo(), -1, null);
 

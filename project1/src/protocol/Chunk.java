@@ -1,6 +1,13 @@
 package protocol;
 
-import java.io.*;
+import protocol.subprotocol.FileManagement.FileManager;
+
+import java.io.IOException;
+import java.io.Serializable;
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousFileChannel;
+import java.nio.channels.CompletionHandler;
+import java.nio.file.*;
 
 public class Chunk implements Serializable {
 
@@ -10,20 +17,25 @@ public class Chunk implements Serializable {
     private byte[] body;
     private int size;
 
+    private boolean loaded;
+
     private static String pathname = "TMP/peer" + Peer.getServerId() + "/backup/";
 
-    public Chunk() {}
+    public Chunk() {
+    }
 
     public Chunk(int chunkNo, byte[] body) {
         this.chunkNo = chunkNo;
         this.body = body;
         this.size = body.length;
+        loaded = true;
     }
 
     public Chunk(int chunkNo) {
         this.chunkNo = chunkNo;
         this.body = null;
         this.size = 0;
+        loaded = true;
     }
 
     public int getChunkNo() {
@@ -34,61 +46,85 @@ public class Chunk implements Serializable {
         return body;
     }
 
-    public int getSize() {
-        return size;
-    }
-
     public void store(String fileId) {
-        String chunkId = buildChunkFileId(chunkNo);
+        String chunkId = buildChunkId();
+        Path path = Paths.get(pathname + fileId + "/" + chunkId);
+
         try {
-            File file = new File(pathname + fileId + "/" + chunkId);
-            file.getParentFile().mkdirs();
-            file.createNewFile();
-            FileOutputStream fOut = new FileOutputStream(file, false);
-            ObjectOutputStream oOut = new ObjectOutputStream(fOut);
-            oOut.writeObject(this);
-            oOut.close();
-            fOut.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+            Files.createDirectories(path.getParent());
+
+            AsynchronousFileChannel fileChannel = AsynchronousFileChannel.open(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+            ByteBuffer buffer = ByteBuffer.wrap(body);
+
+            fileChannel.write(buffer, 0, buffer, new CompletionHandler<>() {
+                @Override
+                public void completed(Integer result, ByteBuffer attachment) {
+                    System.out.println("Success writing chunk body!");
+                }
+
+                @Override
+                public void failed(Throwable exc, ByteBuffer attachment) {
+                    System.out.println("Error writing chunk body...");
+                }
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public Chunk load(String fileId, int chunkNo) {
-        Chunk loaded = null;
-        String chunkId = buildChunkFileId(chunkNo);
-        try (
-                FileInputStream fIn = new FileInputStream(pathname + fileId + "/" + chunkId);
-                ObjectInputStream oIn = new ObjectInputStream(fIn)) {
-            loaded = (Chunk) oIn.readObject();
-        } catch (FileNotFoundException e) {
-            return null;
+    public void load(String fileId) {
+        loaded = false;
+        String chunkId = buildChunkId();
+        Path path = Paths.get(pathname + fileId + "/" + chunkId);
+
+        try {
+            AsynchronousFileChannel fileChannel = AsynchronousFileChannel.open(path, StandardOpenOption.READ);
+            ByteBuffer buffer = ByteBuffer.allocate(FileManager.MAX_CHUNK_SIZE * 2);
+
+            fileChannel.read(buffer, 0, buffer, new CompletionHandler<>() {
+                @Override
+                public void completed(Integer result, ByteBuffer attachment) {
+                    System.out.println("Success reading chunk body!");
+                    attachment.flip();
+                    body = new byte[attachment.limit()];
+                    attachment.get(body);
+                    size = body.length;
+                    attachment.clear();
+                    loaded = true;
+                }
+
+                @Override
+                public void failed(Throwable exc, ByteBuffer attachment) {
+                    System.out.println("Error reading chunk body...");
+                }
+            });
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
         }
-        return loaded;
     }
 
-    public static String buildChunkKey(String fileId, int chunkNo) {
+    public String buildChunkKey(String fileId) {
         return fileId + "_" + chunkNo;
     }
 
-    public static String buildChunkId(int chunkNo) {
+    public String buildChunkId() {
         return "chk" + chunkNo;
     }
 
-    public static String buildChunkFileId(int chunkNo) {
-        return buildChunkId(chunkNo) + ".ser";
-    }
-
     public void delete(String fileId) {
-        String chunkId = buildChunkFileId(chunkNo);
-        File file = new File(pathname + fileId + "/" + chunkId);
-        file.delete();
+        String chunkId = buildChunkId();
+        Path path = Paths.get(pathname + fileId + "/" + chunkId);
+        try {
+            if (Files.exists(path)) {
+                Files.delete(path);
+                Path dir = path.getParent();
+                Files.delete(dir);
+            }
+        } catch (DirectoryNotEmptyException x) {
+            //do nothing
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static String getPathname() {
@@ -97,5 +133,9 @@ public class Chunk implements Serializable {
 
     public static String getChunkFolderPath(String fileId) {
         return pathname + fileId + "/";
+    }
+
+    public boolean isLoaded() {
+        return loaded;
     }
 }

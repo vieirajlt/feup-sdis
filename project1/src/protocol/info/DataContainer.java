@@ -1,6 +1,12 @@
-package protocol;
+package protocol.info;
+
+import protocol.Chunk;
+import protocol.Peer;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -37,6 +43,8 @@ public class DataContainer implements Serializable {
 
     // maximum amount of disk space that can be used to store chunks (in Bytes)
     private long storageCapacity;
+    // amount of disk space being used to store chunks (in Bytes)
+    private long currStorageAmount;
 
     private DataContainer() {
         stored = new ConcurrentHashMap<>();
@@ -45,15 +53,15 @@ public class DataContainer implements Serializable {
         peersChunks = new ConcurrentHashMap<>();
         tmpChunks = new ConcurrentHashMap<>();
         storageCapacity = INITIAL_STORAGE_CAPACITY;
+        currStorageAmount = 0;
     }
 
     public void store() {
         tmpChunks.clear();
-        File file = new File(DATA_PATH);
-        file.getParentFile().mkdirs();
+        Path path = Paths.get(DATA_PATH);
         try {
-            file.createNewFile();
-            FileOutputStream fOut = new FileOutputStream(file, false);
+            Files.createDirectories(path.getParent());
+            FileOutputStream fOut = new FileOutputStream(DATA_PATH, false);
             ObjectOutputStream oOut = new ObjectOutputStream(fOut);
             oOut.writeObject(this);
             oOut.close();
@@ -251,31 +259,29 @@ public class DataContainer implements Serializable {
     }
 
     public long getCurrStorageAmount() {
-        File dir = new File(Chunk.getPathname());
-        if(dir.exists()) {
-            return folderSize(dir);
-        }
-        return 0;
+        return currStorageAmount;
     }
 
-    private static long folderSize(File directory) {
-        long length = 0;
-        for (File file : directory.listFiles()) {
-            if (file.isFile())
-                length += file.length();
-            else
-                length += folderSize(file);
-        }
-        return length;
+    public void incCurrStorageAmount(long value) {
+        currStorageAmount += value;
     }
 
-    public List<ChunkInfo> getBackedUpChunksSortedInfo() {
+    public void decCurrStorageAmount(long value) {
+        currStorageAmount -= value;
+    }
+
+    public List<ChunkInfo> getBackedUpChunksOnPeerSortedInfo() {
         List<ChunkInfo> sorted = new ArrayList<>(backedUpChunks.values());
         Collections.sort(sorted);
         Collections.reverse(sorted);
-        for (int i = 0; i < sorted.size(); i++)
+        List<ChunkInfo> values = new ArrayList<>();
+        for (int i = 0; i < sorted.size(); i++) {
+            //filter on peer elements
+            if(sorted.get(i).isOnPeer())
+                values.add(sorted.get(i));
             System.out.println(sorted.get(i));
-        return sorted;
+        }
+        return values;
     }
 
     public void deleteOwnFileAndChunks(String fileId) {
@@ -285,11 +291,12 @@ public class DataContainer implements Serializable {
         int nrOfChunks = getOwnFileNrOfChunks(fileId);
         deleteOwnFile(fileId);
 
-        String chunkId;
+        String chunkKey;
 
         for (int chunkNo = 0; chunkNo < nrOfChunks; chunkNo++) {
-            chunkId = Chunk.buildChunkKey(fileId, chunkNo);
-            deleteStoredChunk(chunkId);
+            Chunk chunk = new Chunk(chunkNo);
+            chunkKey = chunk.buildChunkKey(fileId);
+            deleteStoredChunk(chunkKey);
         }
 
     }

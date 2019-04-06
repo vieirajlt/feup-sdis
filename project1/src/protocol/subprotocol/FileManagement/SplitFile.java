@@ -1,22 +1,27 @@
 package protocol.subprotocol.FileManagement;
 
 import protocol.Chunk;
+import protocol.Peer;
+import protocol.subprotocol.handler.PutchunkHandler;
 
-import java.io.*;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousFileChannel;
+import java.nio.channels.CompletionHandler;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileOwnerAttributeView;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
 
 public class SplitFile extends FileManager {
 
     private String pathname;
+    private String fileName;
     private int replicationDegree;
-    private File file;
 
     /**
      * @param pathname
@@ -25,49 +30,65 @@ public class SplitFile extends FileManager {
     public SplitFile(String pathname, int replicationDegree) {
         this.pathname = pathname;
         this.replicationDegree = replicationDegree;
-        file = new File(pathname);
-
+        Path path = Paths.get(pathname);
+        this.fileName = path.getFileName().toString();
         buildId();
-        split();
+
     }
 
     public SplitFile(String pathname) {
         this.pathname = pathname;
         this.replicationDegree = 1;
-        file = new File(pathname);
+        Path path = Paths.get(pathname);
+        this.fileName = path.getFileName().toString();
         buildId();
     }
 
-    private void split() {
-        int chunkNo = 0;
+    public void splitAndSend() {
 
-        byte[] buffer = new byte[MAX_CHUNK_SIZE];
+        Path path = Paths.get(pathname);
 
-        try (FileInputStream fis = new FileInputStream(file);
-             BufferedInputStream bis = new BufferedInputStream(fis)) {
+        try {
+            AsynchronousFileChannel fileChannel = AsynchronousFileChannel.open(path, StandardOpenOption.READ);
+            ByteBuffer buffer = ByteBuffer.allocate(MAX_CHUNK_SIZE * MAX_NUM_CHUNKS);
 
-            int prevBytesRead = 0, bytesRead = bis.read(buffer);
-            while (bytesRead > 0) {
+            fileChannel.read(buffer, 0, buffer, new CompletionHandler<>() {
+                @Override
+                public void completed(Integer result, ByteBuffer attachment) {
+                    attachment.flip();
+                    Integer position = 0;
+                    int chunkNo = 0, length = MAX_CHUNK_SIZE;
+                    while (length == MAX_CHUNK_SIZE) {
+                        //read chunk body
+                        if (result - position < MAX_CHUNK_SIZE) {
+                            length = result - position;
+                        }
 
-                byte[] body = Arrays.copyOf(buffer, bytesRead);
-                Chunk chunk = new Chunk(chunkNo++, body);
+                        byte[] body = new byte[length];
+                        if (length != 0) {
+                            attachment.get(body);
+                            position += length;
+                        }
 
-                addChunksChunk(chunk);
+                        //store chunk
+                        Chunk chunk = new Chunk(chunkNo++, body);
+                        addChunksChunk(chunk);
+                        String chunkKey = chunk.buildChunkKey(getFileId());
+                        Peer.getDataContainer().addStored(chunkKey);
 
-                prevBytesRead = bytesRead;
-                Arrays.fill(buffer, (byte) 0);
-                bytesRead = bis.read(buffer);
-            }
+                        //handler
+                        PutchunkHandler putchunkHandler = new PutchunkHandler(chunk, getFileId(), replicationDegree);
+                        Peer.getExecutor().execute(putchunkHandler);
+                    }
+                    Peer.getDataContainer().addOwnFile(getFileId(), fileName, getChunksSize(), replicationDegree);
+                    attachment.clear();
+                }
 
-            //case last chunk build is full sized
-            //add other empty chunk
-            if (prevBytesRead == MAX_CHUNK_SIZE) {
-                Chunk chunk = new Chunk(chunkNo, new byte[0]);
-                addChunksChunk(chunk);
-            }
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
+                @Override
+                public void failed(Throwable exc, ByteBuffer attachment) {
+                    System.out.println("Error reading file for splitAndSend...");
+                }
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -83,7 +104,7 @@ public class SplitFile extends FileManager {
             FileOwnerAttributeView ownerAttribute = Files.getFileAttributeView(path, FileOwnerAttributeView.class);
 
             String fileIdUnhashed =
-                    file.getName() +
+                    this.fileName +
                             ownerAttribute.getOwner() +
                             fileAttributes.size() +
                             fileAttributes.creationTime() +
@@ -124,5 +145,11 @@ public class SplitFile extends FileManager {
         return replicationDegree;
     }
 
-    public File getFile() { return file; }
+    public String getFileName() {
+        return fileName;
+    }
+
+    public String getPathname() {
+        return pathname;
+    }
 }

@@ -1,11 +1,12 @@
 package protocol.subprotocol;
 
-import protocol.Chunk;
 import protocol.Peer;
 import protocol.subprotocol.FileManagement.SplitFile;
-import protocol.subprotocol.handler.*;
+import protocol.subprotocol.handler.DeleteHandler;
+import protocol.subprotocol.handler.GetchunkHandler;
+import protocol.subprotocol.handler.RemovedHandler;
+import protocol.subprotocol.handler.StateHandler;
 
-import java.rmi.AlreadyBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
@@ -18,10 +19,8 @@ public class Initiator extends Subprotocol implements RMIInterface {
             Initiator obj = new Initiator();
             RMIInterface stub = (RMIInterface) UnicastRemoteObject.exportObject(obj, 0);
             Registry registry = LocateRegistry.getRegistry();
-            registry.bind(Peer.getAp(), stub);
+            registry.rebind(Peer.getAp(), stub);
         } catch (RemoteException e) {
-            e.printStackTrace();
-        } catch (AlreadyBoundException e) {
             e.printStackTrace();
         }
     }
@@ -33,14 +32,7 @@ public class Initiator extends Subprotocol implements RMIInterface {
 
         SplitFile sf = new SplitFile(filepath, repDegree);
 
-        Peer.getDataContainer().addOwnFile(sf.getFileId(), sf.getFile().getName(), sf.getChunks().size(), sf.getReplicationDegree());
-
-        for (Chunk chunk : sf.getChunks()) {
-            String chunkId = sf.getFileId() + "_" + chunk.getChunkNo();
-            Peer.getDataContainer().addStored(chunkId);
-            PutchunkHandler putchunkHandler = new PutchunkHandler(chunk, sf);
-            Peer.getExecutor().execute(putchunkHandler);
-        }
+        sf.splitAndSend();
     }
 
     public synchronized void restore(String[] cmd) {

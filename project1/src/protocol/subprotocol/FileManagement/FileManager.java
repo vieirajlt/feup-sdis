@@ -6,10 +6,9 @@ import java.util.ArrayList;
 
 public class FileManager {
 
-    /*Must be maxed to 64000 to be accordingly to max
-    chunk size. Not possible with UDP. TODO on RMI
-     */
+    //TODO test this maxed to 64000
     public final static int MAX_CHUNK_SIZE = 1000;
+    public final static int MAX_NUM_CHUNKS = 1000000;
 
     private  String fileId;
     private ArrayList<Chunk> chunks = new ArrayList<>();
@@ -39,9 +38,5 @@ public class FileManager {
 
     public int getChunksSize() {
         return chunksSize;
-    }
-
-    public void setChunksSize(int chunksSize) {
-        this.chunksSize = chunksSize;
     }
 }

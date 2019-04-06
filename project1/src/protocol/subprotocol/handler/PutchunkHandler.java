@@ -2,7 +2,6 @@ package protocol.subprotocol.handler;
 
 import protocol.Chunk;
 import protocol.Peer;
-import protocol.subprotocol.FileManagement.SplitFile;
 
 import java.util.concurrent.TimeUnit;
 
@@ -22,13 +21,6 @@ public class PutchunkHandler extends Handler implements Runnable {
         this.chunk = chunk;
         this.fileId = fileId;
         this.repDegree = repDegree;
-        this.repeatCnt = 0;
-    }
-
-    public PutchunkHandler(Chunk chunk, SplitFile sf) {
-        this.chunk = chunk;
-        this.fileId = sf.getFileId();
-        this.repDegree = sf.getReplicationDegree();
         this.repeatCnt = 0;
     }
 

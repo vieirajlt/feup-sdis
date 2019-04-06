@@ -3,6 +3,10 @@ package protocol.subprotocol.handler;
 import protocol.Peer;
 import protocol.subprotocol.FileManagement.SplitFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 
 import static protocol.subprotocol.Subprotocol.DELETE;
@@ -31,9 +35,14 @@ public class DeleteHandler extends Handler implements Runnable {
         Peer.getExecutor().execute(this);
 
         //delete the file
-        if (sf.getFile().delete())
-            System.out.println("File deleted successfully");
-        else {
+        Path path = Paths.get(sf.getPathname());
+        try {
+            if (Files.exists(path)) {
+                Files.delete(path);
+                System.out.println("File deleted successfully " + Files.exists(path));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
             System.out.println("Failed to delete the file");
             return;
         }

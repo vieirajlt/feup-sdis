@@ -10,29 +10,15 @@ import protocol.subprotocol.handler.ChunkHandler;
 import protocol.subprotocol.handler.Handler;
 import protocol.subprotocol.handler.StoredHandler;
 
-import java.io.File;
-import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Receiver extends Subprotocol implements Runnable{
 
-    private final static String LOG_PATH_1 = "TMP/LOGS/";
-    private final static String LOG_PATH_2 = "/replication.log";
-
-    private static String pathname;
     private byte[] message;
 
     public Receiver(byte[] byteMessage) {
-        pathname = LOG_PATH_1 + Peer.getServerId() + LOG_PATH_2;
-        File file = new File(pathname);
-        file.getParentFile().mkdirs();
-        try {
-            file.createNewFile();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
         message = byteMessage;
     }
 
@@ -104,7 +90,8 @@ public class Receiver extends Subprotocol implements Runnable{
 
         String fileId = header[3];
         int chunkNo = Integer.parseInt(header[4]);
-        String chunkKey = Chunk.buildChunkKey(fileId, chunkNo);
+        Chunk chunk = new Chunk(chunkNo);
+        String chunkKey = chunk.buildChunkKey(fileId);
 
         RemovedAction action = new RemovedAction(fileId, chunkKey, chunkNo);
         action.process();
@@ -135,7 +122,7 @@ public class Receiver extends Subprotocol implements Runnable{
 
     private boolean checkHeader(String[] header) {
         return Float.parseFloat(header[1]) == Peer.getProtocolVersion()
-                && !header[2].equals(Peer.getServerId());
+                && Integer.parseInt(header[2]) != Peer.getServerId();
     }
 
     private ArrayList<byte[]> headerBodySeparator(byte[] byteMessage) {

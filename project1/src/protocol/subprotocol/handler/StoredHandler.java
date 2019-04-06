@@ -3,7 +3,10 @@ package protocol.subprotocol.handler;
 import protocol.Chunk;
 import protocol.Peer;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 
 import static protocol.subprotocol.Subprotocol.STORED;
@@ -28,7 +31,7 @@ public class StoredHandler extends Handler implements Runnable {
         if (Peer.getDataContainer().getOwnFile(fileId) != null)
             return;
 
-        String chunkKey = Chunk.buildChunkKey(fileId, chunk.getChunkNo());
+        String chunkKey = chunk.buildChunkKey(fileId);
         message = buildMessage(STORED, MSG_CONFIG_STORED, fileId, chunk.getChunkNo(), -1, null);
 
         //add even if not saved on Peer for other peers info collection
@@ -47,19 +50,20 @@ public class StoredHandler extends Handler implements Runnable {
     public void run() {
         chunk.store(fileId);
 
-        File chunkFile = new File(chunk.getChunkFolderPath(fileId) + chunk.buildChunkFileId(chunk.getChunkNo()));
-
         // case not enough space to store
         // OR repDegree exceeded
-        String chunkKey = Chunk.buildChunkKey(fileId, chunk.getChunkNo());
+        String chunkKey = chunk.buildChunkKey(fileId);
         if (Peer.getDataContainer().getCurrStorageAmount() > Peer.getDataContainer().getStorageCapacity() ||
                 Peer.getDataContainer().getBackedUpChunkCurrRepDegree(chunkKey) >= repDegree) {
-            chunkFile.delete();
-            File dir = new File(chunk.getChunkFolderPath(fileId));
-            if(dir.isDirectory() && dir.list().length == 0) {
-                dir.delete();
-            }
+            chunk.delete(fileId);
             return;
+        }
+
+        Path path = Paths.get(Chunk.getPathname() + fileId + "/" + chunk.buildChunkId());
+        try {
+            Peer.getDataContainer().incCurrStorageAmount(Files.size(path));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
         Peer.getControlChannel().write(message);

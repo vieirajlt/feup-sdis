@@ -1,5 +1,6 @@
 package protocol;
 
+import protocol.info.DataContainer;
 import protocol.subprotocol.Initiator;
 import protocol.subprotocol.Receiver;
 
@@ -8,7 +9,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 public class Peer {
 
-    private static final int MAX_THREAD_POOL_SIZE = Runtime.getRuntime().availableProcessors() * 2;
+    private static final int MAX_THREAD_POOL_SIZE = Runtime.getRuntime().availableProcessors() * 10;
 
     private static Float version;
     private static int id;
@@ -23,8 +24,6 @@ public class Peer {
     private static ScheduledThreadPoolExecutor executor;
 
     public static void main(String[] args) {
-
-        System.out.println(MAX_THREAD_POOL_SIZE);
 
         if (args.length != 5) {
             System.out.println("Usage: protocol.Peer <protocol_version> <server_id> <MC_ip:MC_port> <MDB_ip:MDB_port> <MDR_ip:MDR_port>");
@@ -47,14 +46,14 @@ public class Peer {
 
         Initiator.startInitiator();
 
-        dataContainer = DataContainer.load();
-
         Thread hook = new Thread(() -> {
             dataContainer.store();
         });
         Runtime.getRuntime().addShutdownHook(hook);
 
         executor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(MAX_THREAD_POOL_SIZE);
+
+        dataContainer = DataContainer.load();
 
         executor.execute(control);
         executor.execute(backup);

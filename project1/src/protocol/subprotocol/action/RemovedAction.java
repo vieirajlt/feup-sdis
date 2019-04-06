@@ -36,9 +36,10 @@ public class RemovedAction extends Action implements Runnable {
         if (Peer.getDataContainer().getDifferenceBtCurrDesiredRepDegrees(chunkKey) < 0) {
 
             Chunk chunk = new Chunk(chunkNo);
+            chunk.load(fileId);
             int replicationDegree = Peer.getDataContainer().getBackedUpChunkDesiredRepDegree(chunkKey);
 
-            PutchunkHandler putchunkHandler = new PutchunkHandler(chunk.load(fileId, chunkNo), fileId, replicationDegree);
+            PutchunkHandler putchunkHandler = new PutchunkHandler(chunk, fileId, replicationDegree);
             Peer.getExecutor().execute(putchunkHandler);
         }
     }

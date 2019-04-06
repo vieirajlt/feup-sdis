@@ -12,30 +12,29 @@ public class ChunkHandler extends Handler implements Runnable {
     private String fileId;
     private int chunkNo;
     private String chunkKey;
+    private Chunk chunk;
 
     public ChunkHandler(String fileId, int chunkNo) {
         this.fileId = fileId;
         this.chunkNo = chunkNo;
+        chunk = new Chunk(chunkNo);
+        chunk.load(fileId);
     }
 
     @Override
     public void handle() {
         System.out.println("protocol.subprotocol.handler.senchunk.run");
-        Chunk chunk = new Chunk(chunkNo);
-        Chunk loaded = chunk.load(fileId, chunkNo);
-        if (loaded != null) {
-            chunkKey = Chunk.buildChunkKey(fileId, chunkNo);
-            Peer.getDataContainer().setPeerChunk(chunkKey, false);
-            Peer.getExecutor().schedule(this, getSleep_time_ms(), TimeUnit.MILLISECONDS);
-        }
+
+        chunkKey = chunk.buildChunkKey(fileId);
+        Peer.getDataContainer().setPeerChunk(chunkKey, false);
+        Peer.getExecutor().schedule(this, getSleep_time_ms(), TimeUnit.MILLISECONDS);
     }
 
     @Override
     public void run() {
-        Chunk chunk = new Chunk(chunkNo);
-        Chunk loaded = chunk.load(fileId, chunkNo);
+        while(!chunk.isLoaded()); //TODO this is a precaution... don't know if really  needed
         if (!Peer.getDataContainer().getChunkShippingState(chunkKey)) {
-            byte[] body = loaded.getBody();
+            byte[] body = chunk.getBody();
             byte[] message = buildMessage(CHUNK, MSG_CONFIG_SENDCHUNK, fileId, chunkNo, -1, body);
             // System.out.println(message);
             Peer.getRestoreChannel().write(message);

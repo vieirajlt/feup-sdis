@@ -17,7 +17,7 @@ class ChunkTest {
         String testname = "testname";
         chunk.store(testname);
 
-        chunk.load(testname, chunkNo);
+        chunk.load(testname);
 
         assertEquals(chunkNo,chunk.getChunkNo());
         assertEquals(arr,chunk.getBody());

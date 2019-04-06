@@ -1,9 +1,7 @@
-package protocol;
+package protocol.info;
 
 import java.io.Serializable;
 
-
-//TODO mudar de sitio...nao devia estar aqui provavelmente
 public class ChunkInfo implements Comparable<ChunkInfo>, Serializable {
 
     private String chunkKey;
@@ -79,7 +77,7 @@ public class ChunkInfo implements Comparable<ChunkInfo>, Serializable {
     }
 
 
-    //TODO testing
+    //TODO testing - Isto está?
     /*If the Integer is equal to the argument then 0 is returned.
     If the Integer is less than the argument then -1 is returned.
     If the Integer is greater than the argument then 1 is returned.*/

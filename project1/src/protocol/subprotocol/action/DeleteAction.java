@@ -4,6 +4,11 @@ import protocol.Chunk;
 import protocol.Peer;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Comparator;
 
 public class DeleteAction extends Action {
 
@@ -16,34 +21,17 @@ public class DeleteAction extends Action {
     @Override
     public void process() {
         System.out.println(Chunk.getChunkFolderPath(fileId));
-        File folder = new File(Chunk.getChunkFolderPath(fileId));
-        if (!folder.exists())
+        Path dirPath = Paths.get(Chunk.getChunkFolderPath(fileId));
+        if (!Files.exists(dirPath))
             return;
-        File[] listOfFiles = folder.listFiles();
-
-        //delete all the chunks from the file
-        for (File file : listOfFiles) {
-            if (file.isFile()) {
-                String chunkNoStr = ((file.getName()).substring(3)).split("\\.")[0];
-                int chunkNo = Integer.parseInt(chunkNoStr);
-                String key = Chunk.buildChunkKey(fileId, chunkNo);
-                //dec current storage amount
-
-                //delete file
-                if (!file.delete()) {
-                    System.out.println("Failed to delete the file");
-                    return;
-                }
-
-                //delete file from backedUpChunks map
-                Peer.getDataContainer().deleteBackedUpChunk(key);
-            }
+        try {
+            Files.walk(dirPath)
+                    .sorted(Comparator.reverseOrder())
+                    .map(Path::toFile)
+                    .forEach(File::delete);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-
-        if (folder.list().length == 0) {
-            folder.delete();
-        }
-
         //delete all the file chunks from peersChunks
         Peer.getDataContainer().deletePeersFileChunks(fileId);
     }

@@ -15,7 +15,8 @@ public class StoredAction extends Action {
 
     @Override
     public void process() {
-        String chunkKey = Chunk.buildChunkKey(fileId, chunkNo);
+        Chunk chunk = new Chunk(chunkNo);
+        String chunkKey = chunk.buildChunkKey(fileId);
         Peer.getDataContainer().incStoredCurrRepDegree(chunkKey);
         Peer.getDataContainer().incBackedUpChunkCurrRepDegree(chunkKey);
     }

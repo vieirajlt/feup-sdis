@@ -1,11 +1,14 @@
 package protocol.subprotocol.handler;
 
 import protocol.Chunk;
-import protocol.ChunkInfo;
-import protocol.FileInfo;
+import protocol.info.ChunkInfo;
+import protocol.info.FileInfo;
 import protocol.Peer;
 
-import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 
 public class StateHandler extends Handler{
@@ -28,9 +31,10 @@ public class StateHandler extends Handler{
             int desRepDegree = entry.getValue().getRepDegree();
             //for each chunk, id and currRepDegree
             String chunksInfo = "";
-            for (int i = 0; i < entry.getValue().getNrOfChunks(); ++i) {
-                String chunkId = Chunk.buildChunkId(i);
-                String chunkKey = Chunk.buildChunkKey(fileId, i);
+            for (int chunkNo = 0; chunkNo < entry.getValue().getNrOfChunks(); ++chunkNo) {
+                Chunk chunk = new Chunk(chunkNo);
+                String chunkId = chunk.buildChunkId();
+                String chunkKey = chunk.buildChunkKey(fileId);
                 int currRepDegree = Peer.getDataContainer().getStoredCurrRepDegree(chunkKey);
                 chunksInfo += "\t\tID: " + chunkId + "\tPerceived Replication Degree: " + currRepDegree + "\n";
             }
@@ -46,14 +50,22 @@ public class StateHandler extends Handler{
         //for each chunk stored
         for (HashMap.Entry<String, ChunkInfo> entry : Peer.getDataContainer().getBackedUpChunks().entrySet()) {
             ChunkInfo chunkInfo = entry.getValue();
-            String chunkId = Chunk.buildChunkFileId(chunkInfo.getChunkNo());
+            if(!chunkInfo.isOnPeer())
+                continue;
+            Chunk chunk = new Chunk(chunkInfo.getChunkNo());
+            String chunkId = chunk.buildChunkId();
             String fileId = chunkInfo.getFileId();
-            File chunkFile = new File(Chunk.getPathname() + fileId + "/" + chunkId);
+            Path path = Paths.get(Chunk.getPathname() + fileId + "/" + chunkId);
             //id
             String id = fileId + " -> " + chunkId;
             //size in KBytes
-            long chunkFileLength = chunkFile.length();
-            chunkFileLength /= 1000; //TODO ??? is this correct ???
+            long chunkFileLength = 0;
+            try {
+                chunkFileLength = Files.size(path);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            chunkFileLength /= 1000;
             //currRepDegree
             int currRepDegree = chunkInfo.getCurrRepDegree();
             stateInfo+= "\tID: " + id + "\n\tSize(KBytes): " + chunkFileLength + "\n\tPerceived Replication Degree: " + currRepDegree + "\n";
@@ -66,7 +78,6 @@ public class StateHandler extends Handler{
         //storage capacity
         long max_capacity = Peer.getDataContainer().getStorageCapacity();
         max_capacity /= 1000;
-        File dir = new File(Chunk.getPathname());
         long used_capacity = Peer.getDataContainer().getCurrStorageAmount();
         used_capacity /= 1000;
         stateInfo += "Max Storage Capacity(KBytes): " + max_capacity + "\tUsed Storage Capacity(KBytes): " + used_capacity + "\n";

@@ -4,37 +4,60 @@ package protocol.subprotocol.FileManagement;
 import protocol.Chunk;
 import protocol.Peer;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.nio.ByteBuffer;
+import java.nio.channels.AsynchronousFileChannel;
+import java.nio.channels.CompletionHandler;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 
-public class RestoreFile extends FileManager{
+public class RestoreFile extends FileManager {
 
-    public RestoreFile(String fileId)  {
+    public RestoreFile(String fileId) {
         setFileId(fileId);
         setChunks(Peer.getDataContainer().getTmpChunksChunks(getFileId()));
     }
 
     public void process() {
         String fileName = Peer.getDataContainer().getOwnFileName(getFileId());
-        File file = new File("TMP/" + Peer.getServerId() + "/restored/" + fileName);
-        file.getParentFile().mkdirs();
+        Path path = Paths.get("TMP/peer" + Peer.getServerId() + "/restored/" + fileName);
+
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+
         try {
-            file.createNewFile();
-            FileOutputStream fOut = new FileOutputStream(file, true);
-
-            for(Chunk chunk : getChunks()) {
-                fOut.write(chunk.getBody());
+            for (Chunk chunk : getChunks()) {
+                stream.write(chunk.getBody());
             }
-
-            fOut.close();
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
-     
+
+        byte[] fileArr = stream.toByteArray();
+
+        try {
+            Files.createDirectories(path.getParent());
+            AsynchronousFileChannel fileChannel = AsynchronousFileChannel.open(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
+
+            ByteBuffer buffer = ByteBuffer.wrap(fileArr);
+
+            fileChannel.write(buffer, 0, buffer, new CompletionHandler<>() {
+                @Override
+                public void completed(Integer result, ByteBuffer attachment) {
+                    System.out.println("Success restoring file");
+                }
+
+                @Override
+                public void failed(Throwable exc, ByteBuffer attachment) {
+                    System.out.println("Error restoring chunk file");
+                }
+            });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }
