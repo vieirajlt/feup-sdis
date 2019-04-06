@@ -279,7 +279,7 @@ public class DataContainer implements Serializable {
             //filter on peer elements
             if(sorted.get(i).isOnPeer())
                 values.add(sorted.get(i));
-            System.out.println(sorted.get(i));
+            //System.out.println(sorted.get(i));
         }
         return values;
     }

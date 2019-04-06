@@ -9,7 +9,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 public class Peer {
 
-    private static final int MAX_THREAD_POOL_SIZE = Runtime.getRuntime().availableProcessors() * 10;
+    private static final int MAX_THREAD_POOL_SIZE = Runtime.getRuntime().availableProcessors() * 25;
 
     private static Float version;
     private static int id;
