@@ -14,7 +14,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class DataContainer implements Serializable {
 
-    private final static String DATA_PATH = "TMP/Data/" + Peer.getServerId() + "/" + "data.ser";
+    private final static String DATA_PATH = "TMP/peer" + Peer.getServerId() + "/data/data.ser";
 
     private final static long INITIAL_STORAGE_CAPACITY = 1000000;
 

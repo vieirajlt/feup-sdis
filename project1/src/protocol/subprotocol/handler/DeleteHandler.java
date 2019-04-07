@@ -37,10 +37,8 @@ public class DeleteHandler extends Handler implements Runnable {
         //delete the file
         Path path = Paths.get(sf.getPathname());
         try {
-            if (Files.exists(path)) {
-                Files.delete(path);
-                System.out.println("File deleted successfully " + Files.exists(path));
-            }
+            Files.deleteIfExists(path);
+            System.out.println("File deleted successfully " + Files.exists(path));
         } catch (IOException e) {
             e.printStackTrace();
             System.out.println("Failed to delete the file");

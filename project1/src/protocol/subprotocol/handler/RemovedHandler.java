@@ -6,9 +6,10 @@ import protocol.Peer;
 import protocol.info.ChunkInfo;
 
 import java.io.IOException;
-import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static protocol.subprotocol.Subprotocol.REMOVED;
 
@@ -34,13 +35,11 @@ public class RemovedHandler extends Handler implements Runnable {
     @Override
     public void run() {
         System.out.println(Peer.getDataContainer().getCurrStorageAmount() + " <= " + Peer.getDataContainer().getStorageCapacity());
-        String chunkId, fileId, pathname = Chunk.getPathname();
         if (Peer.getDataContainer().getCurrStorageAmount() <= Peer.getDataContainer().getStorageCapacity()) {
-            Runnable runnable = () -> deleteEmptyDirs(pathname);
-            Peer.getExecutor().schedule(runnable, REMOVE_INBETWEEN_TIME_MS, TimeUnit.MILLISECONDS);
             return;
         }
 
+        String chunkId, fileId, pathname = Chunk.getPathname();
         ChunkInfo chunkInfo;
 
         List sortedBackedUpChunks = Peer.getDataContainer().getBackedUpChunksOnPeerSortedInfo();
@@ -75,24 +74,6 @@ public class RemovedHandler extends Handler implements Runnable {
 
         Peer.getExecutor().execute(this);
 
-    }
-
-    //TODO understand why this shit is not working
-    private void deleteEmptyDirs(String pathname) {
-        try (DirectoryStream<Path> directoryStream = Files.newDirectoryStream(Paths.get(pathname))) {
-            for (Path path : directoryStream) {
-                if (Files.isDirectory(path)) {
-                    System.out.print(path.toString());
-                    try {
-                        Files.delete(path);
-                        System.out.println(" empty");
-                    } catch (DirectoryNotEmptyException ex) {
-                        System.out.println(" not empty");
-                    }
-                }
-            }
-        } catch (IOException ex) {
-        }
     }
 }
 

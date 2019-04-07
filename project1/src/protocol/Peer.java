@@ -1,15 +1,19 @@
 package protocol;
 
 import protocol.info.DataContainer;
+import protocol.subprotocol.FileManagement.FileManager;
 import protocol.subprotocol.Initiator;
 import protocol.subprotocol.Receiver;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 public class Peer {
 
-    private static final int MAX_THREAD_POOL_SIZE = Runtime.getRuntime().availableProcessors() * 25;
+    private final static String TMP_PATH = "TMP/";
+    private static final int MAX_THREAD_POOL_SIZE = Runtime.getRuntime().availableProcessors() + 1;
 
     private static Float version;
     private static int id;
@@ -48,6 +52,8 @@ public class Peer {
 
         Thread hook = new Thread(() -> {
             dataContainer.store();
+            Path path = Paths.get(TMP_PATH);
+            FileManager.clearEmptyFolders(path);
         });
         Runtime.getRuntime().addShutdownHook(hook);
 
