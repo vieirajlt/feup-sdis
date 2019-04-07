@@ -34,7 +34,6 @@ public class RemovedHandler extends Handler implements Runnable {
 
     @Override
     public void run() {
-        System.out.println(Peer.getDataContainer().getCurrStorageAmount() + " <= " + Peer.getDataContainer().getStorageCapacity());
         if (Peer.getDataContainer().getCurrStorageAmount() <= Peer.getDataContainer().getStorageCapacity()) {
             return;
         }

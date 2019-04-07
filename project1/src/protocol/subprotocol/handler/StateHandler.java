@@ -1,14 +1,16 @@
 package protocol.subprotocol.handler;
 
 import protocol.Chunk;
+import protocol.Peer;
 import protocol.info.ChunkInfo;
 import protocol.info.FileInfo;
-import protocol.Peer;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class StateHandler extends Handler{
@@ -47,6 +49,7 @@ public class StateHandler extends Handler{
 
         stateInfo += "Stored Chunks:\n";
 
+        ArrayList<String> stored = new ArrayList<>();
         //for each chunk stored
         for (HashMap.Entry<String, ChunkInfo> entry : Peer.getDataContainer().getBackedUpChunks().entrySet()) {
             ChunkInfo chunkInfo = entry.getValue();
@@ -68,7 +71,12 @@ public class StateHandler extends Handler{
             chunkFileLength /= 1000;
             //currRepDegree
             int currRepDegree = chunkInfo.getCurrRepDegree();
-            stateInfo+= "\tID: " + id + "\n\tSize(KBytes): " + chunkFileLength + "\n\tPerceived Replication Degree: " + currRepDegree + "\n";
+            String chunkInfoStr = "\tID: " + id + "\n\tSize(KBytes): " + chunkFileLength + "\n\tPerceived Replication Degree: " + currRepDegree + "\n";
+            stored.add(chunkInfoStr);
+        }
+        Collections.sort(stored);
+        for(String info : stored) {
+            stateInfo += info;
         }
 
         if(Peer.getDataContainer().getBackedUpChunks().entrySet().size() == 0) {

@@ -254,7 +254,7 @@ public class DataContainer implements Serializable {
         return storageCapacity;
     }
 
-    public void setStorageCapacity(long storageCapacity) {
+    public synchronized void setStorageCapacity(long storageCapacity) {
         this.storageCapacity = storageCapacity;
     }
 
@@ -262,11 +262,11 @@ public class DataContainer implements Serializable {
         return currStorageAmount;
     }
 
-    public void incCurrStorageAmount(long value) {
+    public synchronized void incCurrStorageAmount(long value) {
         currStorageAmount += value;
     }
 
-    public void decCurrStorageAmount(long value) {
+    public synchronized void decCurrStorageAmount(long value) {
         currStorageAmount -= value;
     }
 
