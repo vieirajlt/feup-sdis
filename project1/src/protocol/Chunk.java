@@ -70,6 +70,7 @@ public class Chunk implements Serializable {
                     System.out.println("Error writing chunk body...");
                 }
             });
+            fileChannel.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -101,6 +102,7 @@ public class Chunk implements Serializable {
                     System.out.println("Error reading chunk body...");
                 }
             });
+            fileChannel.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

@@ -89,6 +89,7 @@ public class SplitFile extends FileManager {
                     System.out.println("Error reading file for splitAndSend...");
                 }
             });
+            fileChannel.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

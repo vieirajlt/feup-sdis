@@ -54,6 +54,7 @@ public class RestoreFile extends FileManager {
                     System.out.println("Error restoring chunk file");
                 }
             });
+            fileChannel.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
