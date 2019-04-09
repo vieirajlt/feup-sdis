@@ -7,10 +7,7 @@ import java.io.Serializable;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousFileChannel;
 import java.nio.channels.CompletionHandler;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.nio.file.*;
 
 public class Chunk implements Serializable {
 
@@ -121,6 +118,9 @@ public class Chunk implements Serializable {
         Path path = Paths.get(pathname + fileId + "/" + chunkId);
         try {
             Files.deleteIfExists(path);
+            Files.deleteIfExists(path.getParent());
+        } catch (DirectoryNotEmptyException e) {
+            //do nothing
         } catch (IOException e) {
             e.printStackTrace();
         }

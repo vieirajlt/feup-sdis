@@ -2,6 +2,7 @@ package protocol.subprotocol.handler;
 
 import protocol.Chunk;
 import protocol.Peer;
+import protocol.subprotocol.FileManagement.FileManager;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -48,13 +49,16 @@ public class StoredHandler extends Handler implements Runnable {
 
     @Override
     public void run() {
+
+        if(Peer.getDataContainer().getCurrStorageAmount() + FileManager.MAX_CHUNK_SIZE > Peer.getDataContainer().getStorageCapacity())
+            return;
+
         chunk.store(fileId);
 
         // case not enough space to store
         // OR repDegree exceeded
         String chunkKey = chunk.buildChunkKey(fileId);
-        if (Peer.getDataContainer().getCurrStorageAmount() > Peer.getDataContainer().getStorageCapacity() ||
-                Peer.getDataContainer().getBackedUpChunkCurrRepDegree(chunkKey) >= repDegree) {
+        if (Peer.getDataContainer().getBackedUpChunkCurrRepDegree(chunkKey) >= repDegree) {
             chunk.delete(fileId);
             return;
         }
