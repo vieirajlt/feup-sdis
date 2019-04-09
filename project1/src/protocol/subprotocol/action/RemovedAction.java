@@ -21,6 +21,9 @@ public class RemovedAction extends Action implements Runnable {
 
     @Override
     public void process() {
+        //own files
+        Peer.getDataContainer().decStoredCurrRepDegree(chunkKey);
+        //other files
         Peer.getDataContainer().decBackedUpChunkCurrRepDegree(chunkKey);
 
         //if the peer does not store the chunk

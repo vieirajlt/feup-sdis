@@ -51,10 +51,12 @@ public class StateHandler extends Handler{
 
         ArrayList<String> stored = new ArrayList<>();
         //for each chunk stored
+        boolean hasChunks = false;
         for (HashMap.Entry<String, ChunkInfo> entry : Peer.getDataContainer().getBackedUpChunks().entrySet()) {
             ChunkInfo chunkInfo = entry.getValue();
             if(!chunkInfo.isOnPeer())
                 continue;
+            hasChunks = true;
             Chunk chunk = new Chunk(chunkInfo.getChunkNo());
             String chunkId = chunk.buildChunkId();
             String fileId = chunkInfo.getFileId();
@@ -79,7 +81,7 @@ public class StateHandler extends Handler{
             stateInfo += info;
         }
 
-        if(Peer.getDataContainer().getBackedUpChunks().entrySet().size() == 0) {
+        if(!hasChunks) {
             stateInfo += "\tNone on File System...\n";
         }
 

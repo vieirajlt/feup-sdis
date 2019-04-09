@@ -107,6 +107,15 @@ public class DataContainer implements Serializable {
             stored.replace(key, stored.get(key) + 1);
     }
 
+    public void decStoredCurrRepDegree(String key) {
+        /*if (stored.get(key) == null)
+            stored.put(key, 1);
+        else
+            stored.replace(key, stored.get(key) + 1);*/
+        if (stored.get(key) != null)
+            stored.replace(key, stored.get(key) - 1);
+    }
+
     public void deleteStoredChunk(String key) {
         stored.remove(key);
     }
