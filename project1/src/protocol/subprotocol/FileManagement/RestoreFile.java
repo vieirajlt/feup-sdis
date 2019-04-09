@@ -43,7 +43,7 @@ public class RestoreFile extends FileManager {
 
             ByteBuffer buffer = ByteBuffer.wrap(fileArr);
 
-            fileChannel.write(buffer, 0, buffer, new CompletionHandler<>() {
+            fileChannel.write(buffer, 0, buffer, new CompletionHandler<Integer, ByteBuffer>() {
                 @Override
                 public void completed(Integer result, ByteBuffer attachment) {
                     System.out.println("Success restoring file");

@@ -34,5 +34,6 @@ public class DeleteAction extends Action {
         }
         //delete all the file chunks from peersChunks
         Peer.getDataContainer().deletePeersFileChunks(fileId);
+        Peer.getDataContainer().deleteBackedUpFileChunks(fileId);
     }
 }

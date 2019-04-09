@@ -156,6 +156,15 @@ public class DataContainer implements Serializable {
         backedUpChunks.remove(key);
     }
 
+    public void deleteBackedUpFileChunks(String fileId) {
+        String chunkFileId;
+        for (String key : backedUpChunks.keySet()) {
+            chunkFileId = key.split("_")[0];
+            if (chunkFileId.equals(fileId))
+                backedUpChunks.remove(key);
+        }
+    }
+
 
     public int getDifferenceBtCurrDesiredRepDegrees(String key) {
         return backedUpChunks.get(key).getDifferenceBtCurrDesiredRepDegrees();
@@ -214,7 +223,7 @@ public class DataContainer implements Serializable {
     public void deletePeersFileChunks(String fileId) {
         String chunkFileId;
         for (String key : peersChunks.keySet()) {
-            chunkFileId = key.split("-")[0];
+            chunkFileId = key.split("_")[0];
             if (chunkFileId.equals(fileId))
                 peersChunks.remove(key);
         }

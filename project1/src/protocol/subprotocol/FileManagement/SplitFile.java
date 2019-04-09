@@ -52,7 +52,7 @@ public class SplitFile extends FileManager {
             AsynchronousFileChannel fileChannel = AsynchronousFileChannel.open(path, StandardOpenOption.READ);
             ByteBuffer buffer = ByteBuffer.allocate(MAX_CHUNK_SIZE * MAX_NUM_CHUNKS);
 
-            fileChannel.read(buffer, 0, buffer, new CompletionHandler<>() {
+            fileChannel.read(buffer, 0, buffer, new CompletionHandler<Integer, ByteBuffer>() {
                 @Override
                 public void completed(Integer result, ByteBuffer attachment) {
                     attachment.flip();

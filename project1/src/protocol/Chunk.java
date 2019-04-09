@@ -56,7 +56,7 @@ public class Chunk implements Serializable {
             AsynchronousFileChannel fileChannel = AsynchronousFileChannel.open(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
             ByteBuffer buffer = ByteBuffer.wrap(body);
 
-            fileChannel.write(buffer, 0, buffer, new CompletionHandler<>() {
+            fileChannel.write(buffer, 0, buffer, new CompletionHandler<Integer,ByteBuffer>() {
                 @Override
                 public void completed(Integer result, ByteBuffer attachment) {
                     System.out.println("Success writing chunk body!");
@@ -82,7 +82,7 @@ public class Chunk implements Serializable {
             AsynchronousFileChannel fileChannel = AsynchronousFileChannel.open(path, StandardOpenOption.READ);
             ByteBuffer buffer = ByteBuffer.allocate(FileManager.MAX_CHUNK_SIZE * 2);
 
-            fileChannel.read(buffer, 0, buffer, new CompletionHandler<>() {
+            fileChannel.read(buffer, 0, buffer, new CompletionHandler<Integer, ByteBuffer>() {
                 @Override
                 public void completed(Integer result, ByteBuffer attachment) {
                     System.out.println("Success reading chunk body!");
