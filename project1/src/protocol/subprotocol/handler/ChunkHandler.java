@@ -18,7 +18,6 @@ public class ChunkHandler extends Handler implements Runnable {
         this.fileId = fileId;
         this.chunkNo = chunkNo;
         chunk = new Chunk(chunkNo);
-        chunk.load(fileId);
     }
 
     @Override
@@ -26,6 +25,12 @@ public class ChunkHandler extends Handler implements Runnable {
         System.out.println("protocol.subprotocol.handler.senchunk.run");
 
         chunkKey = chunk.buildChunkKey(fileId);
+
+        //case peer does not store the chunk...
+        if(!Peer.getDataContainer().isBackedUpChunkOnPeer(chunkKey))
+            return;
+
+        chunk.load(fileId);
         Peer.getDataContainer().setPeerChunk(chunkKey, false);
         Peer.getExecutor().schedule(this, getSleep_time_ms(), TimeUnit.MILLISECONDS);
     }
