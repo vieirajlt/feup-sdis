@@ -109,7 +109,8 @@ public class SplitFile extends FileManager {
                             ownerAttribute.getOwner() +
                             fileAttributes.size() +
                             fileAttributes.creationTime() +
-                            fileAttributes.lastModifiedTime();
+                            fileAttributes.lastModifiedTime() +
+                            Peer.getServerId();
 
             setFileId(sha256(fileIdUnhashed));
 
