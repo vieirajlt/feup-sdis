@@ -2,7 +2,6 @@ package protocol.subprotocol.handler;
 
 import protocol.Chunk;
 import protocol.Peer;
-import protocol.subprotocol.FileManagement.FileManager;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -49,10 +48,6 @@ public class StoredHandler extends Handler implements Runnable {
 
     @Override
     public void run() {
-
-        if(Peer.getDataContainer().getCurrStorageAmount() + FileManager.MAX_CHUNK_SIZE > Peer.getDataContainer().getStorageCapacity())
-            return;
-
         chunk.store(fileId);
 
         // case not enough space to store
@@ -65,7 +60,10 @@ public class StoredHandler extends Handler implements Runnable {
 
         Path path = Paths.get(Chunk.getPathname() + fileId + "/" + chunk.buildChunkId());
         try {
-            Peer.getDataContainer().incCurrStorageAmount(Files.size(path));
+            if(!Peer.getDataContainer().incCurrStorageAmountAndCheckSpace(Files.size(path))) {
+                chunk.delete(fileId);
+                return;
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

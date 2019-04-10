@@ -268,7 +268,7 @@ public class DataContainer implements Serializable {
         return true;
     }
 
-    public long getStorageCapacity() {
+    public synchronized long getStorageCapacity() {
         return storageCapacity;
     }
 
@@ -276,8 +276,15 @@ public class DataContainer implements Serializable {
         this.storageCapacity = storageCapacity;
     }
 
-    public long getCurrStorageAmount() {
+    public synchronized long getCurrStorageAmount() {
         return currStorageAmount;
+    }
+
+    public synchronized boolean incCurrStorageAmountAndCheckSpace(long value) {
+        if(currStorageAmount + value > storageCapacity)
+            return false;
+        incCurrStorageAmount(value);
+        return true;
     }
 
     public synchronized void incCurrStorageAmount(long value) {
