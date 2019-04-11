@@ -28,7 +28,11 @@ public class DeleteAction extends Action {
             Files.walk(dirPath)
                     .sorted(Comparator.reverseOrder())
                     .map(Path::toFile)
-                    .forEach(File::delete);
+                    .forEach(File->{
+                        if(File.isFile())
+                            Peer.getDataContainer().decCurrStorageAmount(File.length());
+                    File.delete();
+            });
         } catch (IOException e) {
             e.printStackTrace();
         }
