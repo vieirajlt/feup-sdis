@@ -44,7 +44,7 @@ public class StoredHandler extends Handler implements Runnable {
         Peer.getDataContainer().addBackedUpChunk(chunkKey, repDegree);
 
         if(Peer.getDataContainer().isBackedUpChunkInfoHandling(chunkKey)) {
-            Peer.getDataContainer().setBackedUpChunksChunkInfoHandling(chunkKey,false);
+            //Peer.getDataContainer().setBackedUpChunksChunkInfoHandling(chunkKey,false);
             return;
         }
         Peer.getDataContainer().setBackedUpChunksChunkInfoHandling(chunkKey,true);
@@ -58,6 +58,7 @@ public class StoredHandler extends Handler implements Runnable {
     public void run() {
 
         String chunkKey = chunk.buildChunkKey(fileId);
+
         if(Peer.getDataContainer().getCurrStorageAmount() + FileManager.MAX_CHUNK_SIZE > Peer.getDataContainer().getStorageCapacity()){
             Peer.getDataContainer().setBackedUpChunksChunkInfoHandling(chunkKey,false);
             return;

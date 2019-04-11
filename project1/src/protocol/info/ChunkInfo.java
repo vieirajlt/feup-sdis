@@ -18,7 +18,7 @@ public class ChunkInfo implements Comparable<ChunkInfo>, Serializable {
         this.currRepDegree = currRepDegree;
         this.desiredRepDegree = desiredRepDegree;
         this.onPeer = onPeer;
-        this.handling = true;
+        this.handling = false;
 
         String[] info = chunkKey.split("_");
         fileId = info[0];
