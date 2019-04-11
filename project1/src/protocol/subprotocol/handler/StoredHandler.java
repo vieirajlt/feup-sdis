@@ -14,15 +14,19 @@ import static protocol.subprotocol.Subprotocol.STORED;
 
 public class StoredHandler extends Handler implements Runnable {
 
+    private int senderId;
     private String fileId;
     private Chunk chunk;
     private int repDegree;
+    private Float maxCompletionPercentage;
     private byte[] message;
 
-    public StoredHandler(String fileId, Chunk chunk, int repDegree) {
+    public StoredHandler(int senderId, String fileId, Chunk chunk, int repDegree, float maxCompletionPercentage) {
+        this.senderId = senderId;
         this.fileId = fileId;
         this.chunk = chunk;
         this.repDegree = repDegree;
+        this.maxCompletionPercentage = maxCompletionPercentage;
     }
 
     @Override
@@ -41,12 +45,16 @@ public class StoredHandler extends Handler implements Runnable {
         }
 
         //add even if not saved on Peer for other peers info collection
-        Peer.getDataContainer().addBackedUpChunk(chunkKey, repDegree);
+        Peer.getDataContainer().addBackedUpChunk(chunkKey, senderId, repDegree);
 
         if(Peer.getDataContainer().isBackedUpChunkInfoHandling(chunkKey)) {
             //Peer.getDataContainer().setBackedUpChunksChunkInfoHandling(chunkKey,false);
             return;
         }
+
+        if(Peer.getDataContainer().getCompletionPercentage() > maxCompletionPercentage)
+            return;
+
         Peer.getDataContainer().setBackedUpChunksChunkInfoHandling(chunkKey,true);
 
 

@@ -53,14 +53,21 @@ public class Receiver extends Subprotocol implements Runnable{
     private synchronized void putchunk(String[] header, byte[] body) {
         System.out.println("protocol.subprotocol.Receiver.putchunk");
 
+        boolean enhanced = isEnhancementAllowed(header[0]);
+
+        int senderId = Integer.parseInt(header[2]);
         int chunkNo = Integer.parseInt(header[4]);
         Chunk chunk = new Chunk(chunkNo, body);
 
         String fileId = header[3];
 
         int repDegree = Integer.parseInt(header[5]);
+        float completionPercentage = 1;
+        if(enhanced) {
+            completionPercentage = Float.parseFloat(header[6]);
+        }
 
-        StoredHandler handler = new StoredHandler(fileId, chunk, repDegree);
+        StoredHandler handler = new StoredHandler(senderId, fileId, chunk, repDegree, completionPercentage);
         handler.handle();
     }
 
@@ -93,7 +100,10 @@ public class Receiver extends Subprotocol implements Runnable{
         Chunk chunk = new Chunk(chunkNo);
         String chunkKey = chunk.buildChunkKey(fileId);
 
-        RemovedAction action = new RemovedAction(fileId, chunkKey, chunkNo);
+        //for needed putchunk messages
+        boolean enhanced = isEnhancementAllowed(PUTCHUNK);
+
+        RemovedAction action = new RemovedAction(fileId, chunkKey, chunkNo, enhanced);
         action.process();
     }
 
@@ -121,7 +131,7 @@ public class Receiver extends Subprotocol implements Runnable{
     }
 
     private boolean checkHeader(String[] header) {
-        return Float.parseFloat(header[1]) == Peer.getProtocolVersion()
+        return header[1].equals(Peer.getProtocolVersion())
                 && Integer.parseInt(header[2]) != Peer.getServerId();
     }
 

@@ -7,7 +7,6 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.Key;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -121,9 +120,9 @@ public class DataContainer implements Serializable {
         stored.remove(key);
     }
 
-    public void addBackedUpChunk(String key, int desiredRepDegree) {
+    public void addBackedUpChunk(String key, int senderId, int desiredRepDegree) {
         if (backedUpChunks.get(key) == null) {
-            ChunkInfo chunkInfo = new ChunkInfo(key, desiredRepDegree, 0, false);
+            ChunkInfo chunkInfo = new ChunkInfo(key, senderId, desiredRepDegree, 0, false);
             backedUpChunks.put(key, chunkInfo);
         }
         else
@@ -137,7 +136,7 @@ public class DataContainer implements Serializable {
 
     public  void incBackedUpChunkCurrRepDegree(String key) {
         if (backedUpChunks.get(key) == null)
-            addBackedUpChunk(key, -1);
+            return;
         backedUpChunks.get(key).setCurrRepDegree(backedUpChunks.get(key).getCurrRepDegree() + 1);
         /*System.out.println("incBackedUpChunkCurrRepDegree");
         backedUpChunks.forEach((k, v) -> {
@@ -201,6 +200,13 @@ public class DataContainer implements Serializable {
         if (ci == null)
             return;
         ci.setOnPeer(onPeer);
+    }
+
+    public int getBackedUpChunkSenderId(String key) {
+        ChunkInfo ci = backedUpChunks.get(key);
+        if (ci == null)
+            return -1;
+        return ci.getSenderId();
     }
 
     public ConcurrentHashMap<String, FileInfo> getOwnFiles() {
@@ -335,6 +341,10 @@ public class DataContainer implements Serializable {
 
     public boolean isBackedUpChunkInfoHandling(String chunkKey) {
        return  backedUpChunks.get(chunkKey).isHandling();
+    }
+
+    public float getCompletionPercentage() {
+        return currStorageAmount / storageCapacity;
     }
 
 }

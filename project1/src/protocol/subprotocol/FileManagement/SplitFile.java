@@ -44,7 +44,7 @@ public class SplitFile extends FileManager {
         buildId();
     }
 
-    public void splitAndSend() {
+    public void splitAndSend(boolean enhanced) {
 
         Path path = Paths.get(pathname);
 
@@ -77,7 +77,7 @@ public class SplitFile extends FileManager {
                         Peer.getDataContainer().addStored(chunkKey);
 
                         //handler
-                        PutchunkHandler putchunkHandler = new PutchunkHandler(chunk, getFileId(), replicationDegree);
+                        PutchunkHandler putchunkHandler = new PutchunkHandler(chunk, getFileId(), replicationDegree, enhanced);
                         Peer.getExecutor().execute(putchunkHandler);
                     }
                     Peer.getDataContainer().addOwnFile(getFileId(), fileName, getChunksSize(), replicationDegree);
