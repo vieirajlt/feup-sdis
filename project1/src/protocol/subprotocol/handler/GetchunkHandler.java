@@ -1,7 +1,7 @@
 package protocol.subprotocol.handler;
 
 import protocol.Peer;
-import protocol.subprotocol.FileManagement.SplitFile;
+import protocol.subprotocol.fileManagement.SplitFile;
 
 import static protocol.subprotocol.Subprotocol.GETCHUNK;
 

@@ -1,7 +1,7 @@
 package protocol.subprotocol;
 
 import protocol.Peer;
-import protocol.subprotocol.FileManagement.SplitFile;
+import protocol.subprotocol.fileManagement.SplitFile;
 import protocol.subprotocol.handler.DeleteHandler;
 import protocol.subprotocol.handler.GetchunkHandler;
 import protocol.subprotocol.handler.RemovedHandler;

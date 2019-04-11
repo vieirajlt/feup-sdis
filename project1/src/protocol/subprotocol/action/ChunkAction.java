@@ -2,7 +2,7 @@ package protocol.subprotocol.action;
 
 import protocol.Chunk;
 import protocol.Peer;
-import protocol.subprotocol.FileManagement.RestoreFile;
+import protocol.subprotocol.fileManagement.RestoreFile;
 
 import java.util.ArrayList;
 

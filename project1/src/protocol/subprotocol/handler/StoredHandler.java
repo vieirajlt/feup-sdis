@@ -2,7 +2,7 @@ package protocol.subprotocol.handler;
 
 import protocol.Chunk;
 import protocol.Peer;
-import protocol.subprotocol.FileManagement.FileManager;
+import protocol.subprotocol.fileManagement.FileManager;
 
 import java.io.IOException;
 import java.nio.file.Files;

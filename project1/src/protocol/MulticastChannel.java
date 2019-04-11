@@ -1,6 +1,6 @@
 package protocol;
 
-import protocol.subprotocol.FileManagement.FileManager;
+import protocol.subprotocol.fileManagement.FileManager;
 
 import java.io.IOException;
 import java.net.*;

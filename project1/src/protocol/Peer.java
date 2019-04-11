@@ -1,7 +1,7 @@
 package protocol;
 
 import protocol.info.DataContainer;
-import protocol.subprotocol.FileManagement.FileManager;
+import protocol.subprotocol.fileManagement.FileManager;
 import protocol.subprotocol.Initiator;
 import protocol.subprotocol.Receiver;
 

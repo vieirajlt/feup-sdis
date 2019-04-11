@@ -1,4 +1,4 @@
-package protocol.subprotocol.FileManagement;
+package protocol.subprotocol.fileManagement;
 
 import protocol.Chunk;
 import protocol.Peer;
