@@ -15,7 +15,7 @@ public class Peer {
     private final static String TMP_PATH = "TMP/";
     private static final int MAX_THREAD_POOL_SIZE = Runtime.getRuntime().availableProcessors() + 1;
 
-    private static Float version;
+    private static String version;
     private static int id;
     private static String ap;
 
@@ -34,7 +34,7 @@ public class Peer {
             return;
         }
 
-        version = Float.parseFloat(args[0]);
+        version = args[0];
         id = Integer.parseInt(args[1]);
         ap = "peer" + id;
 
@@ -83,7 +83,7 @@ public class Peer {
         executor.execute(receiver);
     }
 
-    public static Float getProtocolVersion() {
+    public static String getProtocolVersion() {
         return version;
     }
 

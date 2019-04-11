@@ -27,12 +27,13 @@ public class Initiator extends Subprotocol implements RMIInterface {
 
     public synchronized void backup(String[] cmd) {
         System.out.println("protocol.subprotocol.Initiator.putchunk");
+        boolean enhanced = isEnhancementAllowed(BACKUP_SUBPROTOCOL);
         String filepath = cmd[1];
         int repDegree = Integer.parseInt(cmd[2]);
 
         SplitFile sf = new SplitFile(filepath, repDegree);
 
-        sf.splitAndSend();
+        sf.splitAndSend(enhanced);
     }
 
     public synchronized void restore(String[] cmd) {

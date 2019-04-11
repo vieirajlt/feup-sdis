@@ -16,12 +16,14 @@ public class PutchunkHandler extends Handler implements Runnable {
     private Chunk chunk;
     private String fileId;
     private int repDegree;
+    private boolean enhanced;
 
-    public PutchunkHandler(Chunk chunk, String fileId, int repDegree) {
+    public PutchunkHandler(Chunk chunk, String fileId, int repDegree, boolean enhanced) {
         this.chunk = chunk;
         this.fileId = fileId;
         this.repDegree = repDegree;
         this.repeatCnt = 0;
+        this.enhanced = enhanced;
     }
 
     @Override
@@ -44,7 +46,11 @@ public class PutchunkHandler extends Handler implements Runnable {
 
             byte[] body = chunk.getBody();
 
-            byte[] message = buildMessage(PUTCHUNK, MSG_CONFIG_PUTCHUNK, fileId, chunkNo, repDegree, body);
+            byte[] message;
+            if(enhanced)
+                message = buildMessage(PUTCHUNK, MSG_CONFIG_PUTCHUNK, fileId, chunkNo, repDegree, body, completionPercentage());
+            else
+                message = buildMessage(PUTCHUNK, MSG_CONFIG_PUTCHUNK, fileId, chunkNo, repDegree, body);
 
             Peer.getBackupChannel().write(message);
 
@@ -53,5 +59,30 @@ public class PutchunkHandler extends Handler implements Runnable {
             //delay for stored msg receiving
             Peer.getExecutor().schedule(this, PUTCHUNK_INBETWEEN_TIME_MS, TimeUnit.MILLISECONDS);
         }
+    }
+
+    private float completionPercentage() {
+        float percentage = 0;
+        switch (repeatCnt) {
+            case 0:
+                percentage = (float) 0.6;
+                break;
+            case 1:
+                percentage = (float) 0.75;
+                break;
+            case 2:
+                percentage = (float) 0.85;
+                break;
+            case 3:
+                percentage = (float) 1.0;
+                break;
+            case 4:
+                percentage = (float) 1.0;
+                break;
+            default:
+                percentage = (float) 1.0;
+                break;
+        }
+        return percentage;
     }
 }

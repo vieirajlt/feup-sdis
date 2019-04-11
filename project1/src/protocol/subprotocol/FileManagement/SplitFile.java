@@ -23,6 +23,9 @@ public class SplitFile extends FileManager {
     private String fileName;
     private int replicationDegree;
 
+    private int chunkNo;
+    private long position;
+
     /**
      * @param pathname
      * @param replicationDegree
@@ -44,44 +47,55 @@ public class SplitFile extends FileManager {
         buildId();
     }
 
-    public void splitAndSend() {
+    public void splitAndSend(boolean enhanced) {
 
         Path path = Paths.get(pathname);
 
         try {
             AsynchronousFileChannel fileChannel = AsynchronousFileChannel.open(path, StandardOpenOption.READ);
-            ByteBuffer buffer = ByteBuffer.allocate(MAX_CHUNK_SIZE * MAX_NUM_CHUNKS);
+            chunkNo = 0;
+            position = 0;
+            ByteBuffer buffer = ByteBuffer.allocate(MAX_CHUNK_SIZE);
 
-            fileChannel.read(buffer, 0, buffer, new CompletionHandler<Integer, ByteBuffer>() {
+            fileChannel.read(buffer, position, buffer, new CompletionHandler<Integer, ByteBuffer>() {
                 @Override
                 public void completed(Integer result, ByteBuffer attachment) {
-                    attachment.flip();
-                    Integer position = 0;
-                    int chunkNo = 0, length = MAX_CHUNK_SIZE;
-                    while (length == MAX_CHUNK_SIZE) {
-                        //read chunk body
-                        if (result - position < MAX_CHUNK_SIZE) {
-                            length = result - position;
-                        }
 
-                        byte[] body = new byte[length];
-                        if (length != 0) {
-                            attachment.get(body);
-                            position += length;
-                        }
-
-                        //store chunk
-                        Chunk chunk = new Chunk(chunkNo++, body);
-                        addChunksChunk(chunk);
-                        String chunkKey = chunk.buildChunkKey(getFileId());
-                        Peer.getDataContainer().addStored(chunkKey);
-
-                        //handler
-                        PutchunkHandler putchunkHandler = new PutchunkHandler(chunk, getFileId(), replicationDegree);
-                        Peer.getExecutor().execute(putchunkHandler);
+                    if(chunkNo == MAX_NUM_CHUNKS) {
+                        System.out.println("Error - max num ofd chunks exceeded");
+                        return;
                     }
-                    Peer.getDataContainer().addOwnFile(getFileId(), fileName, getChunksSize(), replicationDegree);
+
+                    attachment.flip();
+
+                    byte[] body = new byte[result];
+                    if (result != 0) {
+                        attachment.get(body);
+                    }
+                    position += result;
+
+                    //store chunk
+                    Chunk chunk = new Chunk(chunkNo++, body);
+                    addChunksChunk(chunk);
+                    String chunkKey = chunk.buildChunkKey(getFileId());
+                    Peer.getDataContainer().addStored(chunkKey);
+
+                    //handler
+                    PutchunkHandler putchunkHandler = new PutchunkHandler(chunk, getFileId(), replicationDegree, enhanced);
+                    Peer.getExecutor().execute(putchunkHandler);
+
                     attachment.clear();
+                    buffer.clear();
+                    if(result == MAX_CHUNK_SIZE) {
+                        fileChannel.read(buffer, position, buffer, this);
+                    } else {
+                        try {
+                            Peer.getDataContainer().addOwnFile(getFileId(), fileName, getChunksSize(), replicationDegree);
+                            fileChannel.close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
                 }
 
                 @Override
@@ -89,7 +103,6 @@ public class SplitFile extends FileManager {
                     System.out.println("Error reading file for splitAndSend...");
                 }
             });
-            fileChannel.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

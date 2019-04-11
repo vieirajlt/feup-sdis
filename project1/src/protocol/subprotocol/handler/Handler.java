@@ -31,7 +31,7 @@ public abstract class Handler {
         sleep_time_ms = buildSleep_time_ms();
     }
 
-    private byte[] buildHeader(String type, int configuration, String fileId, int chunkNo, int replicationDegree) {
+    private byte[] buildHeader(String type, int configuration, String fileId, int chunkNo, int replicationDegree, float completionPercentage) {
 
         String message = type;
         int config = configuration;
@@ -65,13 +65,29 @@ public abstract class Handler {
             message += " " + replicationDegree;
         }
 
+        //backup enhancement
+        if(completionPercentage > 0) {
+            message += " " + completionPercentage;
+        }
+
         //End Header
         message += " " + CR + LF + CR + LF;
         return message.getBytes(StandardCharsets.UTF_8);
     }
 
     protected byte[] buildMessage(String type, int configuration, String fileId, int chunkNo, int replicationDegree, byte[] body) {
-        byte[] header = buildHeader(type, configuration, fileId, chunkNo, replicationDegree);
+        byte[] header = buildHeader(type, configuration, fileId, chunkNo, replicationDegree, 0);
+        byte[] message = completeMessage(configuration, body, header);
+        return message;
+    }
+
+    protected byte[] buildMessage(String type, int configuration, String fileId, int chunkNo, int replicationDegree, byte[] body, float completionPercentage) {
+        byte[] header = buildHeader(type, configuration, fileId, chunkNo, replicationDegree, completionPercentage);
+        byte[] message = completeMessage(configuration, body, header);
+        return message;
+    }
+
+    private byte[] completeMessage(int configuration, byte[] body, byte[] header) {
         int config = configuration >>> 5;
         byte[] message = null;
         if (config % 2 == 1) {

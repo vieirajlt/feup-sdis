@@ -12,11 +12,13 @@ public class RemovedAction extends Action implements Runnable {
     private String fileId;
     private String chunkKey;
     private int chunkNo;
+    private boolean enhanced;
 
-    public RemovedAction(String fileId, String chunkKey, int chunkNo) {
+    public RemovedAction(String fileId, String chunkKey, int chunkNo, boolean enhanced) {
         this.fileId = fileId;
         this.chunkKey = chunkKey;
         this.chunkNo = chunkNo;
+        this.enhanced = enhanced;
     }
 
     @Override
@@ -42,7 +44,7 @@ public class RemovedAction extends Action implements Runnable {
             chunk.load(fileId);
             int replicationDegree = Peer.getDataContainer().getBackedUpChunkDesiredRepDegree(chunkKey);
 
-            PutchunkHandler putchunkHandler = new PutchunkHandler(chunk, fileId, replicationDegree);
+            PutchunkHandler putchunkHandler = new PutchunkHandler(chunk, fileId, replicationDegree, enhanced);
             Peer.getExecutor().execute(putchunkHandler);
         }
     }

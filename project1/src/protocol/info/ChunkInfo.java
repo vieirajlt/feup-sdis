@@ -5,6 +5,7 @@ import java.io.Serializable;
 public class ChunkInfo implements Comparable<ChunkInfo>, Serializable {
 
     private String chunkKey;
+    private Integer senderId;
     private Integer currRepDegree;
     private Integer desiredRepDegree;
     private boolean onPeer;
@@ -13,8 +14,9 @@ public class ChunkInfo implements Comparable<ChunkInfo>, Serializable {
     private String fileId;
     private int chunkNo;
 
-    public ChunkInfo(String chunkKey, Integer desiredRepDegree, Integer currRepDegree, boolean onPeer){
+    public ChunkInfo(String chunkKey, Integer senderId, Integer desiredRepDegree, Integer currRepDegree, boolean onPeer){
         this.chunkKey = chunkKey;
+        this.senderId = senderId;
         this.currRepDegree = currRepDegree;
         this.desiredRepDegree = desiredRepDegree;
         this.onPeer = onPeer;
@@ -117,6 +119,14 @@ public class ChunkInfo implements Comparable<ChunkInfo>, Serializable {
 
         //if(this_difference < 0 && o_difference >= 0)
             return -1;
+    }
+
+    public Integer getSenderId() {
+        return senderId;
+    }
+
+    public void setSenderId(Integer senderId) {
+        this.senderId = senderId;
     }
 }
 
