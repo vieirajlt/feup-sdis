@@ -18,6 +18,8 @@ public class StoredAction extends Action {
         Chunk chunk = new Chunk(chunkNo);
         String chunkKey = chunk.buildChunkKey(fileId);
         Peer.getDataContainer().incStoredCurrRepDegree(chunkKey);
-        Peer.getDataContainer().incBackedUpChunkCurrRepDegree(chunkKey);
+        //if chunk is not stored chunk
+        if(Peer.getDataContainer().getStoredCurrRepDegree(chunkKey) == -1)
+          Peer.getDataContainer().incBackedUpChunkCurrRepDegree(chunkKey);
     }
 }

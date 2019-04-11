@@ -7,6 +7,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.security.Key;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -125,6 +126,8 @@ public class DataContainer implements Serializable {
             ChunkInfo chunkInfo = new ChunkInfo(key, desiredRepDegree, 0, false);
             backedUpChunks.put(key, chunkInfo);
         }
+        else
+            backedUpChunks.get(key).setDesiredRepDegree(desiredRepDegree);
         /*System.out.println("addBackedUpChunk");
 
         backedUpChunks.forEach((k, v) -> {
@@ -134,7 +137,7 @@ public class DataContainer implements Serializable {
 
     public  void incBackedUpChunkCurrRepDegree(String key) {
         if (backedUpChunks.get(key) == null)
-            return;
+            addBackedUpChunk(key, -1);
         backedUpChunks.get(key).setCurrRepDegree(backedUpChunks.get(key).getCurrRepDegree() + 1);
         /*System.out.println("incBackedUpChunkCurrRepDegree");
         backedUpChunks.forEach((k, v) -> {
