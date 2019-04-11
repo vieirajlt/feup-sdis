@@ -60,11 +60,13 @@ public class Chunk implements Serializable {
                 @Override
                 public void completed(Integer result, ByteBuffer attachment) {
                     System.out.println("Success writing chunk body!");
+                    loaded = true;
                 }
 
                 @Override
                 public void failed(Throwable exc, ByteBuffer attachment) {
                     System.out.println("Error writing chunk body...");
+                    loaded = false;
                 }
             });
             fileChannel.close();

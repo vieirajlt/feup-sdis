@@ -92,13 +92,13 @@ public class DataContainer implements Serializable {
         stored.put(key, 0);
     }
 
-    public Integer getStoredCurrRepDegree(String key) {
+    public  Integer getStoredCurrRepDegree(String key) {
         if (stored.get(key) == null)
             return -1;
         return stored.get(key);
     }
 
-    public void incStoredCurrRepDegree(String key) {
+    public  void incStoredCurrRepDegree(String key) {
         /*if (stored.get(key) == null)
             stored.put(key, 1);
         else
@@ -107,7 +107,7 @@ public class DataContainer implements Serializable {
             stored.replace(key, stored.get(key) + 1);
     }
 
-    public void decStoredCurrRepDegree(String key) {
+    public  void decStoredCurrRepDegree(String key) {
         /*if (stored.get(key) == null)
             stored.put(key, 1);
         else
@@ -132,7 +132,7 @@ public class DataContainer implements Serializable {
         });*/
     }
 
-    public void incBackedUpChunkCurrRepDegree(String key) {
+    public  void incBackedUpChunkCurrRepDegree(String key) {
         if (backedUpChunks.get(key) == null)
             return;
         backedUpChunks.get(key).setCurrRepDegree(backedUpChunks.get(key).getCurrRepDegree() + 1);
@@ -142,7 +142,7 @@ public class DataContainer implements Serializable {
         });*/
     }
 
-    public void decBackedUpChunkCurrRepDegree(String key) {
+    public  void decBackedUpChunkCurrRepDegree(String key) {
         if (backedUpChunks.get(key) == null)
             return;
         backedUpChunks.get(key).setCurrRepDegree(backedUpChunks.get(key).getCurrRepDegree() - 1);
@@ -174,13 +174,13 @@ public class DataContainer implements Serializable {
         return backedUpChunks;
     }
 
-    public int getBackedUpChunkCurrRepDegree(String key) {
+    public  int getBackedUpChunkCurrRepDegree(String key) {
         if (backedUpChunks.get(key) == null)
             return -1;
         return backedUpChunks.get(key).getCurrRepDegree();
     }
 
-    public int getBackedUpChunkDesiredRepDegree(String key) {
+    public  int getBackedUpChunkDesiredRepDegree(String key) {
         if (backedUpChunks.get(key) == null)
             return -1;
         return backedUpChunks.get(key).getDesiredRepDegree();
@@ -324,6 +324,14 @@ public class DataContainer implements Serializable {
             deleteStoredChunk(chunkKey);
         }
 
+    }
+
+    public void setBackedUpChunksChunkInfoHandling(String chunkKey, boolean handling) {
+        backedUpChunks.get(chunkKey).setHandling(handling);
+    }
+
+    public boolean isBackedUpChunkInfoHandling(String chunkKey) {
+       return  backedUpChunks.get(chunkKey).isHandling();
     }
 
 }

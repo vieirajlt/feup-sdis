@@ -8,6 +8,7 @@ public class ChunkInfo implements Comparable<ChunkInfo>, Serializable {
     private Integer currRepDegree;
     private Integer desiredRepDegree;
     private boolean onPeer;
+    private boolean handling;
 
     private String fileId;
     private int chunkNo;
@@ -17,6 +18,7 @@ public class ChunkInfo implements Comparable<ChunkInfo>, Serializable {
         this.currRepDegree = currRepDegree;
         this.desiredRepDegree = desiredRepDegree;
         this.onPeer = onPeer;
+        this.handling = true;
 
         String[] info = chunkKey.split("_");
         fileId = info[0];
@@ -76,6 +78,13 @@ public class ChunkInfo implements Comparable<ChunkInfo>, Serializable {
                 '}';
     }
 
+    public boolean isHandling() {
+        return handling;
+    }
+
+    public void setHandling(boolean handling) {
+        this.handling = handling;
+    }
 
     //TODO testing - Isto está?
     /*If the Integer is equal to the argument then 0 is returned.
