@@ -8,6 +8,13 @@ import static protocol.subprotocol.Subprotocol.FILESTATUS;
 
 public class FileStatusHandler extends Handler implements Runnable {
 
+    private static final int MAX_FILESTATUS_REPEAT = 5;
+
+    private static final int FILESTATUS_INBETWEEN_TIME_MS = 1000;
+
+    private int repeatCnt = 0;
+
+
     private String fileId;
     private int fileOwner;
     private byte[] message;
@@ -23,8 +30,15 @@ public class FileStatusHandler extends Handler implements Runnable {
         Peer.getExecutor().schedule(this, getSleep_time_ms(), TimeUnit.MILLISECONDS);
     }
 
+
     @Override
     public void run() {
-        Peer.getControlChannel().write(message);
+        if (repeatCnt < MAX_FILESTATUS_REPEAT) {
+            if(Peer.getDataContainer().getTmpBackedUpFileResponse(fileId , fileOwner) != -1)
+                return;
+            Peer.getControlChannel().write(message);
+            ++repeatCnt;
+            Peer.getExecutor().schedule(this,FILESTATUS_INBETWEEN_TIME_MS, TimeUnit.MILLISECONDS);
+        }
     }
 }

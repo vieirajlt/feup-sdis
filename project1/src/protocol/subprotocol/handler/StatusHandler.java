@@ -2,8 +2,6 @@ package protocol.subprotocol.handler;
 
 import protocol.Peer;
 
-import java.util.concurrent.TimeUnit;
-
 import static protocol.subprotocol.Subprotocol.STATUS;
 
 public class StatusHandler extends Handler implements Runnable {
@@ -26,7 +24,6 @@ public class StatusHandler extends Handler implements Runnable {
 
     @Override
     public void run() {
-        System.out.println("statushandler.run");
         Peer.getControlChannel().write(message);
     }
 }

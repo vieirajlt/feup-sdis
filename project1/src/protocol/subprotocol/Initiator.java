@@ -78,8 +78,6 @@ public class Initiator extends Subprotocol implements RMIInterface {
 
 
     public static void initiateFileStatus() {
-        //TODO isto fica estranho aqui
-
         boolean enhanced = isEnhancementAllowed(Peer.getProtocolVersion());
         if(!enhanced)
            return;
@@ -94,7 +92,7 @@ public class Initiator extends Subprotocol implements RMIInterface {
                     .forEach(File->{
                         if(File.isDirectory() && !File.getName().equals("backup")) {
                             System.out.println("kEY: " + File.getName() + "_" + Peer.getDataContainer().getBackedUpChunkFileOwnerId(File.getName()) );
-                            Peer.getDataContainer().addTmpBackedUpFile(File.getName() + "_" + Peer.getDataContainer().getBackedUpChunkFileOwnerId(File.getName()));
+                            Peer.getDataContainer().addTmpBackedUpFile(File.getName() , Peer.getDataContainer().getBackedUpChunkFileOwnerId(File.getName()));
                             FileStatusHandler handler = new FileStatusHandler(File.getName(), Peer.getDataContainer().getBackedUpChunkFileOwnerId(File.getName()));
                             handler.handle();
                         }

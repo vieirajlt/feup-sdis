@@ -183,16 +183,16 @@ public class Receiver extends Subprotocol implements Runnable{
 
         String fileId = header[3];
 
-        String key = fileId + "_"  + senderId;
 
         //does not backup the file
-        if(!Peer.getDataContainer().hasTmpBackedUpFile(key))
+        if(!Peer.getDataContainer().hasTmpBackedUpFile(fileId, senderId))
             return;
 
         int status = Integer.parseInt(header[4]);
 
-        Peer.getDataContainer().setTmpBackedUpFileResponse(key, status);
+        Peer.getDataContainer().setTmpBackedUpFileResponse(fileId,senderId, status);
 
+        System.out.println("file status  " + fileId + " " + status);
         //the file was not deleted
         if(status == 0)
             return;  //the file was deleted

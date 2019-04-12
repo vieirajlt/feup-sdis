@@ -64,6 +64,7 @@ public class DataContainer implements Serializable {
 
     public void store() {
         tmpChunks.clear();
+        tmpBackedUpFiles.clear();
         Path path = Paths.get(DATA_PATH);
         try {
             Files.createDirectories(path.getParent());
@@ -370,25 +371,32 @@ public class DataContainer implements Serializable {
     }
 
 
-    public void addTmpBackedUpFile(String key) {
+    public void addTmpBackedUpFile(String fileId, int ownerId) {
+        String key = buildTmpBackedUpFileKey(fileId, ownerId);
         if (tmpBackedUpFiles.get(key) == null)
             tmpBackedUpFiles.put(key, -1);
     }
 
-    public void setTmpBackedUpFileResponse(String key, Integer response)  {
+    public void setTmpBackedUpFileResponse(String fileId, int ownerId, Integer response)  {
+        String key = buildTmpBackedUpFileKey(fileId, ownerId);
          if(tmpBackedUpFiles.get(key)!= null)
              tmpBackedUpFiles.replace(key,response);
     }
 
 
-    public boolean hasTmpBackedUpFile(String key)  {
-        if(tmpBackedUpFiles.get(key) == null)
+    public boolean hasTmpBackedUpFile(String fileId, int ownerId)  {
+        if(tmpBackedUpFiles.get(buildTmpBackedUpFileKey(fileId, ownerId)) == null)
             return false;
         return true;
     }
 
-    public int getTmpBackedUpFileResponse(String key)  {
-           return tmpBackedUpFiles.get(key);
+    public int getTmpBackedUpFileResponse(String fileId, int ownerId)  {
+           return tmpBackedUpFiles.get(buildTmpBackedUpFileKey(fileId, ownerId));
     }
+
+    private String buildTmpBackedUpFileKey(String fileId, int ownerId) {
+        return fileId + "_" + ownerId;
+    }
+
 
 }
