@@ -37,7 +37,7 @@ public class StoredHandler extends Handler implements Runnable {
             return;
 
         String chunkKey = chunk.buildChunkKey(fileId);
-        message = buildMessage(STORED, MSG_CONFIG_STORED, fileId, chunk.getChunkNo(), -1, null);
+        message = buildMessage(STORED, MSG_CONFIG_STORED, fileId, chunk.getChunkNo(), -1, (byte[]) null);
 
         // case already backed up
         if (Peer.getDataContainer().isBackedUpChunkOnPeer(chunkKey)) {

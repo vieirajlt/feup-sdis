@@ -68,7 +68,7 @@ public class RemovedHandler extends Handler implements Runnable {
         String chunkKey = chunk.buildChunkKey(fileId);
         Peer.getDataContainer().deleteBackedUpChunk(chunkKey);
         //Peer.getDataContainer().setBackedUpChunkOnPeer(chunkKey, false);
-        byte[] message = buildMessage(REMOVED, MSG_CONFIG_REMOVED, chunkInfo.getFileId(), chunkInfo.getChunkNo(), -1, null);
+        byte[] message = buildMessage(REMOVED, MSG_CONFIG_REMOVED, chunkInfo.getFileId(), chunkInfo.getChunkNo(), -1,  (byte[]) null);
 
         Peer.getControlChannel().write(message);
 

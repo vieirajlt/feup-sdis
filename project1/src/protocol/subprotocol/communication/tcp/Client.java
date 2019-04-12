@@ -44,7 +44,10 @@ public class Client {
         try {
             int chunkNo = in.readInt();
             int length = in.readInt();
-            byte[] body = in.readNBytes(length);
+            byte[] body = new byte[length];
+            int size =    in.read(body, 0, length);
+            if(size != length) //error
+                return null;
             Chunk chunk = new Chunk(chunkNo, body);
             return chunk;
         } catch (IOException e) {

@@ -19,7 +19,7 @@ public class GetchunkHandler extends Handler{
         int chunksSize = Peer.getDataContainer().getOwnFileNrOfChunks(sf.getFileId());
         for(int chunkNo = 0; chunkNo < chunksSize; chunkNo++ )
         {
-            byte[] message = buildMessage(GETCHUNK, MSG_CONFIG_GETCHUNK, sf.getFileId(), chunkNo, -1,null);
+            byte[] message = buildMessage(GETCHUNK, MSG_CONFIG_GETCHUNK, sf.getFileId(), chunkNo, -1, (byte[]) null);
             Peer.getControlChannel().write(message);
         }
     }

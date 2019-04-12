@@ -30,7 +30,7 @@ public class DeleteHandler extends Handler implements Runnable {
     @Override
     public void handle() {
 
-        message = buildMessage(DELETE, MSG_CONFIG_DELETE, sf.getFileId(), -1, -1, null);
+        message = buildMessage(DELETE, MSG_CONFIG_DELETE, sf.getFileId(), -1, -1, (byte[]) null);
 
         Peer.getExecutor().execute(this);
 
