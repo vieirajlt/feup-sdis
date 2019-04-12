@@ -9,12 +9,14 @@ import java.util.concurrent.TimeUnit;
 
 public class RemovedAction extends Action implements Runnable {
 
+    private String senderId;
     private String fileId;
     private String chunkKey;
     private int chunkNo;
     private boolean enhanced;
 
-    public RemovedAction(String fileId, String chunkKey, int chunkNo, boolean enhanced) {
+    public RemovedAction(String senderId, String fileId, String chunkKey, int chunkNo, boolean enhanced) {
+        this.senderId = senderId;
         this.fileId = fileId;
         this.chunkKey = chunkKey;
         this.chunkNo = chunkNo;
@@ -24,7 +26,7 @@ public class RemovedAction extends Action implements Runnable {
     @Override
     public void process() {
         //own files
-        Peer.getDataContainer().decStoredCurrRepDegree(chunkKey);
+        Peer.getDataContainer().decStoredCurrRepDegree(chunkKey, senderId);
         //other files
         Peer.getDataContainer().decBackedUpChunkCurrRepDegree(chunkKey);
 

@@ -31,7 +31,7 @@ public abstract class Handler {
         sleep_time_ms = buildSleep_time_ms();
     }
 
-    private byte[] buildHeader(String type, int configuration, String fileId, int chunkNo, int replicationDegree, float completionPercentage) {
+    private byte[] buildHeader(String type, int configuration, String fileId, int chunkNo, int replicationDegree, float completionPercentage, String connection) {
 
         String message = type;
         int config = configuration;
@@ -70,21 +70,33 @@ public abstract class Handler {
             message += " " + completionPercentage;
         }
 
+        //restore enhancement
+        if(connection != null) {
+            message += " " + connection;
+        }
+
         //End Header
         message += " " + CR + LF + CR + LF;
         return message.getBytes(StandardCharsets.UTF_8);
     }
 
     protected byte[] buildMessage(String type, int configuration, String fileId, int chunkNo, int replicationDegree, byte[] body) {
-        byte[] header = buildHeader(type, configuration, fileId, chunkNo, replicationDegree, 0);
+        byte[] header = buildHeader(type, configuration, fileId, chunkNo, replicationDegree, 0, null);
         byte[] message = completeMessage(configuration, body, header);
         return message;
     }
 
+    //backup enhancement
     protected byte[] buildMessage(String type, int configuration, String fileId, int chunkNo, int replicationDegree, byte[] body, float completionPercentage) {
-        byte[] header = buildHeader(type, configuration, fileId, chunkNo, replicationDegree, completionPercentage);
+        byte[] header = buildHeader(type, configuration, fileId, chunkNo, replicationDegree, completionPercentage, null);
         byte[] message = completeMessage(configuration, body, header);
         return message;
+    }
+
+    //restore enhancement
+    protected byte[] buildMessage(String type, int configuration, String fileId, int chunkNo, int replicationDegree, String connection) {
+        byte[] header = buildHeader(type, configuration, fileId, chunkNo, replicationDegree, 0, connection);
+        return header;
     }
 
     private byte[] completeMessage(int configuration, byte[] body, byte[] header) {

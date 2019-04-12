@@ -88,7 +88,7 @@ public class ChunkInfo implements Comparable<ChunkInfo>, Serializable {
         this.handling = handling;
     }
 
-    //TODO testing - Isto está?
+    //TODO testing - Isto está? Não tens o algoritmo disto apontado so para poder confirmar melhor?
     /*If the Integer is equal to the argument then 0 is returned.
     If the Integer is less than the argument then -1 is returned.
     If the Integer is greater than the argument then 1 is returned.*/

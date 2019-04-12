@@ -1,4 +1,4 @@
-package protocol;
+package protocol.subprotocol.communication;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
@@ -6,7 +6,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.Arrays;
 
-public class Channel implements Runnable {
+public class Channel implements Communication {
 
     private int PORT;
     private InetAddress address;
@@ -22,7 +22,7 @@ public class Channel implements Runnable {
         }
     }
 
-    public void read(boolean acceptText) {
+    public void read() {
         try (DatagramSocket socket = new DatagramSocket(PORT)) {
             byte[] rbuf = new byte[MAX_BUFFER_SIZE];
             DatagramPacket packet = new DatagramPacket(rbuf, rbuf.length);
@@ -51,6 +51,6 @@ public class Channel implements Runnable {
 
     @Override
     public void run() {
-        read(false);
+        read();
     }
 }

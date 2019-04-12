@@ -20,8 +20,8 @@ public class DataContainer implements Serializable {
 
 
     // Key = chunkId
-    // Value = currReplicationDegree
-    private ConcurrentHashMap<String, Integer> stored; //all the chunks of the Peer's own files
+    // Value = peers that store chunks
+    private ConcurrentHashMap<String, ArrayList<String>> stored; //all the chunks of the Peer's own files
 
     // Key = fileId
     // Value = nrOfChunks
@@ -89,31 +89,37 @@ public class DataContainer implements Serializable {
 
 
     public void addStored(String key) {
-        stored.put(key, 0);
+        stored.put(key, new ArrayList<>());
     }
 
     public  Integer getStoredCurrRepDegree(String key) {
         if (stored.get(key) == null)
             return -1;
+        return stored.get(key).size();
+    }
+
+    public  ArrayList<String> getStoredPeersList(String key) {
+        if (stored.get(key) == null)
+            return null;
         return stored.get(key);
     }
 
-    public  void incStoredCurrRepDegree(String key) {
+    public  void incStoredCurrRepDegree(String key, String senderId) {
         /*if (stored.get(key) == null)
             stored.put(key, 1);
         else
             stored.replace(key, stored.get(key) + 1);*/
         if (stored.get(key) != null)
-            stored.replace(key, stored.get(key) + 1);
+            stored.get(key).add(senderId);
     }
 
-    public  void decStoredCurrRepDegree(String key) {
+    public  void decStoredCurrRepDegree(String key, String senderId) {
         /*if (stored.get(key) == null)
             stored.put(key, 1);
         else
             stored.replace(key, stored.get(key) + 1);*/
         if (stored.get(key) != null)
-            stored.replace(key, stored.get(key) - 1);
+            stored.get(key).remove(senderId);
     }
 
     public void deleteStoredChunk(String key) {
@@ -255,8 +261,9 @@ public class DataContainer implements Serializable {
     }
 
     public void setPeerChunk(String key, boolean state) {
-        peersChunks.put(key, false);
-        //peersChunks.replace(key, state);
+        //TODO porque que isto estava comentado ao contrario???
+        //peersChunks.put(key, false);
+        peersChunks.replace(key, state);
     }
 
 

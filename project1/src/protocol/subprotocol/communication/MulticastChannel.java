@@ -1,12 +1,13 @@
-package protocol;
+package protocol.subprotocol.communication;
 
+import protocol.Peer;
 import protocol.subprotocol.fileManagement.FileManager;
 
 import java.io.IOException;
 import java.net.*;
 import java.util.Arrays;
 
-public class MulticastChannel implements Runnable{
+public class MulticastChannel implements Communication{
 
     private int PORT;
     private InetAddress address;

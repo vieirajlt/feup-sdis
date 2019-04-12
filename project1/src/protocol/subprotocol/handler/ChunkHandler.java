@@ -1,7 +1,8 @@
 package protocol.subprotocol.handler;
 
-import protocol.Peer;
 import protocol.Chunk;
+import protocol.Peer;
+import protocol.subprotocol.communication.tcp.Server;
 
 import java.util.concurrent.TimeUnit;
 
@@ -13,11 +14,13 @@ public class ChunkHandler extends Handler implements Runnable {
     private int chunkNo;
     private String chunkKey;
     private Chunk chunk;
+    private boolean enhanced;
 
-    public ChunkHandler(String fileId, int chunkNo) {
+    public ChunkHandler(String fileId, int chunkNo, boolean enhanced) {
         this.fileId = fileId;
         this.chunkNo = chunkNo;
         chunk = new Chunk(chunkNo);
+        this.enhanced = enhanced;
     }
 
     @Override
@@ -40,9 +43,17 @@ public class ChunkHandler extends Handler implements Runnable {
         while(!chunk.isLoaded()); //TODO this is a precaution... don't know if really  needed
         if (!Peer.getDataContainer().getChunkShippingState(chunkKey)) {
             byte[] body = chunk.getBody();
-            byte[] message = buildMessage(CHUNK, MSG_CONFIG_SENDCHUNK, fileId, chunkNo, -1, body);
-            // System.out.println(message);
-            Peer.getRestoreChannel().write(message);
+
+            byte[] message;
+            if(enhanced) {
+                Server tcpServer = new Server(chunk);
+                message = buildMessage(CHUNK, MSG_CONFIG_SENDCHUNK, fileId, chunkNo, -1, tcpServer.getConnectionSettings());
+                Peer.getRestoreChannel().write(message);
+                tcpServer.sendChunk();
+            } else {
+                message = buildMessage(CHUNK, MSG_CONFIG_SENDCHUNK, fileId, chunkNo, -1, body);
+                Peer.getRestoreChannel().write(message);
+            }
 
             Peer.getDataContainer().setPeerChunk(chunkKey, true);
         }

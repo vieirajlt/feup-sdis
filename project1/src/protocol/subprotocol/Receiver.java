@@ -6,6 +6,7 @@ import protocol.subprotocol.action.ChunkAction;
 import protocol.subprotocol.action.DeleteAction;
 import protocol.subprotocol.action.RemovedAction;
 import protocol.subprotocol.action.StoredAction;
+import protocol.subprotocol.communication.tcp.Client;
 import protocol.subprotocol.handler.ChunkHandler;
 import protocol.subprotocol.handler.Handler;
 import protocol.subprotocol.handler.StoredHandler;
@@ -74,13 +75,12 @@ public class Receiver extends Subprotocol implements Runnable{
     private synchronized void getchunk(String[] header) {
         System.out.println("protocol.subprotocol.Receiver.getchunk");
 
-        //TODO what to do with this??
-        String senderId = header[2];
+        boolean enhanced = isEnhancementAllowed(header[0]);
 
         int chunkNo = Integer.parseInt(header[4]);
         String fileId = header[3];
 
-        ChunkHandler handler = new ChunkHandler(fileId, chunkNo); //CHUNK
+        ChunkHandler handler = new ChunkHandler(fileId, chunkNo, enhanced); //CHUNK
         handler.handle();
     }
 
@@ -95,6 +95,7 @@ public class Receiver extends Subprotocol implements Runnable{
     private synchronized void removed(String[] header) {
         System.out.println("protocol.subprotocol.Receiver.removed");
 
+        String senderId = header[2];
         String fileId = header[3];
         int chunkNo = Integer.parseInt(header[4]);
         Chunk chunk = new Chunk(chunkNo);
@@ -103,7 +104,7 @@ public class Receiver extends Subprotocol implements Runnable{
         //for needed putchunk messages
         boolean enhanced = isEnhancementAllowed(PUTCHUNK);
 
-        RemovedAction action = new RemovedAction(fileId, chunkKey, chunkNo, enhanced);
+        RemovedAction action = new RemovedAction(senderId, fileId, chunkKey, chunkNo, enhanced);
         action.process();
     }
 
@@ -114,18 +115,33 @@ public class Receiver extends Subprotocol implements Runnable{
 
         System.out.println("protocol.subprotocol.Receiver.stored from " + senderId + " of chunkNo " + chunkNo);
 
-        StoredAction action = new StoredAction(fileId, chunkNo);
+        StoredAction action = new StoredAction(senderId, fileId, chunkNo);
         action.process();
     }
 
     private synchronized void chunk(String[] header, byte[] body) {
         System.out.println("protocol.subprotocol.Receiver.chunk");
-        //TODO what to do with this??
-        String senderId = header[2];
         String fileId = header[3];
         int chunkNo = Integer.parseInt(header[4]);
 
-        ChunkAction action = new ChunkAction(fileId, body, chunkNo);
+        boolean enhanced = isEnhancementAllowed(header[0]);
+        byte[] chunkBody = body;
+
+        if(enhanced) {
+            String[] connection = header[5].split(":");
+            Client client = new Client(connection[1], connection[0]);
+            Chunk chunk = client.receiveChunk();
+            if(chunk == null)
+                return;
+
+            if(chunkNo != chunk.getChunkNo())
+                System.out.println("diff ChunkNo");
+
+            chunkNo = chunk.getChunkNo();
+            chunkBody = chunk.getBody();
+        }
+
+        ChunkAction action = new ChunkAction(fileId, chunkBody, chunkNo);
         action.process();
 
     }
