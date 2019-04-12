@@ -10,7 +10,7 @@ import java.util.ArrayList;
 public class FileManager {
 
     //TODO test this maxed to 64000
-    public final static int MAX_CHUNK_SIZE = 10000;
+    public final static int MAX_CHUNK_SIZE = 64000;
     public final static int MAX_NUM_CHUNKS = 1000000;
 
     private String fileId;

@@ -7,9 +7,7 @@ import protocol.subprotocol.action.DeleteAction;
 import protocol.subprotocol.action.RemovedAction;
 import protocol.subprotocol.action.StoredAction;
 import protocol.subprotocol.communication.tcp.Client;
-import protocol.subprotocol.handler.ChunkHandler;
-import protocol.subprotocol.handler.Handler;
-import protocol.subprotocol.handler.StoredHandler;
+import protocol.subprotocol.handler.*;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -33,7 +31,7 @@ public class Receiver extends Subprotocol implements Runnable{
 
         String[] cmd = header.split(" ");
 
-        if (!checkHeader(cmd))
+        if (!checkHeader(cmd) && !cmd[0].equals(DELETE))
             return;
 
         if (cmd[0].equals(PUTCHUNK)) {
@@ -48,7 +46,12 @@ public class Receiver extends Subprotocol implements Runnable{
             stored(cmd);
         } else if (cmd[0].equals(CHUNK)) {
             chunk(cmd, body);
+        } else if (cmd[0].equals(FILESTATUS)) {
+            filestatus(cmd, body);
+        } else if (cmd[0].equals(STATUS)) {
+            status(cmd, body);
         }
+
     }
 
     private synchronized void putchunk(String[] header, byte[] body) {
@@ -144,6 +147,59 @@ public class Receiver extends Subprotocol implements Runnable{
         ChunkAction action = new ChunkAction(fileId, chunkBody, chunkNo);
         action.process();
 
+    }
+
+    //<FILESTATUS> <SenderId> <FileId> <FileOwnerId> <CRLF><CRLF>
+    private synchronized void filestatus(String[] header, byte[] body) {
+        System.out.println("protocol.subprotocol.Receiver.filestatus");
+
+        int fileOwnerId = Integer.parseInt(header[4]);
+
+        System.out.println("fileOwnerId:  " + fileOwnerId);
+
+        //if peer is not the owner of the file
+        if(fileOwnerId != Peer.getServerId())
+            return;
+
+        String fileId = header[3];
+
+        System.out.println("fileId:  " + fileId);
+
+        int status = 1;
+
+        //if the file was not deleted status = 0, else status = 1
+        if(Peer.getDataContainer().getOwnFile(fileId) != null)
+            status = 0;
+
+        StatusHandler handler = new StatusHandler(fileId, status);
+        handler.handle();
+    }
+
+    //<STATUS> <SenderId> <FileId> <Status> <CRLF><CRLF>
+    private synchronized void status(String[] header, byte[] body) {
+        System.out.println("protocol.subprotocol.Receiver.status");
+
+        int senderId = Integer.parseInt(header[2]);
+
+        String fileId = header[3];
+
+        String key = fileId + "_"  + senderId;
+
+        //does not backup the file
+        if(!Peer.getDataContainer().hasTmpBackedUpFile(key))
+            return;
+
+        int status = Integer.parseInt(header[4]);
+
+        Peer.getDataContainer().setTmpBackedUpFileResponse(key, status);
+
+        //the file was not deleted
+        if(status == 0)
+            return;  //the file was deleted
+        else if(status == 1){
+            DeleteHandler handler = new DeleteHandler(fileId);
+            handler.handle();
+        }
     }
 
     private boolean checkHeader(String[] header) {

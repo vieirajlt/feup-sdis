@@ -23,6 +23,10 @@ public abstract class Handler {
 
     protected final static int MSG_CONFIG_REMOVED = 0b001111;
 
+    protected final static int MSG_CONFIG_FILESTATUS = 0b000111;
+
+    protected final static int MSG_CONFIG_STATUS = 0b000111;
+
     private final static int MAX_TIME_SLEEP_MS = 400;
 
     private int sleep_time_ms;
@@ -31,7 +35,7 @@ public abstract class Handler {
         sleep_time_ms = buildSleep_time_ms();
     }
 
-    private byte[] buildHeader(String type, int configuration, String fileId, int chunkNo, int replicationDegree, float completionPercentage, String connection) {
+    private byte[] buildHeader(String type, int configuration, String fileId, int chunkNo, int replicationDegree, float completionPercentage, int fileOwner, int status, String connection) {
 
         String message = type;
         int config = configuration;
@@ -65,6 +69,7 @@ public abstract class Handler {
             message += " " + replicationDegree;
         }
 
+
         //backup enhancement
         if(completionPercentage > 0) {
             message += " " + completionPercentage;
@@ -75,29 +80,51 @@ public abstract class Handler {
             message += " " + connection;
         }
 
+        //delete enhancement
+        if(fileOwner > 0)
+            message += " " + fileOwner;
+
+        if(status > -1)
+            message += " " + status;
+
+
+
         //End Header
         message += " " + CR + LF + CR + LF;
         return message.getBytes(StandardCharsets.UTF_8);
     }
 
     protected byte[] buildMessage(String type, int configuration, String fileId, int chunkNo, int replicationDegree, byte[] body) {
-        byte[] header = buildHeader(type, configuration, fileId, chunkNo, replicationDegree, 0, null);
+        byte[] header = buildHeader(type, configuration, fileId, chunkNo, replicationDegree, 0, -1, -1,null);
         byte[] message = completeMessage(configuration, body, header);
         return message;
     }
 
     //backup enhancement
     protected byte[] buildMessage(String type, int configuration, String fileId, int chunkNo, int replicationDegree, byte[] body, float completionPercentage) {
-        byte[] header = buildHeader(type, configuration, fileId, chunkNo, replicationDegree, completionPercentage, null);
+        byte[] header = buildHeader(type, configuration, fileId, chunkNo, replicationDegree, completionPercentage, -1, -1,  null);
         byte[] message = completeMessage(configuration, body, header);
         return message;
     }
 
     //restore enhancement
     protected byte[] buildMessage(String type, int configuration, String fileId, int chunkNo, int replicationDegree, String connection) {
-        byte[] header = buildHeader(type, configuration, fileId, chunkNo, replicationDegree, 0, connection);
+        byte[] header = buildHeader(type, configuration, fileId, chunkNo, replicationDegree, 0,-1, -1, connection);
         return header;
     }
+
+    //delete enhancement
+    protected byte[] buildMessage(String type, int configuration,  String fileId, int fileOwner) {
+        byte[] header = buildHeader(type, configuration, fileId, -1,-1,0, fileOwner, -1,null);
+        return header;
+    }
+
+    protected byte[] buildMessage(String type, int configuration,  String fileId, int fileOwner, int status) {
+        byte[] header = buildHeader(type, configuration, fileId, -1,-1,0, -1, status, null);
+        return header;
+    }
+
+
 
     private byte[] completeMessage(int configuration, byte[] body, byte[] header) {
         int config = configuration >>> 5;

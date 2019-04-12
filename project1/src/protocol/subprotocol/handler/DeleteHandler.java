@@ -19,34 +19,47 @@ public class DeleteHandler extends Handler implements Runnable {
 
     private int repeatCnt = 0;
 
-    private SplitFile sf;
+    private String fileId;
+
+    private String pathname;
 
     private byte[] message;
 
+    private boolean deleteFile;
+
     public DeleteHandler(SplitFile sf) {
-        this.sf = sf;
+        this.fileId = sf.getFileId();
+        this.pathname = sf.getPathname();
+        this.deleteFile = true;
+    }
+
+    public DeleteHandler(String fileId){
+        this.fileId = fileId;
+        this.deleteFile = false;
     }
 
     @Override
     public void handle() {
 
-        message = buildMessage(DELETE, MSG_CONFIG_DELETE, sf.getFileId(), -1, -1, (byte[]) null);
+        message = buildMessage(DELETE, MSG_CONFIG_DELETE, fileId, -1, -1, (byte[]) null);
 
         Peer.getExecutor().execute(this);
 
-        //delete the file
-        Path path = Paths.get(sf.getPathname());
-        try {
-            Files.deleteIfExists(path);
-            System.out.println("File deleted successfully " + Files.exists(path));
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.out.println("Failed to delete the file");
-            return;
-        }
+        if(deleteFile) {
+            //delete the file
+            Path path = Paths.get(pathname);
+            try {
+                Files.deleteIfExists(path);
+                System.out.println("File deleted successfully " + Files.exists(path));
+            } catch (IOException e) {
+                e.printStackTrace();
+                System.out.println("Failed to delete the file");
+                return;
+            }
 
-        //delete file from Peer's ownFiles and file chunks from stored
-        Peer.getDataContainer().deleteOwnFileAndChunks(sf.getFileId());
+            //delete file from Peer's ownFiles and file chunks from stored
+            Peer.getDataContainer().deleteOwnFileAndChunks(fileId);
+        }
     }
 
     @Override

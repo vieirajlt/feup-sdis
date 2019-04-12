@@ -1,16 +1,19 @@
 package protocol.subprotocol;
 
+import protocol.Chunk;
 import protocol.Peer;
 import protocol.subprotocol.fileManagement.SplitFile;
-import protocol.subprotocol.handler.DeleteHandler;
-import protocol.subprotocol.handler.GetchunkHandler;
-import protocol.subprotocol.handler.RemovedHandler;
-import protocol.subprotocol.handler.StateHandler;
+import protocol.subprotocol.handler.*;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Comparator;
 
 public class Initiator extends Subprotocol implements RMIInterface {
 
@@ -71,6 +74,34 @@ public class Initiator extends Subprotocol implements RMIInterface {
 
         StateHandler stateHandler = new StateHandler();
         stateHandler.handle();
+    }
+
+
+    public static void initiateFileStatus() {
+        //TODO isto fica estranho aqui
+
+        boolean enhanced = isEnhancementAllowed(Peer.getProtocolVersion());
+        if(!enhanced)
+           return;
+
+        Path dirPath = Paths.get(Chunk.getPathname());
+        if (!Files.exists(dirPath))
+            return;
+        try {
+            Files.walk(dirPath)
+                    .sorted(Comparator.reverseOrder())
+                    .map(Path::toFile)
+                    .forEach(File->{
+                        if(File.isDirectory() && !File.getName().equals("backup")) {
+                            System.out.println("kEY: " + File.getName() + "_" + Peer.getDataContainer().getBackedUpChunkFileOwnerId(File.getName()) );
+                            Peer.getDataContainer().addTmpBackedUpFile(File.getName() + "_" + Peer.getDataContainer().getBackedUpChunkFileOwnerId(File.getName()));
+                            FileStatusHandler handler = new FileStatusHandler(File.getName(), Peer.getDataContainer().getBackedUpChunkFileOwnerId(File.getName()));
+                            handler.handle();
+                        }
+                    });
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }

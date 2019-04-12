@@ -10,6 +10,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DataContainer implements Serializable {
@@ -41,6 +42,10 @@ public class DataContainer implements Serializable {
     // Value = chunks
     private ConcurrentHashMap<String, ArrayList<Chunk>> tmpChunks; //used in restore
 
+    // Key = fileId_ownerId
+    // Value = response (-1 no response, 0 not deleted, 1 deleted)
+    private ConcurrentHashMap<String, Integer> tmpBackedUpFiles; //used in delete enhancement
+
     // maximum amount of disk space that can be used to store chunks (in Bytes)
     private long storageCapacity;
     // amount of disk space being used to store chunks (in Bytes)
@@ -52,6 +57,7 @@ public class DataContainer implements Serializable {
         ownFiles = new ConcurrentHashMap<>();
         peersChunks = new ConcurrentHashMap<>();
         tmpChunks = new ConcurrentHashMap<>();
+        tmpBackedUpFiles = new ConcurrentHashMap<>();
         storageCapacity = INITIAL_STORAGE_CAPACITY;
         currStorageAmount = 0;
     }
@@ -92,19 +98,19 @@ public class DataContainer implements Serializable {
         stored.put(key, new ArrayList<>());
     }
 
-    public  Integer getStoredCurrRepDegree(String key) {
+    public Integer getStoredCurrRepDegree(String key) {
         if (stored.get(key) == null)
             return -1;
         return stored.get(key).size();
     }
 
-    public  ArrayList<String> getStoredPeersList(String key) {
+    public ArrayList<String> getStoredPeersList(String key) {
         if (stored.get(key) == null)
             return null;
         return stored.get(key);
     }
 
-    public  void incStoredCurrRepDegree(String key, String senderId) {
+    public void incStoredCurrRepDegree(String key, String senderId) {
         /*if (stored.get(key) == null)
             stored.put(key, 1);
         else
@@ -113,7 +119,7 @@ public class DataContainer implements Serializable {
             stored.get(key).add(senderId);
     }
 
-    public  void decStoredCurrRepDegree(String key, String senderId) {
+    public void decStoredCurrRepDegree(String key, String senderId) {
         /*if (stored.get(key) == null)
             stored.put(key, 1);
         else
@@ -130,8 +136,7 @@ public class DataContainer implements Serializable {
         if (backedUpChunks.get(key) == null) {
             ChunkInfo chunkInfo = new ChunkInfo(key, senderId, desiredRepDegree, 0, false);
             backedUpChunks.put(key, chunkInfo);
-        }
-        else
+        } else
             backedUpChunks.get(key).setDesiredRepDegree(desiredRepDegree);
         /*System.out.println("addBackedUpChunk");
 
@@ -140,7 +145,7 @@ public class DataContainer implements Serializable {
         });*/
     }
 
-    public  void incBackedUpChunkCurrRepDegree(String key) {
+    public void incBackedUpChunkCurrRepDegree(String key) {
         if (backedUpChunks.get(key) == null)
             return;
         backedUpChunks.get(key).setCurrRepDegree(backedUpChunks.get(key).getCurrRepDegree() + 1);
@@ -150,7 +155,7 @@ public class DataContainer implements Serializable {
         });*/
     }
 
-    public  void decBackedUpChunkCurrRepDegree(String key) {
+    public void decBackedUpChunkCurrRepDegree(String key) {
         if (backedUpChunks.get(key) == null)
             return;
         backedUpChunks.get(key).setCurrRepDegree(backedUpChunks.get(key).getCurrRepDegree() - 1);
@@ -182,13 +187,13 @@ public class DataContainer implements Serializable {
         return backedUpChunks;
     }
 
-    public  int getBackedUpChunkCurrRepDegree(String key) {
+    public int getBackedUpChunkCurrRepDegree(String key) {
         if (backedUpChunks.get(key) == null)
             return -1;
         return backedUpChunks.get(key).getCurrRepDegree();
     }
 
-    public  int getBackedUpChunkDesiredRepDegree(String key) {
+    public int getBackedUpChunkDesiredRepDegree(String key) {
         if (backedUpChunks.get(key) == null)
             return -1;
         return backedUpChunks.get(key).getDesiredRepDegree();
@@ -297,7 +302,7 @@ public class DataContainer implements Serializable {
     }
 
     public synchronized boolean incCurrStorageAmountAndCheckSpace(long value) {
-        if(currStorageAmount + value > storageCapacity)
+        if (currStorageAmount + value > storageCapacity)
             return false;
         incCurrStorageAmount(value);
         return true;
@@ -318,7 +323,7 @@ public class DataContainer implements Serializable {
         List<ChunkInfo> values = new ArrayList<>();
         for (int i = 0; i < sorted.size(); i++) {
             //filter on peer elements
-            if(sorted.get(i).isOnPeer())
+            if (sorted.get(i).isOnPeer())
                 values.add(sorted.get(i));
             //System.out.println(sorted.get(i));
         }
@@ -347,11 +352,43 @@ public class DataContainer implements Serializable {
     }
 
     public boolean isBackedUpChunkInfoHandling(String chunkKey) {
-       return  backedUpChunks.get(chunkKey).isHandling();
+        return backedUpChunks.get(chunkKey).isHandling();
     }
 
     public float getCompletionPercentage() {
         return currStorageAmount / storageCapacity;
+    }
+
+
+    public synchronized int getBackedUpChunkFileOwnerId(String fileId) {
+        for (Map.Entry<String, ChunkInfo> entry : backedUpChunks.entrySet()) {
+            if (entry.getValue().getFileId().equals(fileId)) {
+                return entry.getValue().getSenderId();
+            }
+        }
+        return -1;
+    }
+
+
+    public void addTmpBackedUpFile(String key) {
+        if (tmpBackedUpFiles.get(key) == null)
+            tmpBackedUpFiles.put(key, -1);
+    }
+
+    public void setTmpBackedUpFileResponse(String key, Integer response)  {
+         if(tmpBackedUpFiles.get(key)!= null)
+             tmpBackedUpFiles.replace(key,response);
+    }
+
+
+    public boolean hasTmpBackedUpFile(String key)  {
+        if(tmpBackedUpFiles.get(key) == null)
+            return false;
+        return true;
+    }
+
+    public int getTmpBackedUpFileResponse(String key)  {
+           return tmpBackedUpFiles.get(key);
     }
 
 }

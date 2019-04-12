@@ -8,8 +8,10 @@ import protocol.subprotocol.Receiver;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+
 
 public class Peer {
 
@@ -51,6 +53,7 @@ public class Peer {
 
         Initiator.startInitiator();
 
+        //TODO ir guardando ao longo da execuçao do programa e nao so no fim
         Thread hook = new Thread(() -> {
             dataContainer.store();
             Path path = Paths.get(TMP_PATH);
@@ -65,6 +68,9 @@ public class Peer {
         executor.execute(control);
         executor.execute(backup);
         executor.execute(restore);
+
+
+        Initiator.initiateFileStatus();
     }
 
     public static MulticastChannel getControlChannel() {
@@ -103,4 +109,5 @@ public class Peer {
     public static ScheduledThreadPoolExecutor getExecutor() {
         return executor;
     }
+
 }
