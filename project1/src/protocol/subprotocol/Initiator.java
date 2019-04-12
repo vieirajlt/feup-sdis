@@ -78,7 +78,7 @@ public class Initiator extends Subprotocol implements RMIInterface {
 
 
     public static void initiateFileStatus() {
-        boolean enhanced = isEnhancementAllowed(Peer.getProtocolVersion());
+        boolean enhanced = isEnhancementAllowed(DELETE_SUBPROTOCOL);
         if(!enhanced)
            return;
 

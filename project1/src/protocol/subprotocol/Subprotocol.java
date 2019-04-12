@@ -27,7 +27,7 @@ public abstract class Subprotocol {
             return true;
         else if (Peer.getProtocolVersion().equals("1.2") && (protocol.equals(GETCHUNK) || protocol.equals(CHUNK) || protocol.equals(RESTORE_SUBPROTOCOL)))
             return true;
-        else if (Peer.getProtocolVersion().equals("1.3") ) //&& (protocol.equals(DELETE) || protocol.equals(FILESTATUS) || protocol.equals(DELETE_SUBPROTOCOL)))
+        else if (Peer.getProtocolVersion().equals("1.3") && (protocol.equals(DELETE) || protocol.equals(FILESTATUS) || protocol.equals(DELETE_SUBPROTOCOL)))
             return true;
         return false;
     }
