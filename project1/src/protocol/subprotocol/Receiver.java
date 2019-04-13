@@ -131,17 +131,20 @@ public class Receiver extends Subprotocol implements Runnable{
         byte[] chunkBody = body;
 
         if(enhanced) {
-            String[] connection = header[5].split(":");
-            Client client = new Client(connection[1], connection[0]);
-            Chunk chunk = client.receiveChunk();
-            if(chunk == null)
-                return;
+            //if peer is the owner of the file
+            if (Peer.getDataContainer().getOwnFile(fileId) != null) {
+                String[] connection = header[5].split(":");
+                Client client = new Client(connection[1], connection[0]);
+                Chunk chunk = client.receiveChunk();
+                if (chunk == null)
+                    return;
 
-            if(chunkNo != chunk.getChunkNo())
-                System.out.println("diff ChunkNo");
+                if (chunkNo != chunk.getChunkNo())
+                    System.out.println("diff ChunkNo");
 
-            chunkNo = chunk.getChunkNo();
-            chunkBody = chunk.getBody();
+                chunkNo = chunk.getChunkNo();
+                chunkBody = chunk.getBody();
+            }
         }
 
         ChunkAction action = new ChunkAction(fileId, chunkBody, chunkNo);
@@ -191,8 +194,6 @@ public class Receiver extends Subprotocol implements Runnable{
         int status = Integer.parseInt(header[4]);
 
         Peer.getDataContainer().setTmpBackedUpFileResponse(fileId,senderId, status);
-
-        System.out.println("file status  " + fileId + " " + status);
         //the file was not deleted
         if(status == 0)
             return;  //the file was deleted
