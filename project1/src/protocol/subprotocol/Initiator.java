@@ -91,7 +91,7 @@ public class Initiator extends Subprotocol implements RMIInterface {
                     .map(Path::toFile)
                     .forEach(File->{
                         if(File.isDirectory() && !File.getName().equals("backup")) {
-                            if( Peer.getDataContainer().getBackedUpChunkFileOwnerId(File.getName()) > 0)
+                            if( Peer.getDataContainer().getBackedUpChunkFileOwnerId(File.getName()) > -1)
                             {
                                 Peer.getDataContainer().addTmpBackedUpFile(File.getName() , Peer.getDataContainer().getBackedUpChunkFileOwnerId(File.getName()));
                                 FileStatusHandler handler = new FileStatusHandler(File.getName(), Peer.getDataContainer().getBackedUpChunkFileOwnerId(File.getName()));

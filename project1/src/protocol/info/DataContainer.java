@@ -19,7 +19,6 @@ public class DataContainer implements Serializable {
 
     private final static long INITIAL_STORAGE_CAPACITY = 1000000;
 
-
     // Key = chunkId
     // Value = peers that store chunks
     private ConcurrentHashMap<String, ArrayList<String>> stored; //all the chunks of the Peer's own files
@@ -85,7 +84,6 @@ public class DataContainer implements Serializable {
             return (DataContainer) oIn.readObject();
         } catch (FileNotFoundException e) {
             // Do nothing
-            System.out.print("error loading data container");
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {

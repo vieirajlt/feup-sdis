@@ -9,6 +9,8 @@ import protocol.subprotocol.Receiver;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
@@ -17,6 +19,7 @@ public class Peer {
 
     private final static String TMP_PATH = "TMP/";
     private static final int MAX_THREAD_POOL_SIZE = Runtime.getRuntime().availableProcessors() + 1;
+    private final static int SAVE_DATA_INTERVAL = 30000;
 
     private static String version;
     private static int id;
@@ -53,7 +56,15 @@ public class Peer {
 
         Initiator.startInitiator();
 
-        //TODO ir guardando ao longo da execuçao do programa e nao so no fim
+
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                dataContainer.store();
+            }
+        }, SAVE_DATA_INTERVAL, SAVE_DATA_INTERVAL);
+
+
         Thread hook = new Thread(() -> {
             dataContainer.store();
             Path path = Paths.get(TMP_PATH);
