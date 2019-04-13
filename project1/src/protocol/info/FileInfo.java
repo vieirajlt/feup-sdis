@@ -5,11 +5,13 @@ import java.io.Serializable;
 public class FileInfo implements Serializable {
 
     private String name;
+    private String path;
     private int nrOfChunks;
     private int repDegree;
 
-    public FileInfo(String name, int nrOfChunks, int repDegree) {
+    public FileInfo(String name, String path, int nrOfChunks, int repDegree) {
         this.name = name;
+        this.path = path;
         this.nrOfChunks = nrOfChunks;
         this.repDegree = repDegree;
     }
@@ -18,25 +20,15 @@ public class FileInfo implements Serializable {
         return name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public int getNrOfChunks() {
         return nrOfChunks;
-    }
-
-    public void setNrOfChunks(int nrOfChunks) {
-        this.nrOfChunks = nrOfChunks;
     }
 
     public int getRepDegree() {
         return repDegree;
     }
 
-    public void setRepDegree(int repDegree) {
-        this.repDegree = repDegree;
+    public String getPath() {
+        return path;
     }
-
-
 }

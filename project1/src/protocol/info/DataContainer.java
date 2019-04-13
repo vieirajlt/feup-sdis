@@ -235,9 +235,9 @@ public class DataContainer implements Serializable {
         }
     }
 
-    public void addOwnFile(String key, String name, int nrOfChunks, int repDegree) {
+    public void addOwnFile(String key, String id, String path, int nrOfChunks, int repDegree) {
         if (ownFiles.get(key) == null) {
-            FileInfo fi = new FileInfo(name, nrOfChunks, repDegree);
+            FileInfo fi = new FileInfo(id, path, nrOfChunks, repDegree);
             ownFiles.put(key, fi);
         }
     }

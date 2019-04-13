@@ -26,7 +26,8 @@ public class StateHandler extends Handler{
         //for each file initiated
         for (HashMap.Entry<String, FileInfo> entry : Peer.getDataContainer().getOwnFiles().entrySet()) {
             //file pathname
-            String pathname = entry.getValue().getName();
+            Path path = Paths.get(entry.getValue().getPath());
+            String pathname = path.toAbsolutePath().toString();
             //backup service fileId
             String fileId = entry.getKey();
             //desirable repDegree

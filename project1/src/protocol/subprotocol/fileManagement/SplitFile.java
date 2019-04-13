@@ -90,7 +90,7 @@ public class SplitFile extends FileManager {
                         fileChannel.read(buffer, position, buffer, this);
                     } else {
                         try {
-                            Peer.getDataContainer().addOwnFile(getFileId(), fileName, getChunksSize(), replicationDegree);
+                            Peer.getDataContainer().addOwnFile(getFileId(), fileName, pathname, getChunksSize(), replicationDegree);
                             fileChannel.close();
                         } catch (IOException e) {
                             e.printStackTrace();
