@@ -20,7 +20,6 @@ public class DeleteAction extends Action {
 
     @Override
     public void process() {
-        System.out.println(Chunk.getChunkFolderPath(fileId));
         Path dirPath = Paths.get(Chunk.getChunkFolderPath(fileId));
         if (!Files.exists(dirPath))
             return;

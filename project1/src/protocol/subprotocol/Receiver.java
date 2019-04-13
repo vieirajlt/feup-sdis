@@ -34,21 +34,21 @@ public class Receiver extends Subprotocol implements Runnable{
         if (!checkHeader(cmd) && !cmd[0].equals(DELETE))
             return;
 
-        if (cmd[0].equals(PUTCHUNK)) {
+        if (cmd[0].equalsIgnoreCase(PUTCHUNK)) {
             putchunk(cmd, body);
-        } else if (cmd[0].equals(GETCHUNK)) {
+        } else if (cmd[0].equalsIgnoreCase(GETCHUNK)) {
             getchunk(cmd);
-        } else if (cmd[0].equals(REMOVED)) {
+        } else if (cmd[0].equalsIgnoreCase(REMOVED)) {
             removed(cmd);
-        } else if (cmd[0].equals(DELETE)) {
+        } else if (cmd[0].equalsIgnoreCase(DELETE)) {
             delete(cmd);
-        } else if (cmd[0].equals(STORED)) {
+        } else if (cmd[0].equalsIgnoreCase(STORED)) {
             stored(cmd);
-        } else if (cmd[0].equals(CHUNK)) {
+        } else if (cmd[0].equalsIgnoreCase(CHUNK)) {
             chunk(cmd, body);
-        } else if (cmd[0].equals(FILESTATUS)) {
+        } else if (cmd[0].equalsIgnoreCase(FILESTATUS)) {
             filestatus(cmd, body);
-        } else if (cmd[0].equals(STATUS)) {
+        } else if (cmd[0].equalsIgnoreCase(STATUS)) {
             status(cmd, body);
         }
 
@@ -158,15 +158,11 @@ public class Receiver extends Subprotocol implements Runnable{
 
         int fileOwnerId = Integer.parseInt(header[4]);
 
-        System.out.println("fileOwnerId:  " + fileOwnerId);
-
         //if peer is not the owner of the file
         if(fileOwnerId != Peer.getServerId())
             return;
 
         String fileId = header[3];
-
-        System.out.println("fileId:  " + fileId);
 
         int status = 1;
 
@@ -185,7 +181,6 @@ public class Receiver extends Subprotocol implements Runnable{
         int senderId = Integer.parseInt(header[2]);
 
         String fileId = header[3];
-
 
         //does not backup the file
         if(!Peer.getDataContainer().hasTmpBackedUpFile(fileId, senderId))

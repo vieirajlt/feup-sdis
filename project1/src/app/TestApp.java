@@ -52,31 +52,31 @@ public class TestApp {
             String[] cmd = message.split(" ");
 
             //Parameters check
-            if (sub_protocol.equals(BACKUP)) {
+            if (sub_protocol.equalsIgnoreCase(BACKUP)) {
                 if (args.length != 4) {
                     System.out.println("Usage: app.TestApp <peer_ap> " + sub_protocol + "  <filepath> <replication_degree> ");
                     return;
                 }
                 initiator.backup(cmd);
-            } else if (sub_protocol.equals(RESTORE)) {
+            } else if (sub_protocol.equalsIgnoreCase(RESTORE)) {
                 if (args.length != 3) {
                     System.out.println("Usage: app.TestApp <peer_ap> " + sub_protocol + "  <filepath>");
                     return;
                 }
                 initiator.restore(cmd);
-            } else if (sub_protocol.equals(DELETE)) {
+            } else if (sub_protocol.equalsIgnoreCase(DELETE)) {
                 if (args.length != 3) {
                     System.out.println("Usage: app.TestApp <peer_ap> " + sub_protocol + "  <filepath>");
                     return;
                 }
                 initiator.delete(cmd);
-            } else if (sub_protocol.equals(RECLAIM)) {
+            } else if (sub_protocol.equalsIgnoreCase(RECLAIM)) {
                 if (args.length != 3) {
                     System.out.println("Usage: app.TestApp <peer_ap> " + sub_protocol + "  <max_size>");
                     return;
                 }
                 initiator.reclaim(cmd);
-            } else if (sub_protocol.equals(STATE)) {
+            } else if (sub_protocol.equalsIgnoreCase(STATE)) {
                 if (args.length != 2) {
                     System.out.println("Usage: app.TestApp <peer_ap> " + sub_protocol);
                     return;

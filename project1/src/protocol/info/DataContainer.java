@@ -137,31 +137,18 @@ public class DataContainer implements Serializable {
             backedUpChunks.put(key, chunkInfo);
         } else
             backedUpChunks.get(key).setDesiredRepDegree(desiredRepDegree);
-        /*System.out.println("addBackedUpChunk");
-
-        backedUpChunks.forEach((k, v) -> {
-            System.out.println("" + k + "" + v);
-        });*/
     }
 
     public void incBackedUpChunkCurrRepDegree(String key) {
         if (backedUpChunks.get(key) == null)
             return;
         backedUpChunks.get(key).setCurrRepDegree(backedUpChunks.get(key).getCurrRepDegree() + 1);
-        /*System.out.println("incBackedUpChunkCurrRepDegree");
-        backedUpChunks.forEach((k, v) -> {
-            System.out.println("" + k + "" + v);
-        });*/
     }
 
     public void decBackedUpChunkCurrRepDegree(String key) {
         if (backedUpChunks.get(key) == null)
             return;
         backedUpChunks.get(key).setCurrRepDegree(backedUpChunks.get(key).getCurrRepDegree() - 1);
-        /*System.out.println("incBackedUpChunkCurrRepDegree");
-        backedUpChunks.forEach((k, v) -> {
-            System.out.println("" + k + "" + v);
-        });*/
     }
 
     public void deleteBackedUpChunk(String key) {
@@ -324,7 +311,6 @@ public class DataContainer implements Serializable {
             //filter on peer elements
             if (sorted.get(i).isOnPeer())
                 values.add(sorted.get(i));
-            //System.out.println(sorted.get(i));
         }
         return values;
     }
