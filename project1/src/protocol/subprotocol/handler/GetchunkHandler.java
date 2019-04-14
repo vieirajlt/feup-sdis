@@ -17,7 +17,6 @@ public class GetchunkHandler extends Handler{
 
     @Override
     public void handle() {
-        System.out.println("protocol.subprotocol.handler.getchunk.run");
         int chunksSize = Peer.getDataContainer().getOwnFileNrOfChunks(sf.getFileId());
         for(int chunkNo = 0; chunkNo < chunksSize; chunkNo++ )
         {

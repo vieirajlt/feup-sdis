@@ -27,11 +27,9 @@ public class DataContainer implements Serializable {
     // Value = nrOfChunks
     private ConcurrentHashMap<String, FileInfo> ownFiles; // all the Peer's own files
 
-
     // Key = chunkId
     // Value = 0 - chunkInfo
     private ConcurrentHashMap<String, ChunkInfo> backedUpChunks; //all the chunks the Peer is backing up for another Peer
-
 
     // Key = chunkId
     // Value = shipping state
@@ -47,6 +45,7 @@ public class DataContainer implements Serializable {
 
     // maximum amount of disk space that can be used to store chunks (in Bytes)
     private long storageCapacity;
+
     // amount of disk space being used to store chunks (in Bytes)
     private long currStorageAmount;
 
@@ -111,19 +110,11 @@ public class DataContainer implements Serializable {
     }
 
     public void incStoredCurrRepDegree(String key, String senderId) {
-        /*if (stored.get(key) == null)
-            stored.put(key, 1);
-        else
-            stored.replace(key, stored.get(key) + 1);*/
         if (stored.get(key) != null)
             stored.get(key).add(senderId);
     }
 
     public void decStoredCurrRepDegree(String key, String senderId) {
-        /*if (stored.get(key) == null)
-            stored.put(key, 1);
-        else
-            stored.replace(key, stored.get(key) + 1);*/
         if (stored.get(key) != null)
             stored.get(key).remove(senderId);
     }
@@ -253,8 +244,6 @@ public class DataContainer implements Serializable {
     }
 
     public void setPeerChunk(String key, boolean state) {
-        //TODO porque que isto estava comentado ao contrario??? Responde meeeeeeeeeeeeeeeeeeeeee
-        //peersChunks.put(key, false);
         peersChunks.replace(key, state);
     }
 
