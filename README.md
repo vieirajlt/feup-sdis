@@ -34,5 +34,5 @@ rm sources.txt
 *Usage: app.TestApp <peer_ap> STATE*  
 `java app.TestApp peer1 STATE`  
 
-### 3. Saved Files
+### 4. Saved Files
 All data is saved under TMP folder created on the same level of **src/**
