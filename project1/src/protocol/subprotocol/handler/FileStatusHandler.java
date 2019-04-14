@@ -39,6 +39,9 @@ public class FileStatusHandler extends Handler implements Runnable {
             Peer.getControlChannel().write(message);
             ++repeatCnt;
             Peer.getExecutor().schedule(this,FILESTATUS_INBETWEEN_TIME_MS, TimeUnit.MILLISECONDS);
+        } else {
+            repeatCnt = 0;
+            Peer.getExecutor().schedule(this, 24, TimeUnit.HOURS);
         }
     }
 }
