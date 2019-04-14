@@ -47,14 +47,23 @@ public class RestoreFile extends FileManager {
                 @Override
                 public void completed(Integer result, ByteBuffer attachment) {
                     System.out.println("Success restoring file");
+                    try {
+                        fileChannel.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 @Override
                 public void failed(Throwable exc, ByteBuffer attachment) {
                     System.out.println("Error restoring chunk file");
+                    try {
+                        fileChannel.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
-            fileChannel.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

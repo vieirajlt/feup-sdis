@@ -57,8 +57,6 @@ public class Receiver extends Subprotocol implements Runnable{
     private synchronized void putchunk(String[] header, byte[] body) {
         System.out.println("protocol.subprotocol.Receiver.putchunk");
 
-        boolean enhanced = isEnhancementAllowed(header[0]);
-
         int senderId = Integer.parseInt(header[2]);
         int chunkNo = Integer.parseInt(header[4]);
         Chunk chunk = new Chunk(chunkNo, body);
@@ -67,7 +65,8 @@ public class Receiver extends Subprotocol implements Runnable{
 
         int repDegree = Integer.parseInt(header[5]);
         float completionPercentage = 1;
-        if(enhanced) {
+        //case of enhancement
+        if(header.length > 7) {
             completionPercentage = Float.parseFloat(header[6]);
         }
 
@@ -78,7 +77,10 @@ public class Receiver extends Subprotocol implements Runnable{
     private synchronized void getchunk(String[] header) {
         System.out.println("protocol.subprotocol.Receiver.getchunk");
 
-        boolean enhanced = isEnhancementAllowed(header[0]);
+        boolean enhanced = false;
+        //case of enhancement
+        if(header.length > 6 && header[5].equals("ENH"))
+            enhanced = true;
 
         int chunkNo = Integer.parseInt(header[4]);
         String fileId = header[3];
@@ -105,7 +107,8 @@ public class Receiver extends Subprotocol implements Runnable{
         String chunkKey = chunk.buildChunkKey(fileId);
 
         //for needed putchunk messages
-        boolean enhanced = isEnhancementAllowed(PUTCHUNK);
+        //consider enhanced if Peer version allows it
+        boolean enhanced = isEnhancementAllowed(BACKUPENH);
 
         RemovedAction action = new RemovedAction(senderId, fileId, chunkKey, chunkNo, enhanced);
         action.process();
@@ -127,7 +130,12 @@ public class Receiver extends Subprotocol implements Runnable{
         String fileId = header[3];
         int chunkNo = Integer.parseInt(header[4]);
 
-        boolean enhanced = isEnhancementAllowed(header[0]);
+        //case of enhancement
+        //connection info sent ending header
+        boolean enhanced = false;
+        if(header.length > 6)
+            enhanced = true;
+
         byte[] chunkBody = body;
 
         if(enhanced) {

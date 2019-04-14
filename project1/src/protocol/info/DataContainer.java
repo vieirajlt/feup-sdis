@@ -94,7 +94,8 @@ public class DataContainer implements Serializable {
 
 
     public void addStored(String key) {
-        stored.put(key, new ArrayList<>());
+        if (stored.get(key) == null)
+            stored.put(key, new ArrayList<>());
     }
 
     public Integer getStoredCurrRepDegree(String key) {

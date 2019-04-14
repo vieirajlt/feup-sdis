@@ -56,20 +56,29 @@ public class Chunk implements Serializable {
             AsynchronousFileChannel fileChannel = AsynchronousFileChannel.open(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE);
             ByteBuffer buffer = ByteBuffer.wrap(body);
 
-            fileChannel.write(buffer, 0, buffer, new CompletionHandler<Integer,ByteBuffer>() {
+            fileChannel.write(buffer, 0, buffer, new CompletionHandler<Integer, ByteBuffer>() {
                 @Override
                 public void completed(Integer result, ByteBuffer attachment) {
                     System.out.println("Success writing chunk body!");
                     loaded = true;
+                    try {
+                        fileChannel.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 @Override
                 public void failed(Throwable exc, ByteBuffer attachment) {
                     System.out.println("Error writing chunk body...");
                     loaded = false;
+                    try {
+                        fileChannel.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
-            fileChannel.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -94,14 +103,23 @@ public class Chunk implements Serializable {
                     size = body.length;
                     attachment.clear();
                     loaded = true;
+                    try {
+                        fileChannel.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
 
                 @Override
                 public void failed(Throwable exc, ByteBuffer attachment) {
                     System.out.println("Error reading chunk body...");
+                    try {
+                        fileChannel.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             });
-            fileChannel.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

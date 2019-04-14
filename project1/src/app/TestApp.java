@@ -15,6 +15,9 @@ public class TestApp {
     public final static String RECLAIM = "RECLAIM";
     public final static String STATE = "STATE";
 
+    public final static String BACKUPENH = "BACKUPENH";
+    public final static String RESTOREENH = "RESTOREENH";
+
     private static String sub_protocol;
     private static String opnd_1 = "";
     private static String opnd_2 = "";
@@ -52,13 +55,13 @@ public class TestApp {
             String[] cmd = message.split(" ");
 
             //Parameters check
-            if (sub_protocol.equalsIgnoreCase(BACKUP)) {
+            if (sub_protocol.equalsIgnoreCase(BACKUP) || sub_protocol.equalsIgnoreCase(BACKUPENH)) {
                 if (args.length != 4) {
                     System.out.println("Usage: app.TestApp <peer_ap> " + sub_protocol + "  <filepath> <replication_degree> ");
                     return;
                 }
                 initiator.backup(cmd);
-            } else if (sub_protocol.equalsIgnoreCase(RESTORE)) {
+            } else if (sub_protocol.equalsIgnoreCase(RESTORE) || sub_protocol.equalsIgnoreCase(RESTOREENH)) {
                 if (args.length != 3) {
                     System.out.println("Usage: app.TestApp <peer_ap> " + sub_protocol + "  <filepath>");
                     return;

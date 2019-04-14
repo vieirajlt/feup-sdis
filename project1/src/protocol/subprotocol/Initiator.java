@@ -30,7 +30,7 @@ public class Initiator extends Subprotocol implements RMIInterface {
 
     public synchronized void backup(String[] cmd) {
         System.out.println("protocol.subprotocol.Initiator.putchunk");
-        boolean enhanced = isEnhancementAllowed(BACKUP_SUBPROTOCOL);
+        boolean enhanced = isEnhancementAllowed(cmd[0]);
         String filepath = cmd[1];
         int repDegree = Integer.parseInt(cmd[2]);
 
@@ -43,9 +43,11 @@ public class Initiator extends Subprotocol implements RMIInterface {
         System.out.println("protocol.subprotocol.Initiator.getchunk");
         String filepath = cmd[1];
 
+        boolean enhanced = isEnhancementAllowed(cmd[0]);
+
         SplitFile sf = new SplitFile(filepath);
 
-        GetchunkHandler getchunkHandler = new GetchunkHandler(sf);
+        GetchunkHandler getchunkHandler = new GetchunkHandler(sf, enhanced);
         getchunkHandler.handle();
     }
 
@@ -78,7 +80,7 @@ public class Initiator extends Subprotocol implements RMIInterface {
 
 
     public static void initiateFileStatus() {
-        boolean enhanced = isEnhancementAllowed(DELETE_SUBPROTOCOL);
+        boolean enhanced = isEnhancementAllowed(DELETEENH);
         if(!enhanced)
            return;
 
