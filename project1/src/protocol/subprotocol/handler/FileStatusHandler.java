@@ -40,6 +40,8 @@ public class FileStatusHandler extends Handler implements Runnable {
             ++repeatCnt;
             Peer.getExecutor().schedule(this,FILESTATUS_INBETWEEN_TIME_MS, TimeUnit.MILLISECONDS);
         } else {
+            if(Peer.getDataContainer().getTmpBackedUpFileResponse(fileId , fileOwner) != -1)
+                return;
             repeatCnt = 0;
             Peer.getExecutor().schedule(this, 24, TimeUnit.HOURS);
         }

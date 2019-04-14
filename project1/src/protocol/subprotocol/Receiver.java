@@ -201,6 +201,8 @@ public class Receiver extends Subprotocol implements Runnable{
         if(status == 0)
             return;  //the file was deleted
         else if(status == 1){
+            if(!Peer.getDataContainer().isBackedUpChunkOnPeer(fileId))
+                return;
             DeleteHandler handler = new DeleteHandler(fileId);
             handler.handle();
         }
