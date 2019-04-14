@@ -3,12 +3,12 @@
 ## To run on UBUNTU
 
 ### 1. Create __compile.sh__ on project1
-    ```
-    #!/bin/bash
-    find -name "*.java" > sources.txt
-    javac -d ./out @sources.txt
-    rm sources.txt
-    ```
+```
+#!/bin/bash
+find -name "*.java" > sources.txt
+javac -d ./out @sources.txt
+rm sources.txt
+```
 ### 2. Run `rmiregistry &` on project1/out
 
 ### 3. Run from project1/out  
@@ -33,3 +33,6 @@
 ##### 3.2.5 State  
 *Usage: app.TestApp <peer_ap> STATE*  
 `java app.TestApp peer1 STATE`  
+
+### 3. Saved Files
+All data is saved under TMP folder created on the same level of **src/**
