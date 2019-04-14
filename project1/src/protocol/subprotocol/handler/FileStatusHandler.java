@@ -43,7 +43,7 @@ public class FileStatusHandler extends Handler implements Runnable {
             if(Peer.getDataContainer().getTmpBackedUpFileResponse(fileId , fileOwner) != -1)
                 return;
             repeatCnt = 0;
-            Peer.getExecutor().schedule(this, 24, TimeUnit.HOURS);
+            Peer.getExecutor().schedule(this, 2, TimeUnit.HOURS);
         }
     }
 }
