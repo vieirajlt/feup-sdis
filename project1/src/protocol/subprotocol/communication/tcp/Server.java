@@ -71,7 +71,7 @@ public class Server {
     }
 
     public String getConnectionSettings() {
-        return address.getHostName() + ":" + PORT;
+        return address.getHostAddress() + ":" + PORT;
     }
 
     public void sendChunk() {
