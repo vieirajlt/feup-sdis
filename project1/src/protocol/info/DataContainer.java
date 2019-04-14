@@ -253,7 +253,7 @@ public class DataContainer implements Serializable {
     }
 
     public void setPeerChunk(String key, boolean state) {
-        //TODO porque que isto estava comentado ao contrario???
+        //TODO porque que isto estava comentado ao contrario??? Responde meeeeeeeeeeeeeeeeeeeeee
         //peersChunks.put(key, false);
         peersChunks.replace(key, state);
     }

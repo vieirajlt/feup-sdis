@@ -14,7 +14,7 @@ public class ChunkInfo implements Comparable<ChunkInfo>, Serializable {
     private String fileId;
     private int chunkNo;
 
-    public ChunkInfo(String chunkKey, Integer senderId, Integer desiredRepDegree, Integer currRepDegree, boolean onPeer){
+    public ChunkInfo(String chunkKey, Integer senderId, Integer desiredRepDegree, Integer currRepDegree, boolean onPeer) {
         this.chunkKey = chunkKey;
         this.senderId = senderId;
         this.currRepDegree = currRepDegree;
@@ -88,10 +88,14 @@ public class ChunkInfo implements Comparable<ChunkInfo>, Serializable {
         this.handling = handling;
     }
 
-    //TODO testing - Isto está? Não tens o algoritmo disto apontado so para poder confirmar melhor?
     /*If the Integer is equal to the argument then 0 is returned.
     If the Integer is less than the argument then -1 is returned.
-    If the Integer is greater than the argument then 1 is returned.*/
+    If the Integer is greater than the argument then 1 is returned.
+
+        1* apagar os em excesso de replicação mas com > excesso
+        2* apagar os com replicação correta mas com > currRepDegree
+        3* apagar os com defeito de replicação mas com > currRepDegree
+    */
     @Override
     public int compareTo(ChunkInfo o) {
         if (this.currRepDegree.equals(o.getCurrRepDegree()) && this.desiredRepDegree.equals(o.getDesiredRepDegree()))
@@ -99,26 +103,26 @@ public class ChunkInfo implements Comparable<ChunkInfo>, Serializable {
         Integer this_difference = this.getDifferenceBtCurrDesiredRepDegrees();
         Integer o_difference = o.getDifferenceBtCurrDesiredRepDegrees();
 
-        if(this_difference > 0 && o_difference <= 0)
+        if (this_difference > 0 && o_difference <= 0)
             return 1;
 
-        if(this_difference > 0 && o_difference > 0 )
+        if (this_difference > 0 && o_difference > 0)
             return this_difference.compareTo(o_difference);
 
-        if(this_difference == 0 && o_difference < 0)
+        if (this_difference == 0 && o_difference < 0)
             return 1;
 
-        if(this_difference == 0 && o_difference > 0)
+        if (this_difference == 0 && o_difference > 0)
             return -1;
 
-        if(this_difference == 0 && o_difference == 0)
+        if (this_difference == 0 && o_difference == 0)
             return currRepDegree.compareTo(o.getCurrRepDegree());
 
-        if(this_difference < 0 && o_difference < 0)
+        if (this_difference < 0 && o_difference < 0)
             return currRepDegree.compareTo(o.getCurrRepDegree());
 
         //if(this_difference < 0 && o_difference >= 0)
-            return -1;
+        return -1;
     }
 
     public Integer getSenderId() {

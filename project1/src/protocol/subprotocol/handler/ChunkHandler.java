@@ -25,7 +25,7 @@ public class ChunkHandler extends Handler implements Runnable {
 
     @Override
     public void handle() {
-        System.out.println("protocol.subprotocol.handler.senchunk.run");
+        System.out.println("protocol.subprotocol.handler.chunkhandler.handle");
 
         chunkKey = chunk.buildChunkKey(fileId);
 
@@ -40,7 +40,10 @@ public class ChunkHandler extends Handler implements Runnable {
 
     @Override
     public void run() {
-        while(!chunk.isLoaded()); //TODO this is a precaution... don't know if really  needed
+        if(!chunk.isLoaded()) {
+            Peer.getExecutor().schedule(this, 100, TimeUnit.MILLISECONDS);
+            return;
+        }
         if (!Peer.getDataContainer().getChunkShippingState(chunkKey)) {
             byte[] body = chunk.getBody();
 
