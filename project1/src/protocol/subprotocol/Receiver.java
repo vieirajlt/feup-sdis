@@ -140,10 +140,6 @@ public class Receiver extends Subprotocol implements Runnable{
                 if (chunk == null)
                     return;
 
-                if (chunkNo != chunk.getChunkNo())
-                    System.out.println("diff ChunkNo");
-
-                chunkNo = chunk.getChunkNo();
                 chunkBody = chunk.getBody();
             }
         }
