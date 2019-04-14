@@ -70,7 +70,7 @@ public class Chunk implements Serializable {
 
                 @Override
                 public void failed(Throwable exc, ByteBuffer attachment) {
-                    System.out.println("Error writing chunk body...");
+                    System.err.println("Error writing chunk body...");
                     loaded = false;
                     try {
                         fileChannel.close();
@@ -112,7 +112,7 @@ public class Chunk implements Serializable {
 
                 @Override
                 public void failed(Throwable exc, ByteBuffer attachment) {
-                    System.out.println("Error reading chunk body...");
+                    System.err.println("Error reading chunk body...");
                     try {
                         fileChannel.close();
                     } catch (IOException e) {

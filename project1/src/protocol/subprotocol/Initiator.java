@@ -29,7 +29,6 @@ public class Initiator extends Subprotocol implements RMIInterface {
     }
 
     public synchronized void backup(String[] cmd) {
-        System.out.println("protocol.subprotocol.Initiator.putchunk");
         boolean enhanced = isEnhancementAllowed(cmd[0]);
         String filepath = cmd[1];
         int repDegree = Integer.parseInt(cmd[2]);
@@ -40,7 +39,6 @@ public class Initiator extends Subprotocol implements RMIInterface {
     }
 
     public synchronized void restore(String[] cmd) {
-        System.out.println("protocol.subprotocol.Initiator.getchunk");
         String filepath = cmd[1];
 
         boolean enhanced = isEnhancementAllowed(cmd[0]);
@@ -52,7 +50,6 @@ public class Initiator extends Subprotocol implements RMIInterface {
     }
 
     public synchronized void delete(String[] cmd) {
-        System.out.println("protocol.subprotocol.Initiator.delete");
         String filepath = cmd[1];
 
         SplitFile sf = new SplitFile(filepath);
@@ -63,7 +60,6 @@ public class Initiator extends Subprotocol implements RMIInterface {
 
 
     public synchronized void reclaim(String[] cmd) {
-        System.out.println("protocol.subprotocol.Initiator.removed");
 
         long maxDiskSpace = Long.parseLong(cmd[1]);
 
@@ -72,7 +68,6 @@ public class Initiator extends Subprotocol implements RMIInterface {
     }
 
     public synchronized void state(String[] cmd) {
-        System.out.println("protocol.subprotocol.Initiator.state");
 
         StateHandler stateHandler = new StateHandler();
         stateHandler.handle();

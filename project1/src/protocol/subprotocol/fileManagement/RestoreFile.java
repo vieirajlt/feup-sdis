@@ -56,7 +56,7 @@ public class RestoreFile extends FileManager {
 
                 @Override
                 public void failed(Throwable exc, ByteBuffer attachment) {
-                    System.out.println("Error restoring chunk file");
+                    System.err.println("Error restoring chunk file");
                     try {
                         fileChannel.close();
                     } catch (IOException e) {

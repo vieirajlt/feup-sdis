@@ -25,7 +25,6 @@ public class ChunkHandler extends Handler implements Runnable {
 
     @Override
     public void handle() {
-        System.out.println("protocol.subprotocol.handler.chunkhandler.handle");
 
         chunkKey = chunk.buildChunkKey(fileId);
 

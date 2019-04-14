@@ -25,7 +25,6 @@ public class RemovedHandler extends Handler implements Runnable {
 
     @Override
     public void handle() {
-        System.out.println("protocol.subprotocol.handler.RemovedHandler.run");
         Peer.getDataContainer().setStorageCapacity(maxDiskSpace * 1000);
 
         Peer.getExecutor().execute(this);
@@ -59,7 +58,7 @@ public class RemovedHandler extends Handler implements Runnable {
             chunk.delete(fileId);
         } catch (IOException e) {
             e.printStackTrace();
-            System.out.println("Error Deleting...");
+            System.err.println("Error Deleting...");
             return;
         }
 

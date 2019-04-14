@@ -55,7 +55,6 @@ public class Receiver extends Subprotocol implements Runnable{
     }
 
     private synchronized void putchunk(String[] header, byte[] body) {
-        System.out.println("protocol.subprotocol.Receiver.putchunk");
 
         int senderId = Integer.parseInt(header[2]);
         int chunkNo = Integer.parseInt(header[4]);
@@ -75,7 +74,6 @@ public class Receiver extends Subprotocol implements Runnable{
     }
 
     private synchronized void getchunk(String[] header) {
-        System.out.println("protocol.subprotocol.Receiver.getchunk");
 
         boolean enhanced = false;
         //case of enhancement
@@ -90,7 +88,6 @@ public class Receiver extends Subprotocol implements Runnable{
     }
 
     private synchronized void delete(String[] header) {
-        System.out.println("protocol.subprotocol.Receiver.delete");
         String fileId = header[3];
 
         DeleteAction action = new DeleteAction(fileId);
@@ -98,7 +95,6 @@ public class Receiver extends Subprotocol implements Runnable{
     }
 
     private synchronized void removed(String[] header) {
-        System.out.println("protocol.subprotocol.Receiver.removed");
 
         String senderId = header[2];
         String fileId = header[3];
@@ -119,14 +115,11 @@ public class Receiver extends Subprotocol implements Runnable{
         String fileId = header[3];
         int chunkNo = Integer.parseInt(header[4]);
 
-        System.out.println("protocol.subprotocol.Receiver.stored from " + senderId + " of chunkNo " + chunkNo);
-
         StoredAction action = new StoredAction(senderId, fileId, chunkNo);
         action.process();
     }
 
     private synchronized void chunk(String[] header, byte[] body) {
-        System.out.println("protocol.subprotocol.Receiver.chunk");
         String fileId = header[3];
         int chunkNo = Integer.parseInt(header[4]);
 
@@ -162,7 +155,6 @@ public class Receiver extends Subprotocol implements Runnable{
 
     //<FILESTATUS> <SenderId> <FileId> <FileOwnerId> <CRLF><CRLF>
     private synchronized void filestatus(String[] header, byte[] body) {
-        System.out.println("protocol.subprotocol.Receiver.filestatus");
 
         int fileOwnerId = Integer.parseInt(header[4]);
 
@@ -184,7 +176,6 @@ public class Receiver extends Subprotocol implements Runnable{
 
     //<STATUS> <SenderId> <FileId> <Status> <CRLF><CRLF>
     private synchronized void status(String[] header, byte[] body) {
-        System.out.println("protocol.subprotocol.Receiver.status");
 
         int senderId = Integer.parseInt(header[2]);
 

@@ -53,7 +53,7 @@ public class DeleteHandler extends Handler implements Runnable {
                 System.out.println("File deleted successfully " + Files.exists(path));
             } catch (IOException e) {
                 e.printStackTrace();
-                System.out.println("Failed to delete the file");
+                System.err.println("Failed to delete the file");
                 return;
             }
 

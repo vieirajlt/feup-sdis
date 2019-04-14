@@ -62,7 +62,7 @@ public class SplitFile extends FileManager {
                 public void completed(Integer result, ByteBuffer attachment) {
 
                     if(chunkNo == MAX_NUM_CHUNKS) {
-                        System.out.println("Error - max num ofd chunks exceeded");
+                        System.err.println("Error - max num ofd chunks exceeded");
                         return;
                     }
 
@@ -100,7 +100,7 @@ public class SplitFile extends FileManager {
 
                 @Override
                 public void failed(Throwable exc, ByteBuffer attachment) {
-                    System.out.println("Error reading file for splitAndSend...");
+                    System.err.println("Error reading file for splitAndSend...");
                 }
             });
         } catch (IOException e) {
