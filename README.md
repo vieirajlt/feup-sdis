@@ -14,8 +14,8 @@
 ### 3. Run from project1/out  
 
 #### 3.1 Peer  
-        Usage: protocol.Peer <protocol_version> <server_id> <MC_ip:MC_port> <MDB_ip:MDB_port> <MDR_ip:MDR_port>
-            `java protocol.Peer 1.0 1 229.0.0.1:1111 229.0.0.1:1112 229.0.0.1:1113`  
+*Usage: protocol.Peer <protocol_version> <server_id> <MC_ip:MC_port> <MDB_ip:MDB_port> <MDR_ip:MDR_port>*
+`java protocol.Peer 1.0 1 229.0.0.1:1111 229.0.0.1:1112 229.0.0.1:1113`  
     
 #### 3.2 TestApp  
 ##### 3.2.1 Backup  
