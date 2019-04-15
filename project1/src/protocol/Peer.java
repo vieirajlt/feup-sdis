@@ -72,7 +72,10 @@ public class Peer {
         });
         Runtime.getRuntime().addShutdownHook(hook);
 
-        executor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(MAX_THREAD_POOL_SIZE);
+        int pool_size = MAX_THREAD_POOL_SIZE;
+        if (pool_size < 5) pool_size = 5;
+
+        executor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(pool_size);
 
         dataContainer = DataContainer.load();
 
