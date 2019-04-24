@@ -45,7 +45,8 @@ public class StoredHandler extends Handler implements Runnable {
         }
 
         //add even if not saved on Peer for other peers info collection
-        Peer.getDataContainer().addBackedUpChunk(chunkKey, senderId, repDegree);
+        int chunkSize = chunk.getSize();
+        Peer.getDataContainer().addBackedUpChunk(chunkKey, senderId, repDegree, chunkSize);
 
         if(Peer.getDataContainer().isBackedUpChunkInfoHandling(chunkKey)) {
             //Peer.getDataContainer().setBackedUpChunksChunkInfoHandling(chunkKey,false);

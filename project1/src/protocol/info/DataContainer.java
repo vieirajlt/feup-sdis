@@ -123,9 +123,9 @@ public class DataContainer implements Serializable {
         stored.remove(key);
     }
 
-    public void addBackedUpChunk(String key, int senderId, int desiredRepDegree) {
+    public void addBackedUpChunk(String key, int senderId, int desiredRepDegree, int size) {
         if (backedUpChunks.get(key) == null) {
-            ChunkInfo chunkInfo = new ChunkInfo(key, senderId, desiredRepDegree, 0, false);
+            ChunkInfo chunkInfo = new ChunkInfo(key, senderId, desiredRepDegree, size, 0, false);
             backedUpChunks.put(key, chunkInfo);
         } else
             backedUpChunks.get(key).setDesiredRepDegree(desiredRepDegree);

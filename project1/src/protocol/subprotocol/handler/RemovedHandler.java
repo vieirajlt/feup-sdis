@@ -49,18 +49,9 @@ public class RemovedHandler extends Handler implements Runnable {
         Chunk chunk = new Chunk(chunkInfo.getChunkNo());
         chunkId = chunk.buildChunkId();
         fileId = chunkInfo.getFileId();
+        int length = chunkInfo.getSize();
 
-        Path path = Paths.get(pathname + fileId + "/" + chunkId);
-        long length;
-
-        try {
-            length = Files.size(path);
-            chunk.delete(fileId);
-        } catch (IOException e) {
-            e.printStackTrace();
-            System.err.println("Error Deleting...");
-            return;
-        }
+        chunk.delete(fileId);
 
         Peer.getDataContainer().decCurrStorageAmount(length);
 

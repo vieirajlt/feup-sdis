@@ -65,12 +65,7 @@ public class StateHandler extends Handler{
             //id
             String id = fileId + " -> " + chunkId;
             //size in KBytes
-            long chunkFileLength = 0;
-            try {
-                chunkFileLength = Files.size(path);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            int chunkFileLength = chunkInfo.getSize();
             chunkFileLength /= 1000;
             //currRepDegree
             int currRepDegree = chunkInfo.getCurrRepDegree();

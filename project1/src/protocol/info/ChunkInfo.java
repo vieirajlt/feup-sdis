@@ -13,12 +13,14 @@ public class ChunkInfo implements Comparable<ChunkInfo>, Serializable {
 
     private String fileId;
     private int chunkNo;
+    private int size;
 
-    public ChunkInfo(String chunkKey, Integer senderId, Integer desiredRepDegree, Integer currRepDegree, boolean onPeer) {
+    public ChunkInfo(String chunkKey, Integer senderId, Integer desiredRepDegree, int size, Integer currRepDegree, boolean onPeer) {
         this.chunkKey = chunkKey;
         this.senderId = senderId;
         this.currRepDegree = currRepDegree;
         this.desiredRepDegree = desiredRepDegree;
+        this.size = size;
         this.onPeer = onPeer;
         this.handling = false;
 
@@ -131,6 +133,10 @@ public class ChunkInfo implements Comparable<ChunkInfo>, Serializable {
 
     public void setSenderId(Integer senderId) {
         this.senderId = senderId;
+    }
+
+    public int getSize() {
+        return size;
     }
 }
 
