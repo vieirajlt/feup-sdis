@@ -87,15 +87,8 @@ public class StoredHandler extends Handler implements Runnable {
         }
 
 
-        Path path = Paths.get(Chunk.getPathname() + fileId + "/" + chunk.buildChunkId());
-        try {
-            if(!Peer.getDataContainer().incCurrStorageAmountAndCheckSpace(Files.size(path))) {
-                chunk.delete(fileId);
-                Peer.getDataContainer().setBackedUpChunksChunkInfoHandling(chunkKey,false);
-                return;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
+        if(!Peer.getDataContainer().incCurrStorageAmountAndCheckSpace(chunk.getSize())) {
+            chunk.delete(fileId);
             Peer.getDataContainer().setBackedUpChunksChunkInfoHandling(chunkKey,false);
             return;
         }

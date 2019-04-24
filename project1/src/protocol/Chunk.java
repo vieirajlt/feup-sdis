@@ -46,6 +46,10 @@ public class Chunk implements Serializable {
         return body;
     }
 
+    public int getSize() {
+        return size;
+    }
+
     public void store(String fileId) {
         String chunkId = buildChunkId();
         Path path = Paths.get(pathname + fileId + "/" + chunkId);
