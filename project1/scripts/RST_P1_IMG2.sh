@@ -1,0 +1,1 @@
+x-terminal-emulator -e java app.TestApp peer1 RESTORE ../FILES/img2.png
