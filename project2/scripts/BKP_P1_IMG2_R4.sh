@@ -1,0 +1,1 @@
+x-terminal-emulator -e java app.TestApp localhost:peer1 BACKUP ../FILES/img2.png 4

@@ -1,0 +1,1 @@
+x-terminal-emulator -e java java app.TestApp peer1 DELETE ../FILES/img2.png
