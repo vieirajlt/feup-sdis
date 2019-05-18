@@ -8,15 +8,13 @@ import java.io.OutputStream;
 import java.net.Socket;
 
 public class IncomingConnection implements Runnable {
-  Socket socket;
-  CentralServer server;
-  DataInputStream inputStream;
-  DataOutputStream outputStream;
+
+  private DataInputStream inputStream;
+  private DataOutputStream outputStream;
+
+  private CentralServer se;
 
   IncomingConnection(Socket so, CentralServer se) {
-    this.socket = so;
-    this.server = se;
-
     try {
       InputStream in = so.getInputStream();
       OutputStream out = so.getOutputStream();
@@ -34,13 +32,12 @@ public class IncomingConnection implements Runnable {
     try {
       String msg = this.inputStream.readUTF();
 
+      se.request(msg);
+
       System.out.println(msg);
 
     } catch (IOException e) {
       e.printStackTrace();
     }
-
-    // System.out.println("NOT AVAILABLE");
-
   }
 }
