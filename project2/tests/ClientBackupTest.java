@@ -1,6 +1,6 @@
 import server.ClientSocket;
 
-public class ClientServerTest {
+public class ClientBackupTest {
 
   public static void main(String[] args) {
     String host = args[0];
@@ -8,6 +8,12 @@ public class ClientServerTest {
 
     ClientSocket test = new ClientSocket(host, port);
 
-    test.write("BACKUP 1as98d21hiwdhwadh19832rhwqi 3");
+    test.write("BACKUP 1as98d21hiwdhwadh19832rhwqi 3 45000");
+
+    while (true) {
+      String msg = test.read();
+
+      System.out.println(msg);
+    }
   }
 }

@@ -43,12 +43,20 @@ public class ClientSocket extends SSLInit {
       dout.writeUTF(msg);
       dout.flush();
 
-      din.close();
-      dout.close();
-
       System.out.println("wrote\t" + msg);
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
+
+  public String read() {
+    try {
+      String msg = din.readUTF();
+      return msg;
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+    return null;
   }
 }

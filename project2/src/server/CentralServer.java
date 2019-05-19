@@ -7,6 +7,8 @@ import java.io.Serializable;
 import java.net.Socket;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -15,19 +17,20 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import javax.net.ssl.SSLServerSocket;
 import protocol.Peer;
+import protocol.info.ChunkInfo;
+import server.info.ActivePeer;
 
 public class CentralServer extends SSLInit implements Serializable {
   private transient ScheduledThreadPoolExecutor executor;
 
-  private ConcurrentHashMap<String, List<String>> chunkLog;
-
-  private int port;
+  private ConcurrentHashMap<String, List<ChunkInfo>> chunkLog; // key is File/Chunk ID (hash)
+  private ConcurrentHashMap<String, ActivePeer> peers; // key is Peer ID
 
   private CentralServer(int port) {
     super("serverpw");
 
-    this.port = port;
     this.chunkLog = new ConcurrentHashMap<>();
+    this.peers = new ConcurrentHashMap<>();
 
     int pool_size = Peer.getMaxThreadPoolSize();
     if (pool_size < 5) pool_size = 5;
@@ -91,6 +94,111 @@ public class CentralServer extends SSLInit implements Serializable {
     }
   }
 
-  void request(String message) {
+  void request(String message, IncomingConnection connection) {
+
+    try {
+      String[] parts = message.split(" ");
+      System.out.println("Received request: " + Arrays.toString(parts));
+
+      String header = parts[0];
+
+      switch (header.toLowerCase()) {
+        case "backup":
+          String fileID = parts[1];
+          int replicationDegree = Integer.parseInt(parts[2]);
+          int fileSize = Integer.parseInt(parts[3]);
+
+          backup(fileID, replicationDegree, fileSize, connection);
+          break;
+
+        case "restore":
+          break;
+
+        case "delete":
+          break;
+
+        case "signup":
+          String peerID = parts[1];
+          long freeSpace = Long.parseLong(parts[2]);
+
+          signUp(peerID, freeSpace, connection);
+          break;
+
+        default:
+          System.err.println("Unrecognized Header\t" + header);
+      }
+    } catch (Exception e) {
+      System.err.println("Request malformed\n" + e.toString());
+    }
+  }
+
+  private void signUp(String peerID, long freeSpace, IncomingConnection conection) {
+    ActivePeer newPeer = new ActivePeer(freeSpace, conection);
+    this.peers.put(peerID, newPeer);
+    System.out.println("Peer " + peerID + " registered");
+    System.out.println(this.peers.size() + " peers online");
+
+    try {
+      conection.getOutputStream().writeUTF("Peer " + peerID + " registered");
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  private void signOut(String peerID) {
+    this.peers.remove(peerID);
+  }
+
+  private void backup(
+      String fileID, int replicationDegree, int fileSize, IncomingConnection connection) {
+    System.out.println("Will backup " + fileID);
+
+    List<ActivePeer> availablePeers = new LinkedList<>();
+
+    this.peers.forEachValue(
+        1L,
+        (ActivePeer peer) -> {
+          try {
+            String[] components = new String[] {"BACKUP", fileID, Integer.toString(fileSize)};
+            String msg = String.join(" ", components);
+            peer.getOutput().writeUTF(msg);
+            String response = peer.getInput().readUTF();
+            if (response.equalsIgnoreCase("accepted")) {
+              availablePeers.add(peer);
+            }
+
+          } catch (IOException e) {
+            e.printStackTrace();
+          }
+        });
+
+    new java.util.Timer()
+        .schedule(
+            new java.util.TimerTask() {
+              @Override
+              public void run() {
+
+                System.out.println("RUNNING");
+
+                availablePeers.forEach(
+                    (ActivePeer peer) -> {
+                      try {
+                        String[] components =
+                            new String[] {
+                              "CONNECTION",
+                              peer.getHost(),
+                              peer.getPort(),
+                              Integer.toString(fileSize)
+                            };
+                        String msg = String.join(" ", components);
+                        connection.getOutputStream().writeUTF(msg);
+                        System.out.println(msg);
+                      } catch (IOException e) {
+                        e.printStackTrace();
+                      }
+                    });
+              }
+            },
+            2000);
   }
 }

@@ -13,6 +13,7 @@ public class IncomingConnection implements Runnable {
   private DataOutputStream outputStream;
 
   private CentralServer se;
+  private Socket socket;
 
   IncomingConnection(Socket so, CentralServer se) {
     try {
@@ -22,22 +23,37 @@ public class IncomingConnection implements Runnable {
       this.inputStream = new DataInputStream(in);
       this.outputStream = new DataOutputStream(out);
 
+      this.se = se;
+      this.socket = so;
     } catch (IOException e) {
       e.printStackTrace();
     }
   }
 
   public void run() {
-    System.out.println("START INCOMING CONNECTION");
     try {
       String msg = this.inputStream.readUTF();
 
-      se.request(msg);
-
-      System.out.println(msg);
+      se.request(msg, this);
 
     } catch (IOException e) {
       e.printStackTrace();
     }
+  }
+
+  public DataInputStream getInputStream() {
+    return inputStream;
+  }
+
+  public DataOutputStream getOutputStream() {
+    return outputStream;
+  }
+
+  public String getHost() {
+    return this.socket.getInetAddress().getHostAddress();
+  }
+
+  public String getPort() {
+    return Integer.toString(this.socket.getPort());
   }
 }
