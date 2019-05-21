@@ -108,7 +108,10 @@ public class CentralServer extends SSLInit implements Serializable {
           int replicationDegree = Integer.parseInt(parts[2]);
           int fileSize = Integer.parseInt(parts[3]);
 
-          backup(fileID, replicationDegree, fileSize, connection);
+          String sockets = message.split("#")[1];
+          String[] adrs = sockets.split(" ");
+
+          backup(fileID, replicationDegree, fileSize, connection, adrs);
           break;
 
         case "restore":
@@ -150,7 +153,11 @@ public class CentralServer extends SSLInit implements Serializable {
   }
 
   private void backup(
-      String fileID, int replicationDegree, int fileSize, IncomingConnection connection) {
+      String fileID,
+      int replicationDegree,
+      int fileSize,
+      IncomingConnection connection,
+      String[] adrs) {
     System.out.println("Will backup " + fileID);
 
     List<ActivePeer> availablePeers = new LinkedList<>();
@@ -180,23 +187,27 @@ public class CentralServer extends SSLInit implements Serializable {
 
                 System.out.println("RUNNING");
 
-                availablePeers.forEach(
-                    (ActivePeer peer) -> {
-                      try {
-                        String[] components =
-                            new String[] {
-                              "CONNECTION",
-                              peer.getHost(),
-                              peer.getPort(),
-                              Integer.toString(fileSize)
-                            };
-                        String msg = String.join(" ", components);
-                        connection.getOutputStream().writeUTF(msg);
-                        System.out.println(msg);
-                      } catch (IOException e) {
-                        e.printStackTrace();
-                      }
-                    });
+                for (int i = 0; i < availablePeers.size(); i++) {
+                  ActivePeer peer = availablePeers.get(i);
+
+                  if (i >= adrs.length) {
+                    return;
+                  }
+
+                  String adr = adrs[i];
+                  String host = adr.split(":")[0];
+                  String port = adr.split(":")[1];
+
+                  try {
+                    String[] components =
+                        new String[] {"RECEIVE", host, port, Integer.toString(fileSize)};
+                    String msg = String.join(" ", components);
+                    peer.getOutput().writeUTF(msg);
+                    System.out.println(msg);
+                  } catch (IOException e) {
+                    e.printStackTrace();
+                  }
+                }
               }
             },
             2000);

@@ -1,3 +1,10 @@
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import protocol.Chunk;
+import protocol.subprotocol.communication.tcp.Server;
 import server.ClientSocket;
 
 public class ClientBackupTest {
@@ -8,12 +15,33 @@ public class ClientBackupTest {
 
     ClientSocket test = new ClientSocket(host, port);
 
-    test.write("BACKUP 1as98d21hiwdhwadh19832rhwqi 3 45000");
+    ScheduledThreadPoolExecutor executor =
+        (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(5);
 
-    while (true) {
-      String msg = test.read();
+    int replicationDegree = 3;
+    List<String> sockets = new ArrayList<>();
 
-      System.out.println(msg);
+    for (int i = 0; i < replicationDegree; i++) {
+      String msg = "Hey, this is a message";
+      Chunk chunk = new Chunk(0, msg.getBytes());
+
+      Server server = new Server(chunk);
+      sockets.add(server.getConnectionSettings());
+      executor.schedule(server::sendChunk, 2, TimeUnit.SECONDS);
     }
+
+    StringBuilder sB = new StringBuilder();
+    sB.append("BACKUP 1as98d21hiwdhwadh19832rhwqi " + replicationDegree + " 45000 #");
+    for (String socket : sockets) {
+      sB.append(socket);
+      sB.append(" ");
+    }
+
+    String msg = sB.toString();
+    test.write(msg);
+
+    msg = test.read();
+
+    System.out.println(msg);
   }
 }

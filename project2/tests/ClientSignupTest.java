@@ -1,3 +1,5 @@
+import protocol.Chunk;
+import protocol.subprotocol.communication.tcp.Client;
 import server.ClientSocket;
 
 public class ClientSignupTest {
@@ -15,8 +17,21 @@ public class ClientSignupTest {
       String msg = test.read();
 
       if (msg != null) {
-        if (msg.split(" ")[0].equalsIgnoreCase("backup")) test.write("Accepted");
-        else System.out.println(msg);
+        String header = msg.split(" ")[0];
+
+        if (header.equalsIgnoreCase("backup")) test.write("Accepted");
+        else if (header.equalsIgnoreCase("receive")) {
+          System.out.println("Received " + msg);
+
+          host = msg.split(" ")[1];
+          String sPort = msg.split(" ")[2];
+
+          Client client = new Client(sPort, host);
+          Chunk chunk = client.receiveChunk();
+
+          System.out.println("Received chunk " + chunk.getSize());
+
+        } else System.out.println(msg);
       } else {
         System.out.println("NULL");
       }
