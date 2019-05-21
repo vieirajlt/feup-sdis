@@ -168,6 +168,11 @@ public class CentralServer extends SSLInit implements Serializable {
           try {
             String[] components = new String[] {"BACKUP", fileID, Integer.toString(fileSize)};
             String msg = String.join(" ", components);
+
+            if (!peer.enoughSpace(fileSize)) {
+              return;
+            }
+
             peer.getOutput().writeUTF(msg);
             String response = peer.getInput().readUTF();
             if (response.equalsIgnoreCase("accepted")) {

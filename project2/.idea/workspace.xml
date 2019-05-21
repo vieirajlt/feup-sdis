@@ -2,12 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a677d651-bc04-4f02-9be2-ffe8fa3842fd" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/tests/protocol/subprotocol/communication/tcp/ClientTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/protocol/subprotocol/communication/tcp/ServerTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/server/CentralServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/CentralServer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/server/info/ActivePeer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/info/ActivePeer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/ClientBackupTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/tests/ClientBackupTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/ClientSignupTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/tests/ClientSignupTest.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -21,19 +18,36 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/server/CentralServer.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="158">
-              <caret line="181" column="4" selection-start-line="181" selection-start-column="4" selection-end-line="181" selection-end-column="4" />
+            <state relative-caret-position="-22">
+              <caret line="194" column="39" lean-forward="true" selection-start-line="194" selection-start-column="39" selection-end-line="194" selection-end-column="39" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="method#main#0;class#CentralServer#0" />
                 <element signature="method#store#0;class#CentralServer#0" />
                 <element signature="e#4242#4243#0" expanded="true" />
                 <element signature="e#4277#4278#0" expanded="true" />
-                <element signature="e#5247#6210#0" expanded="true" />
-                <element signature="e#6209#6210#0" expanded="true" />
+                <element signature="e#6436#6437#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/server/info/ActivePeer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="488">
+              <caret line="50" column="38" selection-start-line="50" selection-start-column="38" selection-end-line="50" selection-end-column="38" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#853#854#0" expanded="true" />
+                <element signature="e#874#875#0" expanded="true" />
+                <element signature="e#903#904#0" expanded="true" />
+                <element signature="e#924#925#0" expanded="true" />
+                <element signature="e#973#974#0" expanded="true" />
+                <element signature="e#1016#1017#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -42,8 +56,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/protocol/subprotocol/communication/tcp/Client.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="60" column="12" selection-start-line="60" selection-start-column="12" selection-end-line="60" selection-end-column="12" />
+            <state relative-caret-position="187">
+              <caret line="31" column="27" selection-start-line="31" selection-start-column="27" selection-end-line="31" selection-end-column="27" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -54,8 +68,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tests/ClientSignupTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="248">
-              <caret line="23" column="46" selection-start-line="23" selection-start-column="46" selection-end-line="23" selection-end-column="46" />
+            <state relative-caret-position="308">
+              <caret line="29" column="31" selection-start-line="29" selection-start-column="31" selection-end-line="29" selection-end-column="31" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -63,11 +77,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/tests/ClientBackupTest.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="413">
-              <caret line="42" column="4" selection-start-line="42" selection-start-column="4" selection-end-line="42" selection-end-column="22" />
+              <caret line="65" column="40" selection-start-line="65" selection-start-column="40" selection-end-line="65" selection-end-column="40" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -108,6 +122,7 @@
       <find>start</find>
       <find>HEY</find>
       <find>ScheduledThreadPoolExecutor</find>
+      <find>received</find>
       <find>request malf</find>
     </findStrings>
   </component>
@@ -124,12 +139,12 @@
         <option value="$PROJECT_DIR$/tests/ClientServerTest.java" />
         <option value="$PROJECT_DIR$/src/server/ClientSocket.java" />
         <option value="$PROJECT_DIR$/src/server/IncomingConnection.java" />
-        <option value="$PROJECT_DIR$/src/server/info/ActivePeer.java" />
         <option value="$PROJECT_DIR$/tests/protocol/subprotocol/communication/tcp/ServerTest.java" />
         <option value="$PROJECT_DIR$/tests/protocol/subprotocol/communication/tcp/ClientTest.java" />
-        <option value="$PROJECT_DIR$/tests/ClientBackupTest.java" />
         <option value="$PROJECT_DIR$/tests/ClientSignupTest.java" />
+        <option value="$PROJECT_DIR$/src/server/info/ActivePeer.java" />
         <option value="$PROJECT_DIR$/src/server/CentralServer.java" />
+        <option value="$PROJECT_DIR$/tests/ClientBackupTest.java" />
       </list>
     </option>
   </component>
@@ -393,7 +408,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="23307000" />
+    <option name="totallyTimeSpent" value="25454000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="56" y="27" width="1864" height="1053" extended-state="6" />
@@ -651,22 +666,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/server/info/ActivePeer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="458">
-          <caret line="48" selection-start-line="48" selection-end-line="48" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#599#600#0" expanded="true" />
-            <element signature="e#625#626#0" expanded="true" />
-            <element signature="e#853#854#0" expanded="true" />
-            <element signature="e#874#875#0" expanded="true" />
-            <element signature="e#903#904#0" expanded="true" />
-            <element signature="e#924#925#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/protocol/Chunk.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="256">
@@ -725,10 +724,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tests/ClientBackupTest.java">
+    <entry file="file://$PROJECT_DIR$/src/protocol/subprotocol/communication/tcp/Client.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="413">
-          <caret line="42" column="4" selection-start-line="42" selection-start-column="4" selection-end-line="42" selection-end-column="22" />
+        <state relative-caret-position="187">
+          <caret line="31" column="27" selection-start-line="31" selection-start-column="27" selection-end-line="31" selection-end-column="27" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -737,36 +736,51 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/tests/ClientSignupTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="248">
-          <caret line="23" column="46" selection-start-line="23" selection-start-column="46" selection-end-line="23" selection-end-column="46" />
+        <state relative-caret-position="308">
+          <caret line="29" column="31" selection-start-line="29" selection-start-column="31" selection-end-line="29" selection-end-column="31" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/protocol/subprotocol/communication/tcp/Client.java">
+    <entry file="file://$PROJECT_DIR$/src/server/info/ActivePeer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="60" column="12" selection-start-line="60" selection-start-column="12" selection-end-line="60" selection-end-column="12" />
+        <state relative-caret-position="488">
+          <caret line="50" column="38" selection-start-line="50" selection-start-column="38" selection-end-line="50" selection-end-column="38" />
           <folding>
             <element signature="imports" expanded="true" />
+            <element signature="e#853#854#0" expanded="true" />
+            <element signature="e#874#875#0" expanded="true" />
+            <element signature="e#903#904#0" expanded="true" />
+            <element signature="e#924#925#0" expanded="true" />
+            <element signature="e#973#974#0" expanded="true" />
+            <element signature="e#1016#1017#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/server/CentralServer.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="158">
-          <caret line="181" column="4" selection-start-line="181" selection-start-column="4" selection-end-line="181" selection-end-column="4" />
+        <state relative-caret-position="-22">
+          <caret line="194" column="39" lean-forward="true" selection-start-line="194" selection-start-column="39" selection-end-line="194" selection-end-column="39" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="method#main#0;class#CentralServer#0" />
             <element signature="method#store#0;class#CentralServer#0" />
             <element signature="e#4242#4243#0" expanded="true" />
             <element signature="e#4277#4278#0" expanded="true" />
-            <element signature="e#5247#6210#0" expanded="true" />
-            <element signature="e#6209#6210#0" expanded="true" />
+            <element signature="e#6436#6437#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/ClientBackupTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="413">
+          <caret line="65" column="40" selection-start-line="65" selection-start-column="40" selection-end-line="65" selection-end-column="40" />
+          <folding>
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>
