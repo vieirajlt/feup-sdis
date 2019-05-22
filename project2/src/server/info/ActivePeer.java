@@ -46,4 +46,8 @@ public class ActivePeer {
   public String getPort() {
     return port;
   }
+
+  public boolean enoughSpace(long fileSize) {
+    return this.freeSpace >= fileSize;
+  }
 }
