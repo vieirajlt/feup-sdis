@@ -184,6 +184,12 @@ public class CentralServer extends SSLInit implements Serializable {
           }
         });
 
+    try {
+      connection.getOutputStream().writeUTF("HEY ");
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
     new java.util.Timer()
         .schedule(
             new java.util.TimerTask() {

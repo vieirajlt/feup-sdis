@@ -14,26 +14,32 @@ public class ClientSignupTest {
     test.write("SIGNUP " + peerID + " " + Math.round(100000 + Math.random() * 600000));
 
     while (true) {
-      String msg = test.read();
+      try {
 
-      if (msg != null) {
-        String header = msg.split(" ")[0];
+        String msg = test.read();
 
-        if (header.equalsIgnoreCase("backup")) test.write("Accepted");
-        else if (header.equalsIgnoreCase("receive")) {
-          System.out.println("Received " + msg);
+        if (msg != null) {
+          String header = msg.split(" ")[0];
 
-          host = msg.split(" ")[1];
-          String sPort = msg.split(" ")[2];
+          if (header.equalsIgnoreCase("backup")) test.write("Accepted");
+          else if (header.equalsIgnoreCase("receive")) {
 
-          Client client = new Client(sPort, host);
-          Chunk chunk = client.receiveChunk();
+            host = msg.split(" ")[1];
+            String sPort = msg.split(" ")[2];
 
-          System.out.println("Received chunk " + chunk.getSize());
+            Client client = new Client(sPort, host);
+            System.out.println("Received " + msg);
+            Chunk chunk = client.receiveChunk();
 
-        } else System.out.println(msg);
-      } else {
-        System.out.println("NULL");
+            System.out.println("Received chunk " + chunk.getSize());
+
+          } else System.out.println(msg);
+        } else {
+          System.out.println("NULL");
+        }
+      } catch (Exception e) {
+        System.err.println("Error");
+        e.printStackTrace();
       }
     }
   }

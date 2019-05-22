@@ -1,3 +1,6 @@
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -9,7 +12,7 @@ import server.ClientSocket;
 
 public class ClientBackupTest {
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws IOException {
     String host = args[0];
     int port = Integer.parseInt(args[1]);
 
@@ -21,9 +24,19 @@ public class ClientBackupTest {
     int replicationDegree = 3;
     List<String> sockets = new ArrayList<>();
 
+    File file = new File("./FILES/orpheu.txt");
+    int length = (int) (file.length() / 2);
+    FileInputStream stream = new FileInputStream(file);
+    byte[] bytes = new byte[length];
+    int read = stream.read(bytes, 0, length);
+    System.out.println("READ " + read + " bytes");
+    System.out.println("FileSize " + length + " bytes");
+    String msgToSend = "Hey, this is a message. Bigger than before";
+    // length = msgToSend.length();
+    // Chunk chunk = new Chunk(0, msgToSend.getBytes());
+    Chunk chunk = new Chunk(0, bytes);
+
     for (int i = 0; i < replicationDegree; i++) {
-      String msg = "Hey, this is a message";
-      Chunk chunk = new Chunk(0, msg.getBytes());
 
       Server server = new Server(chunk);
       sockets.add(server.getConnectionSettings());
@@ -31,7 +44,7 @@ public class ClientBackupTest {
     }
 
     StringBuilder sB = new StringBuilder();
-    sB.append("BACKUP 1as98d21hiwdhwadh19832rhwqi " + replicationDegree + " 45000 #");
+    sB.append("BACKUP 1as98d21hiwdhwadh19832rhwqi " + replicationDegree + " " + length + " #");
     for (String socket : sockets) {
       sB.append(socket);
       sB.append(" ");
@@ -39,9 +52,12 @@ public class ClientBackupTest {
 
     String msg = sB.toString();
     test.write(msg);
+    System.out.println("WROTE " + msg);
 
-    msg = test.read();
+    String rMSG = test.read();
 
-    System.out.println(msg);
+    System.out.println("RECEIVED " + rMSG);
+
+    // executor.shutdown();
   }
 }
