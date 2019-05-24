@@ -1,0 +1,6 @@
+grant {
+        permission java.net.SocketPermission "*", "listen,accept,resolve";
+        permission java.net.RuntimePermission "shutdownHooks", "*";
+        permission java.io.FilePermission "FILES/*", "read, write";
+        permission java.io.FilePermission "TMP/*", "read, write";
+};
