@@ -33,7 +33,7 @@ public class Data implements Serializable {
     }
 
     public void store() {
-        Path path = Paths.get(DATA_PATH);
+        Path path = Paths.get(getDataPath(id));
         try {
             Files.createDirectories(path.getParent());
             FileOutputStream fOut = new FileOutputStream(getDataPath(id), false);
