@@ -9,6 +9,7 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.List;
 import java.util.Random;
 
 public class Server {
@@ -22,6 +23,7 @@ public class Server {
     private InetAddress address;
 
     private Chunk chunk;
+    private List<Chunk> chunks;
 
     public Server(Chunk chunk) {
         PORT = pickRandomPort();
@@ -31,6 +33,17 @@ public class Server {
             e.printStackTrace();
         }
         this.chunk = chunk;
+    }
+
+    public Server(List<Chunk> chunks) {
+        PORT = pickRandomPort();
+        try {
+            address = InetAddress.getLocalHost();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        this.chunks = chunks;
+        this.chunk = null;
     }
 
     private void startConnection() throws IOException {
@@ -54,6 +67,7 @@ public class Server {
     }
 
     private void stopConnection() throws IOException {
+        System.out.println("ACABEi");
         in.close();
         out.close();
         clientSocket.close();
@@ -62,9 +76,12 @@ public class Server {
 
     private void connect(Chunk chunk) {
         try {
+            System.out.println("connect no "+ chunk.getChunkNo());
             out.writeInt(chunk.getChunkNo());
+            System.out.println("connect body length "+ chunk.getBody().length);
             out.writeInt(chunk.getBody().length);
             out.write(chunk.getBody());
+            out.flush();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -77,9 +94,19 @@ public class Server {
     public void sendChunk() {
         try {
             startConnection();
-            connect(chunk);
+            if (chunk == null) {
+                for(Chunk c : chunks) {
+                    connect(c);
+
+                    Thread.sleep((long) (Math.random() * 400 + 100));
+                }
+            } else {
+                connect(chunk);
+                Thread.sleep((long) (Math.random() * 400 + 100));
+            }
+
             stopConnection();
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
     }

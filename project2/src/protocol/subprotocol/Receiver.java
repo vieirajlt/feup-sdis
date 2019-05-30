@@ -136,7 +136,7 @@ public class Receiver extends Subprotocol implements Runnable{
             if (Peer.getDataContainer().getOwnFile(fileId) != null) {
                 String[] connection = header[5].split(":");
                 Client client = new Client(connection[1], connection[0]);
-                Chunk chunk = client.receiveChunk();
+                Chunk chunk = null;//client.receiveChunk();
                 if (chunk == null)
                     return;
 

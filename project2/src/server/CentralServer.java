@@ -211,7 +211,7 @@ public class CentralServer extends SSLInit implements Serializable {
 
                   try {
                     String[] components =
-                        new String[] {"RECEIVE", host, port, Integer.toString(fileSize)};
+                        new String[] {"RECEIVE", host, port, Integer.toString(fileSize), fileID };
                     String msg = String.join(" ", components);
                     peer.getOutput().writeUTF(msg);
                     System.out.println(msg);

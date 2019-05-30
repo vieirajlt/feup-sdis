@@ -37,7 +37,7 @@ public class RemovedHandler extends Handler implements Runnable {
             return;
         }
 
-        String chunkId, fileId, pathname = Chunk.getPathname();
+        String chunkId, fileId, pathname = Chunk.getChunkFolderPath();
         ChunkInfo chunkInfo;
 
         List sortedBackedUpChunks = Peer.getDataContainer().getBackedUpChunksOnPeerSortedInfo();

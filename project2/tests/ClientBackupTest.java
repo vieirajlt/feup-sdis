@@ -8,6 +8,7 @@ import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import protocol.Chunk;
 import protocol.subprotocol.communication.tcp.Server;
+import protocol.subprotocol.fileManagement.SplitFile;
 import server.ClientSocket;
 
 public class ClientBackupTest {
@@ -24,8 +25,10 @@ public class ClientBackupTest {
     int replicationDegree = 3;
     List<String> sockets = new ArrayList<>();
 
-    File file = new File("./FILES/orpheu.txt");
-    int length = (int) (file.length() / 2);
+    String filePath = "./FILES/orpheu.txt";
+
+    File file = new File(filePath);
+    int length = (int) (file.length());
     FileInputStream stream = new FileInputStream(file);
     byte[] bytes = new byte[length];
     int read = stream.read(bytes, 0, length);
@@ -36,9 +39,16 @@ public class ClientBackupTest {
     // Chunk chunk = new Chunk(0, msgToSend.getBytes());
     Chunk chunk = new Chunk(0, bytes);
 
+    SplitFile sF = new SplitFile(filePath, replicationDegree);
+    sF.splitAndSend(false);
+
+    while(!sF.completed) {}
+
     for (int i = 0; i < replicationDegree; i++) {
 
-      Server server = new Server(chunk);
+      System.out.println("READ " + sF.getChunks().size() + " CHUNKS!!");
+
+      Server server = new Server(sF.getChunks());
       sockets.add(server.getConnectionSettings());
       executor.schedule(server::sendChunk, 2, TimeUnit.SECONDS);
     }

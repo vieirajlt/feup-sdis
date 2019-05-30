@@ -61,7 +61,7 @@ public class StateHandler extends Handler{
             Chunk chunk = new Chunk(chunkInfo.getChunkNo());
             String chunkId = chunk.buildChunkId();
             String fileId = chunkInfo.getFileId();
-            Path path = Paths.get(Chunk.getPathname() + fileId + "/" + chunkId);
+            Path path = Paths.get(Chunk.getChunkFolderPath() + fileId + "/" + chunkId);
             //id
             String id = fileId + " -> " + chunkId;
             //size in KBytes
