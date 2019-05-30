@@ -1,7 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="a677d651-bc04-4f02-9be2-ffe8fa3842fd" name="Default Changelist" comment="" />
+    <list default="true" id="a677d651-bc04-4f02-9be2-ffe8fa3842fd" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/protocol/Chunk.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/protocol/Chunk.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/protocol/subprotocol/Initiator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/protocol/subprotocol/Initiator.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/protocol/subprotocol/Receiver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/protocol/subprotocol/Receiver.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/protocol/subprotocol/communication/tcp/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/protocol/subprotocol/communication/tcp/Client.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/protocol/subprotocol/communication/tcp/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/protocol/subprotocol/communication/tcp/Server.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/protocol/subprotocol/fileManagement/SplitFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/protocol/subprotocol/fileManagement/SplitFile.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/protocol/subprotocol/handler/StateHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/protocol/subprotocol/handler/StateHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/server/CentralServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/CentralServer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/ClientBackupTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/tests/ClientBackupTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/ClientSignupTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/tests/ClientSignupTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/protocol/subprotocol/communication/tcp/ClientTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/tests/protocol/subprotocol/communication/tcp/ClientTest.java" afterDir="false" />
+    </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -14,7 +29,7 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tests/ClientSignupTest.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="64">
@@ -29,8 +44,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/protocol/Chunk.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-1785">
-              <caret line="9" column="15" selection-start-line="6" selection-start-column="12" selection-end-line="9" selection-end-column="15" />
+            <state relative-caret-position="81">
+              <caret line="165" column="43" selection-start-line="165" selection-start-column="25" selection-end-line="165" selection-end-column="43" />
               <folding>
                 <element signature="e#4910#4911#0" expanded="true" />
                 <element signature="e#4965#4966#0" expanded="true" />
@@ -39,6 +54,15 @@
                 <element signature="e#5027#5028#0" expanded="true" />
                 <element signature="e#5067#5068#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/protocol/subprotocol/handler/RemovedHandler.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="71">
+              <caret line="39" column="67" selection-start-line="39" selection-start-column="67" selection-end-line="39" selection-end-column="67" />
             </state>
           </provider>
         </entry>
@@ -196,7 +220,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1559237661656" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1559237627563" />
     <property name="extract.method.default.visibility" value="private" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../../sdis_test/proj2" />
     <property name="node.js.detected.package.eslint" value="true" />
@@ -357,7 +381,7 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="45382000" />
+    <option name="totallyTimeSpent" value="45105000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
@@ -382,8 +406,8 @@
       <window_info anchor="bottom" id="Database Changes" order="9" />
       <window_info anchor="bottom" id="Terminal" order="10" />
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
-      <window_info anchor="bottom" id="Messages" order="12" weight="0.60720134" />
-      <window_info active="true" anchor="bottom" id="Run Dashboard" order="13" visible="true" weight="0.47463176" />
+      <window_info active="true" anchor="bottom" id="Messages" order="12" visible="true" weight="0.60720134" />
+      <window_info anchor="bottom" id="Run Dashboard" order="13" weight="0.47463176" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -690,6 +714,16 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/tests/ClientSignupTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="64">
+          <caret line="66" column="87" selection-start-line="66" selection-start-column="87" selection-end-line="66" selection-end-column="87" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/protocol/subprotocol/Initiator.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="115">
@@ -704,34 +738,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/protocol/subprotocol/handler/RemovedHandler.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="71">
-          <caret line="39" column="67" selection-start-line="39" selection-start-column="67" selection-end-line="39" selection-end-column="67" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/TMP/peer0/backup/1as98d21hiwdhwadh19832rhwqi/chk0">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="41">
-          <caret line="1953" lean-forward="true" selection-start-line="1953" selection-end-line="1962" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/TMP/peer0/backup/1as98d21hiwdhwadh19832rhwqi/chk1">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="92">
-          <caret line="1476" selection-start-line="1476" selection-end-line="1476" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/TMP/peer0/backup/1as98d21hiwdhwadh19832rhwqi/chk2">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/protocol/Chunk.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1785">
-          <caret line="9" column="15" selection-start-line="6" selection-start-column="12" selection-end-line="9" selection-end-column="15" />
+        <state relative-caret-position="81">
+          <caret line="165" column="43" selection-start-line="165" selection-start-column="25" selection-end-line="165" selection-end-column="43" />
           <folding>
             <element signature="e#4910#4911#0" expanded="true" />
             <element signature="e#4965#4966#0" expanded="true" />
@@ -743,13 +753,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tests/ClientSignupTest.java">
+    <entry file="file://$PROJECT_DIR$/src/protocol/subprotocol/handler/RemovedHandler.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="64">
-          <caret line="66" column="87" selection-start-line="66" selection-start-column="87" selection-end-line="66" selection-end-column="87" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
+        <state relative-caret-position="71">
+          <caret line="39" column="67" selection-start-line="39" selection-start-column="67" selection-end-line="39" selection-end-column="67" />
         </state>
       </provider>
     </entry>
