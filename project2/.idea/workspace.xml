@@ -2,20 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a677d651-bc04-4f02-9be2-ffe8fa3842fd" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/protocol/Chunk.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/protocol/Chunk.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/protocol/subprotocol/Initiator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/protocol/subprotocol/Initiator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/protocol/subprotocol/Receiver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/protocol/subprotocol/Receiver.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/protocol/subprotocol/communication/tcp/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/protocol/subprotocol/communication/tcp/Client.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/protocol/subprotocol/communication/tcp/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/protocol/subprotocol/communication/tcp/Server.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/protocol/subprotocol/fileManagement/SplitFile.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/protocol/subprotocol/fileManagement/SplitFile.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/protocol/subprotocol/handler/StateHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/protocol/subprotocol/handler/StateHandler.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/server/CentralServer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/CentralServer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/ClientBackupTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/tests/ClientBackupTest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/server/IncomingConnection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/server/IncomingConnection.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/ClientSignupTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/tests/ClientSignupTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/protocol/subprotocol/communication/tcp/ClientTest.java" beforeDir="false" afterPath="$PROJECT_DIR$/tests/protocol/subprotocol/communication/tcp/ClientTest.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -32,8 +22,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/tests/ClientSignupTest.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="64">
-              <caret line="66" column="87" selection-start-line="66" selection-start-column="87" selection-end-line="66" selection-end-column="87" />
+            <state relative-caret-position="31">
+              <caret line="67" column="13" lean-forward="true" selection-start-line="67" selection-start-column="13" selection-end-line="67" selection-end-column="13" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -42,11 +32,63 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/tests/ClientBackupTest.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="323">
+              <caret line="30" column="37" selection-start-line="30" selection-start-column="37" selection-end-line="30" selection-end-column="37" />
+              <folding>
+                <element signature="imports" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/server/CentralServer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="200">
+              <caret line="260" column="58" lean-forward="true" selection-start-line="260" selection-start-column="58" selection-end-line="260" selection-end-column="58" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="method#main#0;class#CentralServer#0" />
+                <element signature="method#store#0;class#CentralServer#0" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/protocol/info/ChunkInfo.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="237">
+              <caret line="17" column="11" selection-start-line="17" selection-start-column="11" selection-end-line="17" selection-end-column="11" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/server/info/ActivePeer.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="697">
+              <caret line="50" column="38" selection-start-line="50" selection-start-column="38" selection-end-line="50" selection-end-column="38" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#853#854#0" expanded="true" />
+                <element signature="e#874#875#0" expanded="true" />
+                <element signature="e#903#904#0" expanded="true" />
+                <element signature="e#924#925#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/protocol/Chunk.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="81">
-              <caret line="165" column="43" selection-start-line="165" selection-start-column="25" selection-end-line="165" selection-end-column="43" />
+            <state relative-caret-position="-87">
+              <caret line="99" column="34" selection-start-line="99" selection-start-column="28" selection-end-line="99" selection-end-column="34" />
               <folding>
+                <element signature="imports" expanded="true" />
                 <element signature="e#4910#4911#0" expanded="true" />
                 <element signature="e#4965#4966#0" expanded="true" />
                 <element signature="e#5031#5032#0" expanded="true" />
@@ -58,11 +100,18 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/protocol/subprotocol/handler/RemovedHandler.java">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/server/IncomingConnection.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="71">
-              <caret line="39" column="67" selection-start-line="39" selection-start-column="67" selection-end-line="39" selection-end-column="67" />
+            <state relative-caret-position="197">
+              <caret line="43" selection-start-line="43" selection-end-line="43" />
+              <folding>
+                <element signature="imports" expanded="true" />
+                <element signature="e#1110#1111#0" expanded="true" />
+                <element signature="e#1194#1195#0" expanded="true" />
+                <element signature="e#1293#1294#0" expanded="true" />
+                <element signature="e#1386#1387#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -99,6 +148,7 @@
       <find>position</find>
       <find>receiveChunk</find>
       <find>id</find>
+      <find>request</find>
     </findStrings>
     <dirStrings>
       <dir>C:\Users\Susana\Documents\Git\feup-sdis\project2\src</dir>
@@ -116,21 +166,21 @@
         <option value="$PROJECT_DIR$/src/server/SSLInit.java" />
         <option value="$PROJECT_DIR$/tests/ClientServerTest.java" />
         <option value="$PROJECT_DIR$/src/server/ClientSocket.java" />
-        <option value="$PROJECT_DIR$/src/server/IncomingConnection.java" />
         <option value="$PROJECT_DIR$/tests/protocol/subprotocol/communication/tcp/ServerTest.java" />
         <option value="$PROJECT_DIR$/src/server/info/ActivePeer.java" />
         <option value="$PROJECT_DIR$/src/protocol/subprotocol/Receiver.java" />
         <option value="$PROJECT_DIR$/src/protocol/subprotocol/fileManagement/SplitFile.java" />
         <option value="$PROJECT_DIR$/tests/ClientBackupTest.java" />
-        <option value="$PROJECT_DIR$/src/server/CentralServer.java" />
         <option value="$PROJECT_DIR$/tests/protocol/subprotocol/communication/tcp/ClientTest.java" />
         <option value="$PROJECT_DIR$/src/protocol/subprotocol/communication/tcp/Server.java" />
         <option value="$PROJECT_DIR$/src/protocol/subprotocol/communication/tcp/Client.java" />
-        <option value="$PROJECT_DIR$/tests/ClientSignupTest.java" />
         <option value="$PROJECT_DIR$/src/protocol/Chunk.java" />
         <option value="$PROJECT_DIR$/src/protocol/subprotocol/Initiator.java" />
         <option value="$PROJECT_DIR$/src/protocol/subprotocol/handler/StateHandler.java" />
         <option value="$PROJECT_DIR$/src/protocol/subprotocol/handler/RemovedHandler.java" />
+        <option value="$PROJECT_DIR$/tests/ClientSignupTest.java" />
+        <option value="$PROJECT_DIR$/src/server/IncomingConnection.java" />
+        <option value="$PROJECT_DIR$/src/server/CentralServer.java" />
       </list>
     </option>
   </component>
@@ -207,7 +257,18 @@
             <path>
               <item name="SDIS_project2" type="b2602c69:ProjectViewProjectNode" />
               <item name="project2" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="server" type="462c0819:PsiDirectoryNode" />
+              <item name="info" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="SDIS_project2" type="b2602c69:ProjectViewProjectNode" />
+              <item name="project2" type="462c0819:PsiDirectoryNode" />
               <item name="tests" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="SDIS_project2" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
             </path>
           </expand>
           <select />
@@ -220,7 +281,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1559237627563" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1559240938331" />
     <property name="extract.method.default.visibility" value="private" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../../sdis_test/proj2" />
     <property name="node.js.detected.package.eslint" value="true" />
@@ -381,11 +442,10 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="45105000" />
+    <option name="totallyTimeSpent" value="48098000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" sideWeight="0.49756098" visible="true" weight="0.22692889" />
       <window_info id="Structure" order="1" sideWeight="0.502439" side_tool="true" weight="0.22692889" />
@@ -406,8 +466,8 @@
       <window_info anchor="bottom" id="Database Changes" order="9" />
       <window_info anchor="bottom" id="Terminal" order="10" />
       <window_info anchor="bottom" id="Event Log" order="11" side_tool="true" />
-      <window_info active="true" anchor="bottom" id="Messages" order="12" visible="true" weight="0.60720134" />
-      <window_info anchor="bottom" id="Run Dashboard" order="13" weight="0.47463176" />
+      <window_info anchor="bottom" id="Messages" order="12" weight="0.60720134" />
+      <window_info active="true" anchor="bottom" id="Run Dashboard" order="13" visible="true" weight="0.42716858" />
       <window_info anchor="right" id="Commander" internal_type="SLIDING" order="0" type="SLIDING" weight="0.4" />
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="right" content_ui="combo" id="Hierarchy" order="2" weight="0.25" />
@@ -435,7 +495,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/src/server/CentralServer.java</url>
-          <line>106</line>
+          <line>107</line>
           <properties />
           <option name="timeStamp" value="12" />
         </line-breakpoint>
@@ -527,13 +587,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/protocol/info/ChunkInfo.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-120">
-          <caret line="4" column="13" selection-start-line="4" selection-start-column="13" selection-end-line="4" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="jar://$USER_HOME$/Software/jdk-8/jdk1.8.0_211/src.zip!/java/util/TimerTask.java" />
     <entry file="jar://$USER_HOME$/Software/jdk-8/jdk1.8.0_211/src.zip!/java/util/Timer.java" />
     <entry file="file://$PROJECT_DIR$/src/protocol/subprotocol/handler/PutchunkHandler.java">
@@ -552,22 +605,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="153">
           <caret line="9" column="31" selection-start-line="9" selection-start-column="31" selection-end-line="9" selection-end-column="31" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/server/info/ActivePeer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="488">
-          <caret line="50" column="38" selection-start-line="50" selection-start-column="38" selection-end-line="50" selection-end-column="38" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#853#854#0" expanded="true" />
-            <element signature="e#874#875#0" expanded="true" />
-            <element signature="e#903#904#0" expanded="true" />
-            <element signature="e#924#925#0" expanded="true" />
-            <element signature="e#973#974#0" expanded="true" />
-            <element signature="e#1016#1017#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -594,20 +631,6 @@
           <caret line="105" selection-start-line="105" selection-end-line="105" />
           <folding>
             <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/server/IncomingConnection.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="178">
-          <caret line="36" column="9" selection-start-line="36" selection-start-column="9" selection-end-line="36" selection-end-column="9" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#1105#1106#0" expanded="true" />
-            <element signature="e#1167#1168#0" expanded="true" />
-            <element signature="e#1196#1197#0" expanded="true" />
-            <element signature="e#1252#1253#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -668,28 +691,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tests/ClientBackupTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-476">
-          <caret line="30" column="37" selection-start-line="30" selection-start-column="37" selection-end-line="30" selection-end-column="37" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/server/CentralServer.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="106">
-          <caret line="214" column="62" lean-forward="true" selection-start-line="214" selection-start-column="62" selection-end-line="214" selection-end-column="62" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="method#main#0;class#CentralServer#0" />
-            <element signature="method#store#0;class#CentralServer#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/protocol/subprotocol/communication/tcp/Server.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-8">
@@ -714,16 +715,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/tests/ClientSignupTest.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="64">
-          <caret line="66" column="87" selection-start-line="66" selection-start-column="87" selection-end-line="66" selection-end-column="87" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/protocol/subprotocol/Initiator.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="115">
@@ -738,11 +729,19 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/protocol/subprotocol/handler/RemovedHandler.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="71">
+          <caret line="39" column="67" selection-start-line="39" selection-start-column="67" selection-end-line="39" selection-end-column="67" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/protocol/Chunk.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="81">
-          <caret line="165" column="43" selection-start-line="165" selection-start-column="25" selection-end-line="165" selection-end-column="43" />
+        <state relative-caret-position="-87">
+          <caret line="99" column="34" selection-start-line="99" selection-start-column="28" selection-end-line="99" selection-end-column="34" />
           <folding>
+            <element signature="imports" expanded="true" />
             <element signature="e#4910#4911#0" expanded="true" />
             <element signature="e#4965#4966#0" expanded="true" />
             <element signature="e#5031#5032#0" expanded="true" />
@@ -753,10 +752,70 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/protocol/subprotocol/handler/RemovedHandler.java">
+    <entry file="file://$PROJECT_DIR$/tests/ClientSignupTest.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="71">
-          <caret line="39" column="67" selection-start-line="39" selection-start-column="67" selection-end-line="39" selection-end-column="67" />
+        <state relative-caret-position="31">
+          <caret line="67" column="13" lean-forward="true" selection-start-line="67" selection-start-column="13" selection-end-line="67" selection-end-column="13" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/tests/ClientBackupTest.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="30" column="37" selection-start-line="30" selection-start-column="37" selection-end-line="30" selection-end-column="37" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/server/info/ActivePeer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="697">
+          <caret line="50" column="38" selection-start-line="50" selection-start-column="38" selection-end-line="50" selection-end-column="38" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#853#854#0" expanded="true" />
+            <element signature="e#874#875#0" expanded="true" />
+            <element signature="e#903#904#0" expanded="true" />
+            <element signature="e#924#925#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/server/IncomingConnection.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="197">
+          <caret line="43" selection-start-line="43" selection-end-line="43" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="e#1110#1111#0" expanded="true" />
+            <element signature="e#1194#1195#0" expanded="true" />
+            <element signature="e#1293#1294#0" expanded="true" />
+            <element signature="e#1386#1387#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/protocol/info/ChunkInfo.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="237">
+          <caret line="17" column="11" selection-start-line="17" selection-start-column="11" selection-end-line="17" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/server/CentralServer.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="200">
+          <caret line="260" column="58" lean-forward="true" selection-start-line="260" selection-start-column="58" selection-end-line="260" selection-end-column="58" />
+          <folding>
+            <element signature="imports" expanded="true" />
+            <element signature="method#main#0;class#CentralServer#0" />
+            <element signature="method#store#0;class#CentralServer#0" />
+          </folding>
         </state>
       </provider>
     </entry>

@@ -15,6 +15,7 @@ import java.util.TimerTask;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLServerSocket;
 import protocol.Peer;
 import protocol.info.ChunkInfo;
@@ -23,7 +24,7 @@ import server.info.ActivePeer;
 public class CentralServer extends SSLInit implements Serializable {
   private transient ScheduledThreadPoolExecutor executor;
 
-  private ConcurrentHashMap<String, List<ChunkInfo>> chunkLog; // key is File/Chunk ID (hash)
+  private ConcurrentHashMap<String, List<String>> chunkLog; // key is File/Chunk ID (hash) value is peerID
   private ConcurrentHashMap<String, ActivePeer> peers; // key is Peer ID
 
   private CentralServer(int port) {
@@ -222,5 +223,50 @@ public class CentralServer extends SSLInit implements Serializable {
               }
             },
             2000);
+
+    for (ActivePeer peer :
+            availablePeers) {
+      executor.execute(() -> {
+
+
+        try {
+          String response = peer.getInput().readUTF();
+          System.out.println("Response " + response);
+
+
+          String[] messageTokens = response.split(" ");
+          String header = messageTokens[0];
+
+          if (header.equalsIgnoreCase("stored")) {
+
+
+          String peerID = messageTokens[1];
+          String file = messageTokens[2];
+
+          this.addChunkLog(file, peerID);
+          } else {
+            System.err.println("Unrecognized header " + header);
+          }
+
+        } catch (IOException e) {
+          e.printStackTrace();
+        }
+      });
+    }
+
+    executor.schedule(() -> System.out.println(this.chunkLog.toString()), 10, TimeUnit.SECONDS);
   }
+
+
+  private void addChunkLog(String fileID, String peerID) {
+    List<String> list = this.chunkLog.get(fileID);
+    if(list == null) {
+      List<String> peers = new LinkedList<>();
+      peers.add(peerID);
+      this.chunkLog.put(fileID, peers);
+    } else {
+      list.add(peerID);
+    }
+  }
+
 }
