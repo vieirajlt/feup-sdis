@@ -17,11 +17,18 @@ public class Chunk implements Serializable {
     private byte[] body;
     private int size;
 
+    private String peerID = "-1";
+
     private boolean loaded;
 
-    private static String pathname = "TMP/peer" + Peer.getServerId() + "/backup/";
+
 
     public Chunk() {
+    }
+
+    public Chunk(int chunkNo, byte[] body, String peerID) {
+        this(chunkNo, body);
+        this.peerID = peerID;
     }
 
     public Chunk(int chunkNo, byte[] body) {
@@ -51,8 +58,10 @@ public class Chunk implements Serializable {
     }
 
     public void store(String fileId) {
+        System.out.println("Going to store chunk");
         String chunkId = buildChunkId();
-        Path path = Paths.get(pathname + fileId + "/" + chunkId);
+        Path path = Paths.get(getPathname() + fileId + "/" + chunkId);
+        System.out.println("Going to store in " + path.toString());
 
         try {
             Files.createDirectories(path.getParent());
@@ -91,7 +100,7 @@ public class Chunk implements Serializable {
     public void load(String fileId) {
         loaded = false;
         String chunkId = buildChunkId();
-        Path path = Paths.get(pathname + fileId + "/" + chunkId);
+        Path path = Paths.get(getPathname() + fileId + "/" + chunkId);
 
         try {
             AsynchronousFileChannel fileChannel = AsynchronousFileChannel.open(path, StandardOpenOption.READ);
@@ -139,7 +148,7 @@ public class Chunk implements Serializable {
 
     public void delete(String fileId) {
         String chunkId = buildChunkId();
-        Path path = Paths.get(pathname + fileId + "/" + chunkId);
+        Path path = Paths.get(getPathname() + fileId + "/" + chunkId);
         try {
             Files.deleteIfExists(path);
             Files.deleteIfExists(path.getParent());
@@ -150,12 +159,16 @@ public class Chunk implements Serializable {
         }
     }
 
-    public static String getPathname() {
-        return pathname;
+    public String getPathname() {
+        return "TMP/peer" + peerID + "/backup/";
+    }
+
+    public static String getChunkFolderPath() {
+        return "TMP/static/" + "/";
     }
 
     public static String getChunkFolderPath(String fileId) {
-        return pathname + fileId + "/";
+        return "TMP/static/" + fileId + "/";
     }
 
     public boolean isLoaded() {

@@ -8,6 +8,10 @@ import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.LinkedList;
+import java.util.List;
+
+import static protocol.subprotocol.fileManagement.FileManager.MAX_CHUNK_SIZE;
 
 public class Client {
 
@@ -35,33 +39,52 @@ public class Client {
     }
 
     private void stopConnection() throws IOException {
+        System.out.println("hhhh ");
         in.close();
         out.close();
         clientSocket.close();
     }
 
-    private Chunk connect() {
-        try {
-            int chunkNo = in.readInt();
-            int length = in.readInt();
-            byte[] body = new byte[length];
-            int size =    in.read(body, 0, length);
-            if(size != length) //error
-                return null;
-            Chunk chunk = new Chunk(chunkNo, body);
-            return chunk;
-        } catch (IOException e) {
-            e.printStackTrace();
+    private List<Chunk> connect(String peerID) {
+        LinkedList<Chunk> chunks = new LinkedList<>();
+        boolean completed = false;
+
+        while (!completed) {
+            try {
+                int chunkNo = in.readInt();
+                System.out.println("Received chunk NO " + chunkNo);
+                int length = in.readInt();
+                System.out.println("Received chunk length " + length);
+                byte[] body = new byte[length];
+                //int size = in.read(body, 0, length);
+                int size = length;
+                        in.readFully(body);
+                if (size != length) //error
+                {
+                    size = in.read(body, size+1, length-size);
+                    System.out.println("Received chunk size " + size);
+                   // return null;
+                }
+                Chunk chunk = new Chunk(chunkNo, body, peerID);
+                chunks.add(chunk);
+
+                if (length < MAX_CHUNK_SIZE) {
+                    completed = true;
+                    System.out.println("Acabeiiii ");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-        return null;
+        return chunks;
     }
 
-    public Chunk receiveChunk() {
+    public List<Chunk> receiveChunk(String peerID) {
         try {
             startConnection();
-            Chunk chunk = connect();
+            List<Chunk> chunks = connect(peerID);
             stopConnection();
-            return chunk;
+            return chunks;
         } catch (IOException e) {
             e.printStackTrace();
         }

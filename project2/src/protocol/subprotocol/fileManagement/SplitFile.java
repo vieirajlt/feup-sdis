@@ -5,6 +5,7 @@ import protocol.Peer;
 import protocol.subprotocol.handler.PutchunkHandler;
 
 import java.io.IOException;
+import java.net.Socket;
 import java.nio.ByteBuffer;
 import java.nio.channels.AsynchronousFileChannel;
 import java.nio.channels.CompletionHandler;
@@ -16,6 +17,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.nio.file.attribute.FileOwnerAttributeView;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.LinkedList;
 
 public class SplitFile extends FileManager {
 
@@ -25,6 +27,8 @@ public class SplitFile extends FileManager {
 
     private int chunkNo;
     private long position;
+
+    public boolean completed = false;
 
     /**
      * @param pathname
@@ -77,25 +81,23 @@ public class SplitFile extends FileManager {
                     //store chunk
                     Chunk chunk = new Chunk(chunkNo++, body);
                     addChunksChunk(chunk);
-                    String chunkKey = chunk.buildChunkKey(getFileId());
-                    Peer.getDataContainer().addStored(chunkKey);
-
-                    //handler
-                    PutchunkHandler putchunkHandler = new PutchunkHandler(chunk, getFileId(), replicationDegree, enhanced);
-                    Peer.getExecutor().execute(putchunkHandler);
-
                     attachment.clear();
                     buffer.clear();
+                    System.out.println("AM READING " + getChunks().size() + " CHUNKS!!");
+                    System.out.println("AM READING " + result + "\n");
+
                     if(result == MAX_CHUNK_SIZE) {
                         fileChannel.read(buffer, position, buffer, this);
                     } else {
                         try {
-                            Peer.getDataContainer().addOwnFile(getFileId(), fileName, pathname, getChunksSize(), replicationDegree);
+                            completed = true;
+                            System.out.println("ACABEI BITCHES");
                             fileChannel.close();
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
+
                 }
 
                 @Override

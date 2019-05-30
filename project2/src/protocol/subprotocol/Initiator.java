@@ -79,7 +79,7 @@ public class Initiator extends Subprotocol implements RMIInterface {
         if(!enhanced)
            return;
 
-        Path dirPath = Paths.get(Chunk.getPathname());
+        Path dirPath = Paths.get(Chunk.getChunkFolderPath());
         if (!Files.exists(dirPath))
             return;
         try {
