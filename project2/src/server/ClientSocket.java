@@ -59,4 +59,13 @@ public class ClientSocket extends SSLInit {
 
     return null;
   }
+
+  public void close(){
+    try {
+      din.close();
+      dout.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
 }

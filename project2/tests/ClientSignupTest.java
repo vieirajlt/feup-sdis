@@ -4,6 +4,7 @@ import protocol.subprotocol.communication.tcp.Client;
 import protocol.subprotocol.communication.tcp.Server;
 import server.ClientSocket;
 
+import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -13,11 +14,14 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ClientSignupTest {
 
     private String peerID;
     private ScheduledThreadPoolExecutor executor;
+    private ClientSocket test;
+    private boolean whileRunning = true;
 
     private ConcurrentHashMap<String, Integer> chunkLog; // key is File/Chunk ID (hash) value is nr of chunks stored
 
@@ -27,7 +31,26 @@ public class ClientSignupTest {
 
     public static void main(String[] args) {
         ClientSignupTest t = new ClientSignupTest();
+
+        Thread hook = new Thread(t::shutdown);
+        Runtime.getRuntime().addShutdownHook(new Thread(){
+            public void run(){
+                t.shutdown();
+            }
+        });
+
         t.run(args);
+
+    }
+
+    private void shutdown(){
+        this.whileRunning = false;
+        this.test.write("SIGNOUT " + peerID);
+        System.out.println("SIGNOUT " + peerID);
+        executor.shutdown();
+
+        this.test.close();
+
     }
 
     void run(String[] args) {
@@ -35,23 +58,25 @@ public class ClientSignupTest {
         int port = Integer.parseInt(args[1]);
         peerID = args[2];
 
-        ClientSocket test = new ClientSocket(host, port);
+        this.test = new ClientSocket(host, port);
 
         test.write("SIGNUP " + peerID + " " + Math.round(10000000 + Math.random() * 600000));
 
         executor =
                 (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(7);
 
-        while (true) { //TODO SLIPT THIS THING
+        while (this.whileRunning) {
             try {
                 String msg = test.read();
 
                 if (msg != null) {
                     executor.execute(() -> handleMsg(test, msg));
                 } else {
-                    System.out.println("NULL");
+                    System.out.println("SOCKET ERROR: will close");
+                    this.whileRunning = false;
                 }
-            } catch (Exception e) {
+
+            }catch (Exception e) {
                 System.err.println("Error");
                 e.printStackTrace();
             }
@@ -120,31 +145,6 @@ public class ClientSignupTest {
                 default:
                     System.out.println(msg);
                     break;
-
-
-       /* if (header.equalsIgnoreCase("backup")) test.write("Accepted");
-        else if (header.equalsIgnoreCase("receive")) {
-
-            host = msgSplitted[1];
-            String sPort = msgSplitted[2];
-            int fileSize = Integer.parseInt(msgSplitted[3]);
-            String fileID = msgSplitted[4];
-
-            Client client = new Client(sPort, host);
-            System.out.println("Received " + msg);
-            List<Chunk> chunks = client.receiveChunk(peerID);
-
-            for (Chunk chunk : chunks) {
-                System.out.println("Received chunk " + chunk.getSize());
-                executor.execute(() -> chunk.store(fileID));
-            }
-
-            test.write("STORED " + peerID + " " + fileID);
-            chunkLog.add(fileID);
-
-            System.out.println("peer chunklog " + chunkLog.toString());
-
-        } else System.out.println(msg);*/
             case "delete":
             String fileId = msgSplitted[1];
             System.out.println("Will delete chunks of file " + fileId);
