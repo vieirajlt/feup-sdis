@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 
 public class RestoreFile extends FileManager {
 
@@ -21,9 +22,15 @@ public class RestoreFile extends FileManager {
         setChunks(Peer.getDataContainer().getTmpChunksChunks(getFileId()));
     }
 
-    public void process() {
-        String fileName = Peer.getDataContainer().getOwnFileName(getFileId());
-        Path path = Paths.get("TMP/peer" + Peer.getServerId() + "/restored/" + fileName);
+    public RestoreFile( List<Chunk> chunks) {
+        setChunks(chunks);
+    }
+
+    public void process(String clientID, String fileName) {
+
+        System.out.println("restorefile process");
+
+        Path path = Paths.get("TMP/client" + clientID + "/restored/" + fileName);
 
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
 

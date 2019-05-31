@@ -77,7 +77,6 @@ public class CentralServer extends SSLInit implements Serializable {
         int port = Integer.parseInt(args[0]);
 
 
-
         CentralServer server = new CentralServer(port);
 
         System.out.println("Ready to listen");
@@ -115,7 +114,7 @@ public class CentralServer extends SSLInit implements Serializable {
 
         Path path = Paths.get("./TMP/centralServer/serverLog");
 
-        if(path.toFile().exists()) {
+        if (path.toFile().exists()) {
             System.out.println("Loading myself!");
             try {
                 FileInputStream fileInputStream = new FileInputStream(path.toString());
@@ -127,8 +126,7 @@ public class CentralServer extends SSLInit implements Serializable {
             } catch (IOException | ClassNotFoundException e) {
                 e.printStackTrace();
             }
-        }
-        else
+        } else
             chunkLog = new ConcurrentHashMap<>();
     }
 
@@ -161,13 +159,11 @@ public class CentralServer extends SSLInit implements Serializable {
                         break;
                     }
 
+
                     List<String> peersList = chunkLog.get(fileID);
 
                     for (String peerID : peersList) {
-
                         executor.execute(() -> restore(peerID, message, connection));
-
-
                     }
 
                     break;
@@ -221,12 +217,14 @@ public class CentralServer extends SSLInit implements Serializable {
         try {
             peer.getOutput().writeUTF(message);
             String response = peer.getInput().readUTF();
+            System.out.println("res: " + response);
+
+            connection.getOutputStream().writeUTF(response);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
-
 
     private void backup(
             String fileID,

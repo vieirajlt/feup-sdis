@@ -89,9 +89,10 @@ public class SplitFile extends FileManager {
                         fileChannel.read(buffer, position, buffer, this);
                     } else {
                         try {
-                            completed = true;
+
                             System.out.println("ACABEI BITCHES");
                             fileChannel.close();
+                            completed = true;
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
