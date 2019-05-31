@@ -45,6 +45,14 @@ public class Chunk implements Serializable {
         loaded = true;
     }
 
+    public Chunk(int chunkNo, String peerID) {
+        this.chunkNo = chunkNo;
+        this.peerID = peerID;
+        this.body = null;
+        this.size = 0;
+        loaded = true;
+    }
+
     public int getChunkNo() {
         return chunkNo;
     }

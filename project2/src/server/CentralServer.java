@@ -102,10 +102,10 @@ public class CentralServer extends SSLInit implements Serializable {
       System.out.println("Received request: " + Arrays.toString(parts));
 
       String header = parts[0];
-
+      String fileID;
       switch (header.toLowerCase()) {
         case "backup":
-          String fileID = parts[1];
+           fileID = parts[1];
           int replicationDegree = Integer.parseInt(parts[2]);
           int fileSize = Integer.parseInt(parts[3]);
 
@@ -116,6 +116,26 @@ public class CentralServer extends SSLInit implements Serializable {
           break;
 
         case "restore":
+
+           fileID = parts[1];
+
+           if(!isBackedUp(fileID)) {
+             System.err.println("Unrecognized fileID\t" + fileID);
+             break;
+           }
+
+           List<String> peersList = chunkLog.get(fileID);
+
+           for(String peerID : peersList) {
+
+             executor.execute(()->restore(peerID,message,connection));
+
+
+           }
+
+
+
+
           break;
 
         case "delete":
@@ -152,6 +172,21 @@ public class CentralServer extends SSLInit implements Serializable {
   private void signOut(String peerID) {
     this.peers.remove(peerID);
   }
+
+
+
+  private void restore(String peerID, String message, IncomingConnection connection) {
+
+    ActivePeer peer = peers.get(peerID);
+    try {
+      peer.getOutput().writeUTF(message);
+      String response = peer.getInput().readUTF();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+
+  }
+
 
   private void backup(
       String fileID,
@@ -267,6 +302,12 @@ public class CentralServer extends SSLInit implements Serializable {
     } else {
       list.add(peerID);
     }
+  }
+
+  private boolean isBackedUp(String fileID) {
+    if(this.chunkLog.get(fileID) == null)
+      return false;
+    return true;
   }
 
 }

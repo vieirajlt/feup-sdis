@@ -33,8 +33,9 @@ public class IncomingConnection implements Runnable {
     public void run() {
         try {
 
-            String msg = this.inputStream.readUTF();
 
+            String msg = this.inputStream.readUTF();
+            System.out.println("incoming connection . run " + msg);
             se.request(msg, this);
 
         } catch (IOException e) {
