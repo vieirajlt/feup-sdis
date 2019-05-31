@@ -10,7 +10,7 @@ public class ClientDeleteTest {
     public static void main(String[] args) {
         String host = args[0];
         int port = Integer.parseInt(args[1]);
-        String filename = args[2];
+        String filename = args[3];
 
         ClientSocket test = new ClientSocket(host, port);
 

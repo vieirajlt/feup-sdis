@@ -13,7 +13,7 @@ import protocol.subprotocol.fileManagement.RestoreFile;
 import protocol.subprotocol.fileManagement.SplitFile;
 import server.ClientSocket;
 
-public class ClientRestoreTest {
+public class ClientRestoreTest{
 
     public static void main(String[] args) throws IOException {
         String host = args[0];

@@ -13,6 +13,8 @@ public class ActivePeer {
   private String host;
   private String port;
 
+  private boolean busy = false;
+
   public ActivePeer(long freeSpace, IncomingConnection connection) {
     this.freeSpace = freeSpace;
 
@@ -49,5 +51,13 @@ public class ActivePeer {
 
   public boolean enoughSpace(long fileSize) {
     return this.freeSpace >= fileSize;
+  }
+
+  synchronized public boolean isBusy() {
+    return busy;
+  }
+
+  synchronized public void setBusy(boolean busy) {
+    this.busy = busy;
   }
 }

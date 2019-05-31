@@ -1,7 +1,11 @@
 package protocol.subprotocol.communication.tcp;
 
 import protocol.Chunk;
+import server.SSLInit;
 
+import javax.net.ssl.SSLServerSocket;
+import javax.net.ssl.SSLServerSocketFactory;
+import javax.net.ssl.SSLSocket;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -12,10 +16,10 @@ import java.net.UnknownHostException;
 import java.util.List;
 import java.util.Random;
 
-public class Server {
+public class Server extends SSLInit {
 
-    private ServerSocket serverSocket;
-    private Socket clientSocket;
+    private SSLServerSocket serverSocket;
+    private SSLSocket clientSocket;
     private DataOutputStream out;
     private DataInputStream in;
 
@@ -26,6 +30,7 @@ public class Server {
     private List<Chunk> chunks;
 
     public Server(Chunk chunk) {
+        super("serverpw");
         PORT = pickRandomPort();
         try {
             address = InetAddress.getLocalHost();
@@ -36,6 +41,7 @@ public class Server {
     }
 
     public Server(List<Chunk> chunks) {
+        super("serverpw");
         PORT = pickRandomPort();
         try {
             address = InetAddress.getLocalHost();
@@ -47,16 +53,8 @@ public class Server {
     }
 
     private void startConnection() throws IOException {
-        boolean connected = false;
-        while(!connected) {
-            try {
-                serverSocket = new ServerSocket(PORT);
-                connected = true;
-            } catch (IOException e) {
-                PORT = pickRandomPort();
-            }
-        }
-        clientSocket = serverSocket.accept();
+        serverSocket = initServer(PORT);
+        clientSocket = (SSLSocket) serverSocket.accept();
         out = new DataOutputStream(clientSocket.getOutputStream());
         in = new DataInputStream(clientSocket.getInputStream());
     }
@@ -67,7 +65,7 @@ public class Server {
     }
 
     private void stopConnection() throws IOException {
-        System.out.println("ACABEi");
+        System.out.println("Stopped connection");
         in.close();
         out.close();
         clientSocket.close();

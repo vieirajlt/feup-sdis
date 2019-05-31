@@ -4,7 +4,6 @@ import protocol.subprotocol.communication.tcp.Client;
 import protocol.subprotocol.communication.tcp.Server;
 import server.ClientSocket;
 
-import java.io.EOFException;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -14,14 +13,15 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ClientSignupTest {
 
     private String peerID;
     private ScheduledThreadPoolExecutor executor;
-    private ClientSocket test;
+
     private boolean whileRunning = true;
+    private ClientSocket test;
+
 
     private ConcurrentHashMap<String, Integer> chunkLog; // key is File/Chunk ID (hash) value is nr of chunks stored
 
@@ -31,7 +31,6 @@ public class ClientSignupTest {
 
     public static void main(String[] args) {
         ClientSignupTest t = new ClientSignupTest();
-
         Thread hook = new Thread(t::shutdown);
         Runtime.getRuntime().addShutdownHook(new Thread(){
             public void run(){
@@ -40,7 +39,6 @@ public class ClientSignupTest {
         });
 
         t.run(args);
-
     }
 
     private void shutdown(){
@@ -65,7 +63,7 @@ public class ClientSignupTest {
         executor =
                 (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(7);
 
-        while (this.whileRunning) {
+        while (whileRunning) { //TODO SLIPT THIS THING
             try {
                 String msg = test.read();
 
@@ -73,10 +71,9 @@ public class ClientSignupTest {
                     executor.execute(() -> handleMsg(test, msg));
                 } else {
                     System.out.println("SOCKET ERROR: will close");
-                    this.whileRunning = false;
+                    whileRunning = false;
                 }
-
-            }catch (Exception e) {
+            } catch (Exception e) {
                 System.err.println("Error");
                 e.printStackTrace();
             }
@@ -142,25 +139,28 @@ public class ClientSignupTest {
                 test.write(sB.toString());
 
                 break;
-                default:
-                    System.out.println(msg);
-                    break;
+         
+
             case "delete":
-            String fileId = msgSplitted[1];
-            System.out.println("Will delete chunks of file " + fileId);
-            File dir = new File("TMP/peer" + peerID + "/backup/" + fileId);
-            String [] files = dir.list();
+                String fileId = msgSplitted[1];
+                System.out.println("Will delete chunks of file " + fileId);
+                File dir = new File("TMP/peer" + peerID + "/backup/" + fileId);
+                String [] files = dir.list();
 
 
-            for(String file: files){
-                File deleteFile = new File(dir.getPath(), file);
-                deleteFile.delete();
-            }
-            if(dir.isDirectory() && dir.list().length == 0)
-                dir.delete();
+                for(String file: files){
+                    File deleteFile = new File(dir.getPath(), file);
+                    deleteFile.delete();
+                }
+                if(dir.isDirectory() && dir.list().length == 0)
+                    dir.delete();
 
-            System.out.println("Finished deleting chunks");
-            break;
+                System.out.println("Finished deleting chunks");
+                break;
+
+            default:
+                System.out.println(msg);
+                 break;
         }
 
     }

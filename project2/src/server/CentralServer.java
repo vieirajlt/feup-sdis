@@ -2,7 +2,6 @@ package server;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -23,7 +22,6 @@ import server.info.ActivePeer;
 public class CentralServer extends SSLInit implements Serializable {
     private transient ScheduledThreadPoolExecutor executor;
 
-
     private ConcurrentHashMap<String, List<String>> chunkLog; // key is File/Chunk ID (hash) value is peerID
     private transient ConcurrentHashMap<String, ActivePeer> peers; // key is Peer ID
 
@@ -37,19 +35,7 @@ public class CentralServer extends SSLInit implements Serializable {
         if (pool_size < 5) pool_size = 5;
 
         executor = (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(pool_size);
-        Runtime.getRuntime().addShutdownHook(new Thread(this::store));
 
-
-        new Timer()
-                .scheduleAtFixedRate(
-                        new TimerTask() {
-                            @Override
-                            public void run() {
-                                store();
-                            }
-                        },
-                        Peer.getSaveDataInterval(),
-                        Peer.getSaveDataInterval());
         try {
             SSLServerSocket ss = initServer(port);
 
@@ -69,40 +55,37 @@ public class CentralServer extends SSLInit implements Serializable {
         }
     }
 
-
     public static void main(String[] args) {
         System.out.println("Will Start");
-        Path path = Paths.get("./TMP/centralServer/serverLog");
 
         int port = Integer.parseInt(args[0]);
 
-
         CentralServer server = new CentralServer(port);
+
+        new Timer()
+                .scheduleAtFixedRate(
+                        new TimerTask() {
+                            @Override
+                            public void run() {
+                                server.store();
+                            }
+                        },
+                        Peer.getSaveDataInterval(),
+                        Peer.getSaveDataInterval());
+
+        Thread hook = new Thread(server::store);
+        Runtime.getRuntime().addShutdownHook(hook);
 
         System.out.println("Ready to listen");
     }
 
-
     private void store() {
-        System.out.println("Willl exit!!!");
-
-
-        Path path = Paths.get("./TMP/centralServer/serverLog");
-
-        peers.forEachValue(1L, (ActivePeer peer) -> {
-            try {
-                peer.getOutput().close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+        Path path = Paths.get("./FILES/centralServer/serverLog");
         try {
-            Files.createDirectories(path.getParent());
-
             FileOutputStream fileOutputStream = new FileOutputStream(path.toString());
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
 
-            objectOutputStream.writeObject(this.chunkLog);
+            objectOutputStream.writeObject(this);
             objectOutputStream.close();
 
         } catch (IOException e) {
@@ -111,7 +94,6 @@ public class CentralServer extends SSLInit implements Serializable {
     }
 
     private void load() {
-
         Path path = Paths.get("./TMP/centralServer/serverLog");
 
         if (path.toFile().exists()) {
@@ -159,12 +141,12 @@ public class CentralServer extends SSLInit implements Serializable {
                         break;
                     }
 
-
                     List<String> peersList = chunkLog.get(fileID);
 
                     for (String peerID : peersList) {
                         executor.execute(() -> restore(peerID, message, connection));
                     }
+
 
                     break;
 
@@ -202,12 +184,12 @@ public class CentralServer extends SSLInit implements Serializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 
     private void signOut(String peerID) {
         this.peers.remove(peerID);
         System.out.println("Removed peer " + peerID);
+
     }
 
 
@@ -224,7 +206,9 @@ public class CentralServer extends SSLInit implements Serializable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
+
 
     private void backup(
             String fileID,
@@ -237,19 +221,20 @@ public class CentralServer extends SSLInit implements Serializable {
         List<ActivePeer> availablePeers = new LinkedList<>();
 
         this.peers.forEachValue(
-                1L,
+                1000L,
                 (ActivePeer peer) -> {
                     try {
                         String[] components = new String[]{"BACKUP", fileID, Integer.toString(fileSize)};
                         String msg = String.join(" ", components);
 
-                        if (!peer.enoughSpace(fileSize)) {
+                        if (!peer.enoughSpace(fileSize) || peer.isBusy() || availablePeers.size() >= replicationDegree) {
                             return;
                         }
 
                         peer.getOutput().writeUTF(msg);
                         String response = peer.getInput().readUTF();
                         if (response.equalsIgnoreCase("accepted")) {
+                            peer.setBusy(true);
                             availablePeers.add(peer);
                         }
 
@@ -257,7 +242,7 @@ public class CentralServer extends SSLInit implements Serializable {
                         e.printStackTrace();
                     }
                 });
-
+        System.out.println(peers.toString());
         try {
             connection.getOutputStream().writeUTF("HEY ");
         } catch (IOException e) {
@@ -317,6 +302,7 @@ public class CentralServer extends SSLInit implements Serializable {
                         String file = messageTokens[2];
 
                         this.addChunkLog(file, peerID);
+                        peer.setBusy(false);
                     } else {
                         System.err.println("Unrecognized header " + header);
                     }
@@ -364,7 +350,6 @@ public class CentralServer extends SSLInit implements Serializable {
                 e.printStackTrace();
             }
         }
-
         this.chunkLog.remove(fileID);
 
         return 0;

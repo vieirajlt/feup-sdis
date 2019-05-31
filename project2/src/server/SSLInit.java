@@ -13,74 +13,45 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
 
-class SSLInit {
+public class SSLInit {
 
-  /**
-   * KeyStore for storing our public/private key pair
-   */
-  private KeyStore clientKeyStore;
-
-  /**
-   * KeyStore for storing the server's public key
-   */
-  private KeyStore serverKeyStore;
-
-  /**
-   * Used to generate a SocketFactory
-   */
-  private SSLContext sslContext;
-
-  /**
-   * A source of secure random numbers
-   */
   private SecureRandom secureRandom = new SecureRandom();
 
   private String passphrase;
 
-  SSLInit(String passphrase) {
+  private KeyStore cltKeyStore;
+
+  private KeyStore srvKeyStore;
+
+  private SSLContext sslContext;
+
+  protected SSLInit(String passphrase) {
     this.passphrase = passphrase;
   }
 
-  private void setupClientKeyStore(boolean server) throws GeneralSecurityException, IOException {
-    clientKeyStore = KeyStore.getInstance("JKS");
-    if (server) {
-      clientKeyStore.load(new FileInputStream("./certs/client.public"), "public".toCharArray());
-    } else {
-      clientKeyStore.load(new FileInputStream("./certs/client.private"), passphrase.toCharArray());
-    }
+  protected SSLInit() {
+    this.passphrase = "";
   }
 
-  private void setupServerKeystore(boolean server) throws GeneralSecurityException, IOException {
-    serverKeyStore = KeyStore.getInstance("JKS");
-    if (server) {
-      serverKeyStore.load(new FileInputStream("./certs/server.private"), passphrase.toCharArray());
-    } else {
-      serverKeyStore.load(new FileInputStream("./certs/server.public"), "public".toCharArray());
+
+
+  protected SSLServerSocket initServer(int port) {
+    try {
+      setupClientKeyStore(true);
+      setupServerKeystore(true);
+      setupSSLContext(true);
+
+      SSLServerSocketFactory sf = sslContext.getServerSocketFactory();
+      return (SSLServerSocket) sf.createServerSocket(port);
+
+    } catch (GeneralSecurityException | IOException e) {
+      e.printStackTrace();
     }
+
+    return null;
   }
 
-  private void setupSSLContext(boolean server) throws GeneralSecurityException {
-    secureRandom.nextInt();
-
-    TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
-    if (server) {
-      tmf.init(clientKeyStore);
-    } else {
-      tmf.init(serverKeyStore);
-    }
-
-    KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
-    if (server) {
-      kmf.init(serverKeyStore, passphrase.toCharArray());
-    } else {
-      kmf.init(clientKeyStore, passphrase.toCharArray());
-    }
-
-    sslContext = SSLContext.getInstance("TLS");
-    sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), secureRandom);
-  }
-
-  SSLSocket initClient(String host, int port) {
+  protected SSLSocket initClient(String host, int port) {
     try {
       setupClientKeyStore(false);
       setupServerKeystore(false);
@@ -96,19 +67,45 @@ class SSLInit {
     return null;
   }
 
-  SSLServerSocket initServer(int port) {
-    try {
-      setupClientKeyStore(true);
-      setupServerKeystore(true);
-      setupSSLContext(true);
 
-      SSLServerSocketFactory sf = sslContext.getServerSocketFactory();
-      return (SSLServerSocket) sf.createServerSocket(port);
+  private void setupServerKeystore(boolean server) throws GeneralSecurityException, IOException {
+    srvKeyStore = KeyStore.getInstance("JKS");
+    if (server) {
+      srvKeyStore.load(new FileInputStream("../certs/server.private"), passphrase.toCharArray());
+    } else {
+      srvKeyStore.load(new FileInputStream("../certs/server.public"), "public".toCharArray());
+    }
+  }
 
-    } catch (GeneralSecurityException | IOException e) {
-      e.printStackTrace();
+  private void setupClientKeyStore(boolean server) throws GeneralSecurityException, IOException {
+    cltKeyStore = KeyStore.getInstance("JKS");
+    if (server) {
+      cltKeyStore.load(new FileInputStream("../certs/client.public"), "public".toCharArray());
+    } else {
+      cltKeyStore.load(new FileInputStream("../certs/client.private"), passphrase.toCharArray());
+    }
+  }
+
+  private void setupSSLContext(boolean server) throws GeneralSecurityException {
+    secureRandom.nextInt();
+
+    TrustManagerFactory tmf = TrustManagerFactory.getInstance("SunX509");
+    if (server) {
+      tmf.init(cltKeyStore);
+    } else {
+      tmf.init(srvKeyStore);
     }
 
-    return null;
+    KeyManagerFactory kmf = KeyManagerFactory.getInstance("SunX509");
+    if (server) {
+      kmf.init(srvKeyStore, passphrase.toCharArray());
+    } else {
+      kmf.init(cltKeyStore, passphrase.toCharArray());
+    }
+
+    sslContext = SSLContext.getInstance("TLS");
+    sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), secureRandom);
   }
+
+
 }

@@ -1,7 +1,11 @@
 package protocol.subprotocol.communication.tcp;
 
 import protocol.Chunk;
+import server.SSLInit;
 
+import javax.net.ssl.SSLServerSocketFactory;
+import javax.net.ssl.SSLSocket;
+import javax.net.ssl.SSLSocketFactory;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -13,9 +17,9 @@ import java.util.List;
 
 import static protocol.subprotocol.fileManagement.FileManager.MAX_CHUNK_SIZE;
 
-public class Client {
+public class Client extends SSLInit {
 
-    private Socket clientSocket;
+    private SSLSocket clientSocket;
     private DataOutputStream out;
     private DataInputStream in;
 
@@ -23,6 +27,7 @@ public class Client {
     private InetAddress address;
 
     public Client(String port, String address) {
+        super("clientpw");
         try {
             this.PORT = Integer.parseInt(port);
             this.address = InetAddress.getByName(address);
@@ -33,13 +38,18 @@ public class Client {
     }
 
     private void startConnection() throws IOException {
-        clientSocket = new Socket(address, PORT);
+        String addr = "localhost";
+        if(!address.toString().equalsIgnoreCase(addr)) {
+            addr = address.toString().split("/")[1];
+        }
+        System.out.println("address: " + addr );
+        System.out.println("port: " + PORT );
+        clientSocket = initClient(addr, PORT);
         out = new DataOutputStream(clientSocket.getOutputStream());
         in = new DataInputStream(clientSocket.getInputStream());
     }
 
     private void stopConnection() throws IOException {
-        System.out.println("hhhh ");
         in.close();
         out.close();
         clientSocket.close();
@@ -70,7 +80,7 @@ public class Client {
 
                 if (length < MAX_CHUNK_SIZE) {
                     completed = true;
-                    System.out.println("Acabeiiii ");
+                    System.out.println("Finished reading chunks ");
                 }
             } catch (IOException e) {
                 e.printStackTrace();

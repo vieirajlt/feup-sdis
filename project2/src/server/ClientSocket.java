@@ -54,17 +54,17 @@ public class ClientSocket extends SSLInit {
       String msg = din.readUTF();
       return msg;
     } catch (IOException e) {
-      e.printStackTrace();
+     // e.printStackTrace();
     }
 
     return null;
   }
 
   public void close(){
-    try {
+    try{
       din.close();
       dout.close();
-    } catch (IOException e) {
+    }catch(IOException e){
       e.printStackTrace();
     }
   }

@@ -32,12 +32,14 @@ public class ClientBackupTest {
         ScheduledThreadPoolExecutor executor =
                 (ScheduledThreadPoolExecutor) Executors.newScheduledThreadPool(5);
 
-        int replicationDegree = 3;
+
         List<String> sockets = new ArrayList<>();
 
         String clientID = args[2];
 
         String filePath = args[3];
+
+        int replicationDegree = Integer.parseInt(args[4]);
 
         File file = new File(filePath);
         int length = (int) (file.length());
@@ -90,8 +92,6 @@ public class ClientBackupTest {
         };
 
         executor.execute(runnable);
-
-        // executor.shutdown();
     }
 
 

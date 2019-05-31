@@ -36,11 +36,3 @@ rm sources.txt
 
 ### 4. Saved Files
 All data is saved under TMP folder created on the same level of **src/**
-
-java -Djavax.net.ssl.trustStore=$FileParentDir$/samplecacerts server.CentralServer 8585  
-java ClientSignupTest localhost 8585 0  
-java ClientSignupTest localhost 8585 1  
-java ClientSignupTest localhost 8585 2  
-java ClientSignupTest localhost 8585 3  
-java -Djavax.net.ssl.trustStore=$FileParentDir$/samplecacerts ClientRestoreTest localhost 8585 3 ./FILES/orpheu.txt  
-java -Djavax.net.ssl.trustStore=$FileParentDir$/samplecacerts ClientBackupTest localhost 8585 3 ./FILES/orpheu.txt 2
