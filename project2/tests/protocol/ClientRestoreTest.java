@@ -29,9 +29,10 @@ public class ClientRestoreTest {
 
         List<String> sockets = new ArrayList<>();
 
-        String filePath = args[2];
 
+        String clientId = args[2];
 
+        String filePath = args[3];
 
         SplitFile sF = new SplitFile(filePath);
 
@@ -53,27 +54,10 @@ public class ClientRestoreTest {
                 String rPort = connection.split(":")[1];
                 Client client = new Client(rPort, rAddr);
                 List<Chunk> chunks = client.receiveChunk("1");
-
-                System.out.println("here1");
-
                 RestoreFile rF = new RestoreFile(chunks);
-
-                System.out.println("here2");
-
-
                 String[] pathTokens = filePath.split("/");
-
-                System.out.println("here3");
-
-
-                rF.process("1", pathTokens[pathTokens.length - 1]);
-
-                System.out.println("here4");
-
-
+                rF.process(clientId, pathTokens[pathTokens.length - 1]);
                 executor.shutdownNow();
-
-                System.out.println("here5");
 
 
             }, counter++,  TimeUnit.SECONDS );
