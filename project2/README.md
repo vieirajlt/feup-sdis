@@ -42,4 +42,5 @@ java ClientSignupTest localhost 8585 0
 java ClientSignupTest localhost 8585 1  
 java ClientSignupTest localhost 8585 2  
 java ClientSignupTest localhost 8585 3  
-java -Djavax.net.ssl.trustStore=$FileParentDir$/samplecacerts protocol.ClientRestoreTest localhost 8585 3 ./FILES/orpheu.txt  
+java -Djavax.net.ssl.trustStore=$FileParentDir$/samplecacerts ClientRestoreTest localhost 8585 3 ./FILES/orpheu.txt  
+java -Djavax.net.ssl.trustStore=$FileParentDir$/samplecacerts ClientBackupTest localhost 8585 3 ./FILES/orpheu.txt 2
