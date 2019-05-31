@@ -97,7 +97,6 @@ public class Server {
             if (chunk == null) {
                 for(Chunk c : chunks) {
                     connect(c);
-
                     Thread.sleep((long) (Math.random() * 400 + 100));
                 }
             } else {

@@ -25,7 +25,7 @@ public class ClientBackupTest {
     int replicationDegree = 3;
     List<String> sockets = new ArrayList<>();
 
-    String filePath = "./FILES/orpheu.txt";
+    String filePath = args[2];
 
     File file = new File(filePath);
     int length = (int) (file.length());
@@ -44,6 +44,8 @@ public class ClientBackupTest {
 
     while(!sF.completed) {}
 
+    System.out.println("completed ");
+
     for (int i = 0; i < replicationDegree; i++) {
 
       System.out.println("READ " + sF.getChunks().size() + " CHUNKS!!");
@@ -54,7 +56,7 @@ public class ClientBackupTest {
     }
 
     StringBuilder sB = new StringBuilder();
-    sB.append("BACKUP 1as98d21hiwdhwadh19832rhwqi " + replicationDegree + " " + length + " #");
+    sB.append("BACKUP " + sF.getFileId() + " " + replicationDegree + " " + length + " #");
     for (String socket : sockets) {
       sB.append(socket);
       sB.append(" ");

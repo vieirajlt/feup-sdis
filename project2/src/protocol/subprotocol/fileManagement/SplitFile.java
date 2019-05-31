@@ -46,8 +46,7 @@ public class SplitFile extends FileManager {
     public SplitFile(String pathname) {
         this.pathname = pathname;
         this.replicationDegree = 1;
-        Path path = Paths.get(pathname);
-        this.fileName = path.getFileName().toString();
+        this.fileName = pathname;
         buildId();
     }
 
@@ -112,26 +111,7 @@ public class SplitFile extends FileManager {
 
     private void buildId() {
 
-        try {
-
-            Path path = Paths.get(pathname);
-
-            BasicFileAttributes fileAttributes = Files.readAttributes(path, BasicFileAttributes.class);
-            FileOwnerAttributeView ownerAttribute = Files.getFileAttributeView(path, FileOwnerAttributeView.class);
-
-            String fileIdUnhashed =
-                    this.fileName +
-                            ownerAttribute.getOwner() +
-                            fileAttributes.size() +
-                            fileAttributes.creationTime() +
-                            fileAttributes.lastModifiedTime() +
-                            Peer.getServerId();
-
-            setFileId(sha256(fileIdUnhashed));
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        setFileId(sha256(pathname));
     }
 
     static String sha256(String input) {
