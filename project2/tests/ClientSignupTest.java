@@ -64,9 +64,10 @@ public class ClientSignupTest {
 
             for (Chunk chunk : chunks) {
                 System.out.println("Received chunk " + chunk.getSize());
-                executor.schedule(() -> chunk.store(fileID), 1, TimeUnit.MILLISECONDS);
-                System.out.println(executor.getQueue());
+                executor.execute(() -> chunk.store(fileID));
             }
+
+            test.write("STORED " + peerID + " " + fileID);
 
         } else System.out.println(msg);
     }
