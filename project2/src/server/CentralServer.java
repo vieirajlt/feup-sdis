@@ -223,4 +223,10 @@ public class CentralServer extends SSLInit implements Serializable {
             },
             2000);
   }
+
+  private int delete(String fileID, IncomingConnection connection, String[] adrs){
+    System.out.println("Will delete " + fileID);
+
+    return 0;
+  }
 }
