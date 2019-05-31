@@ -102,10 +102,11 @@ public class CentralServer extends SSLInit implements Serializable {
       System.out.println("Received request: " + Arrays.toString(parts));
 
       String header = parts[0];
+      String fileID;
 
       switch (header.toLowerCase()) {
         case "backup":
-          String fileID = parts[1];
+          fileID = parts[1];
           int replicationDegree = Integer.parseInt(parts[2]);
           int fileSize = Integer.parseInt(parts[3]);
 
@@ -119,6 +120,8 @@ public class CentralServer extends SSLInit implements Serializable {
           break;
 
         case "delete":
+          fileID = parts[1];
+          delete(fileID);
           break;
 
         case "signup":
@@ -270,9 +273,26 @@ public class CentralServer extends SSLInit implements Serializable {
   }
 
 
-  private int delete(String fileID, IncomingConnection connection, String[] adrs){
+  private int delete(String fileID){
     System.out.println("Will delete " + fileID);
+    List<String> filePeers = this.chunkLog.get(fileID);
+    if(filePeers == null) {
+      System.out.println("No peers have this file.");
+      return 1;
+    }
+    for (String filePeer: filePeers) {
+      ActivePeer aPeer = this.peers.get(filePeer);
 
+      try {
+        String[] components =
+                new String[]{"DELETE", fileID};
+        String msg = String.join(" ", components);
+        aPeer.getOutput().writeUTF(msg);
+        System.out.println(msg);
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
     return 0;
   }
 }

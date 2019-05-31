@@ -1,7 +1,14 @@
 import protocol.Chunk;
+import protocol.Peer;
 import protocol.subprotocol.communication.tcp.Client;
 import server.ClientSocket;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
@@ -69,6 +76,22 @@ public class ClientSignupTest {
 
             test.write("STORED " + peerID + " " + fileID);
 
-        } else System.out.println(msg);
+        }else if(header.equalsIgnoreCase("delete")){
+            String fileId = msgSplitted[1];
+            System.out.println("Will delete chunks of file " + fileId);
+            File dir = new File("TMP/peer" + peerID + "/backup/" + fileId);
+            String [] files = dir.list();
+
+
+                for(String file: files){
+                    File deleteFile = new File(dir.getPath(), file);
+                    deleteFile.delete();
+                }
+
+            //delete all the file chunks from peersChunks
+            Peer.getDataContainer().deletePeersFileChunks(fileId);
+            Peer.getDataContainer().deleteBackedUpFileChunks(fileId);
+        }
+        else System.out.println(msg);
     }
 }
