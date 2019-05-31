@@ -304,6 +304,12 @@ public class CentralServer extends SSLInit implements Serializable {
     }
   }
 
+
+  private int delete(String fileID, IncomingConnection connection, String[] adrs){
+    System.out.println("Will delete " + fileID);
+
+    return 0;
+  }
   private boolean isBackedUp(String fileID) {
     if(this.chunkLog.get(fileID) == null)
       return false;
