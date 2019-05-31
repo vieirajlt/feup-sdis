@@ -120,7 +120,7 @@ public class ClientSignupTest {
                 default:
                     System.out.println(msg);
                     break;
-        }
+
 
        /* if (header.equalsIgnoreCase("backup")) test.write("Accepted");
         else if (header.equalsIgnoreCase("receive")) {
@@ -145,23 +145,24 @@ public class ClientSignupTest {
             System.out.println("peer chunklog " + chunkLog.toString());
 
         } else System.out.println(msg);*/
-        }else if(header.equalsIgnoreCase("delete")){
+            case "delete":
             String fileId = msgSplitted[1];
             System.out.println("Will delete chunks of file " + fileId);
             File dir = new File("TMP/peer" + peerID + "/backup/" + fileId);
             String [] files = dir.list();
 
 
-                for(String file: files){
-                    File deleteFile = new File(dir.getPath(), file);
-                    deleteFile.delete();
-                }
+            for(String file: files){
+                File deleteFile = new File(dir.getPath(), file);
+                deleteFile.delete();
+            }
+            if(dir.isDirectory() && dir.list().length == 0)
+                dir.delete();
 
-            //delete all the file chunks from peersChunks
-            Peer.getDataContainer().deletePeersFileChunks(fileId);
-            Peer.getDataContainer().deleteBackedUpFileChunks(fileId);
+            System.out.println("Finished deleting chunks");
+            break;
         }
-        else System.out.println(msg);
+
     }
 
 

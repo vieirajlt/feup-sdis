@@ -1,7 +1,6 @@
 
+import protocol.subprotocol.fileManagement.SplitFile;
 import server.ClientSocket;
-import sun.security.provider.SHA2;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.Base64;
@@ -15,8 +14,7 @@ public class ClientDeleteTest {
 
         ClientSocket test = new ClientSocket(host, port);
 
-        String hashedName = "";
-
+        String hashedName = SplitFile.sha256(filename);
 
         test.write("DELETE " + hashedName);
         System.out.println("WROTE " + "DELETE " + hashedName);
