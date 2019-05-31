@@ -32,3 +32,5 @@ project1/TMP/
 project2/\.idea/workspace\.xml
 
 project2/\.idea/misc\.xml
+
+project2/TMP/*
