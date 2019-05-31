@@ -114,7 +114,7 @@ public class SplitFile extends FileManager {
         setFileId(sha256(pathname));
     }
 
-    static String sha256(String input) {
+    public static String sha256(String input) {
 
         try {
             MessageDigest messageDigest = null;

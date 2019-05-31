@@ -1,8 +1,15 @@
 import protocol.Chunk;
+import protocol.Peer;
 import protocol.subprotocol.communication.tcp.Client;
 import protocol.subprotocol.communication.tcp.Server;
 import server.ClientSocket;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.*;
@@ -113,7 +120,7 @@ public class ClientSignupTest {
                 default:
                     System.out.println(msg);
                     break;
-        }
+
 
        /* if (header.equalsIgnoreCase("backup")) test.write("Accepted");
         else if (header.equalsIgnoreCase("receive")) {
@@ -138,6 +145,24 @@ public class ClientSignupTest {
             System.out.println("peer chunklog " + chunkLog.toString());
 
         } else System.out.println(msg);*/
+            case "delete":
+            String fileId = msgSplitted[1];
+            System.out.println("Will delete chunks of file " + fileId);
+            File dir = new File("TMP/peer" + peerID + "/backup/" + fileId);
+            String [] files = dir.list();
+
+
+            for(String file: files){
+                File deleteFile = new File(dir.getPath(), file);
+                deleteFile.delete();
+            }
+            if(dir.isDirectory() && dir.list().length == 0)
+                dir.delete();
+
+            System.out.println("Finished deleting chunks");
+            break;
+        }
+
     }
 
 
