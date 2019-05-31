@@ -102,7 +102,7 @@ public class ClientSignupTest {
 
                 Server server = new Server(listChunks);
                // sockets.add(server.getConnectionSettings());
-                executor.schedule(server::sendChunk, 2, TimeUnit.SECONDS);
+                executor.execute(server::sendChunk);
 
                 StringBuilder sB = new StringBuilder();
                 sB.append("RESTOREPORT " + fileID + " #" + server.getConnectionSettings());

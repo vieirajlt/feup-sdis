@@ -39,7 +39,7 @@ public class ChunkAction extends Action {
             //if all chunks received, start getchunk
             if (Peer.getDataContainer().isTmpChunksChunksComplete(fileId)) {
                 RestoreFile restoreFile = new RestoreFile(fileId);
-                restoreFile.process();
+                restoreFile.process(null, null);
             }
         }
     }

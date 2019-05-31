@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.List;
 
 public class FileManager {
 
@@ -13,7 +14,7 @@ public class FileManager {
     public final static int MAX_NUM_CHUNKS = 1000000;
 
     private String fileId;
-    private ArrayList<Chunk> chunks = new ArrayList<>();
+    private List<Chunk> chunks = new ArrayList<>();
     private int chunksSize = 0;
 
     public String getFileId() {
@@ -24,11 +25,11 @@ public class FileManager {
         this.fileId = fileId;
     }
 
-    public ArrayList<Chunk> getChunks() {
+    public List<Chunk> getChunks() {
         return chunks;
     }
 
-    public void setChunks(ArrayList<Chunk> chunks) {
+    public void setChunks(List<Chunk> chunks) {
         this.chunks = chunks;
         this.chunksSize = chunks.size();
     }

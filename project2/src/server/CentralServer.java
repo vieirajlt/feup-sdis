@@ -127,10 +127,7 @@ public class CentralServer extends SSLInit implements Serializable {
            List<String> peersList = chunkLog.get(fileID);
 
            for(String peerID : peersList) {
-
              executor.execute(()->restore(peerID,message,connection));
-
-
            }
 
 
@@ -181,6 +178,10 @@ public class CentralServer extends SSLInit implements Serializable {
     try {
       peer.getOutput().writeUTF(message);
       String response = peer.getInput().readUTF();
+      System.out.println("res: " + response);
+
+      connection.getOutputStream().writeUTF(response);
+
     } catch (IOException e) {
       e.printStackTrace();
     }

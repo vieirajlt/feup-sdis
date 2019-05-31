@@ -7,6 +7,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import protocol.Chunk;
+import protocol.subprotocol.communication.tcp.Client;
 import protocol.subprotocol.communication.tcp.Server;
 import protocol.subprotocol.fileManagement.SplitFile;
 import server.ClientSocket;
@@ -66,9 +67,12 @@ public class ClientBackupTest {
     test.write(msg);
     System.out.println("WROTE " + msg);
 
+
     String rMSG = test.read();
 
     System.out.println("RECEIVED " + rMSG);
+
+
 
     // executor.shutdown();
   }
